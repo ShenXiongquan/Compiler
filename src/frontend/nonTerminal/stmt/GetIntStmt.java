@@ -1,0 +1,26 @@
+package frontend.nonTerminal.stmt;
+
+import frontend.nonTerminal.LVal;
+import frontend.token.token;
+import frontend.tool.myWriter;
+
+public class GetIntStmt extends Stmt {
+    public LVal lVal;
+    public token getint;
+
+    public token assign;
+    public token lparent;
+    public token rparent;
+    public token semicn;
+
+    @Override
+    public void visit() {
+        lVal.visit();
+        assign.visit();
+        getint.visit();
+        lparent.visit();
+        if (rparent != null) rparent.visit();
+        if (semicn != null) semicn.visit();
+        myWriter.writeNonTerminal("Stmt");
+    }
+}

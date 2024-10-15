@@ -1,0 +1,101 @@
+INTTK int
+MAINTK main
+LPARENT (
+RPARENT )
+LBRACE {
+IDENFR a
+LBRACK [
+IDENFR a
+LBRACK [
+IDENFR a
+LBRACK [
+IDENFR a
+LBRACK [
+IDENFR a
+LBRACK [
+INTCON 1
+<Number>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+<LVal>
+ASSIGN =
+IDENFR b
+LBRACK [
+IDENFR b
+LBRACK [
+IDENFR b
+LBRACK [
+IDENFR b
+LBRACK [
+INTCON 1
+<Number>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RBRACK ]
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
+<MainFuncDef>
+<CompUnit>
