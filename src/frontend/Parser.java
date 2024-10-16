@@ -29,11 +29,9 @@ public class Parser {
        if(this.token.getType()!=expected){
            return null;
        }
-
        token Token = this.token;
        nextToken();
        return Token;
-
     }
 
     private void nextToken() {
@@ -42,18 +40,30 @@ public class Parser {
         }
     }
 
-    private token index2Token(int offset) {
+    private token offset2Token(int offset) {
         return lexer.getTokens().get(index + offset - 1);
+    }
+
+    private int tempIndex;
+
+    private void saveContent(){
+        tempIndex = this.index;  // 保存当前索引
+        errorManager.setHandleErrorFlag(false);
+    }
+
+    private void restore(){
+        this.index = tempIndex;//恢复索引
+        this.token = lexer.getTokens().get(tempIndex-1);//恢复token
+        errorManager.setHandleErrorFlag(true);
     }
 
     public CompUnit parseCompUnit() {
         CompUnit compUnit = new CompUnit();
         // 循环解析 Decl 部分
-        while (token.getType() == tokenType.CONSTTK || ((token.getType() == tokenType.INTTK || token.getType() == tokenType.CHARTK) && index2Token(2).getType() != tokenType.LPARENT)) {
+        while (token.getType() == tokenType.CONSTTK || ((token.getType() == tokenType.INTTK || token.getType() == tokenType.CHARTK) && offset2Token(2).getType() != tokenType.LPARENT)) {
             compUnit.decls.add(parseDecl());
         }// 循环解析 FuncDef 部分
-        //int ident ()
-        while (token.getType() == tokenType.VOIDTK || token.getType() == tokenType.CHARTK || (token.getType() == tokenType.INTTK && index2Token(1).getType() != tokenType.MAINTK)) {
+        while (token.getType() == tokenType.VOIDTK || token.getType() == tokenType.CHARTK || (token.getType() == tokenType.INTTK && offset2Token(1).getType() != tokenType.MAINTK)) {
             compUnit.funcDefs.add(parseFuncDef());
         }
         // 解析主函数定义 MainFuncDef
@@ -93,7 +103,7 @@ public class Parser {
         if (token.getType() == tokenType.LBRACK) {
             constDef.lbrack = match();
             constDef.constExp = parseConstExp();
-            if (token.getType() != tokenType.RBRACK) errorManager.handleError(index2Token(-1).getLine(), "k");
+            if (token.getType() != tokenType.RBRACK) errorManager.handleError(offset2Token(-1).getLine(), "k");
             else constDef.rbrack = match();
         }//是否是一维数组
         constDef.assign = match();//匹配赋值符号
@@ -186,7 +196,7 @@ public class Parser {
         if (token.getType() == tokenType.PLUS || token.getType() == tokenType.MINU || token.getType() == tokenType.NOT) {
             unaryExp.unaryOp = parseUnaryOp();
             unaryExp.unaryExp = parseUnaryExp();
-        } else if (token.getType() == tokenType.IDENFR && index2Token(1).getType() == tokenType.LPARENT) {
+        } else if (token.getType() == tokenType.IDENFR && offset2Token(1).getType() == tokenType.LPARENT) {
             unaryExp.ident = match();
             unaryExp.lparent = match();
 
@@ -264,7 +274,7 @@ public class Parser {
             lVal.lbrack = match();
             lVal.exp = parseExp();
 
-            if (token.getType() != tokenType.RBRACK) {if(errorManager.handleErrorSwitch())errorManager.handleError(index2Token(-1).getLine(), "k");}
+            if (token.getType() != tokenType.RBRACK) {if(errorManager.handleErrorSwitch())errorManager.handleError(offset2Token(-1).getLine(), "k");}
             else lVal.rbrack = match();
         }
         return lVal;
@@ -277,7 +287,7 @@ public class Parser {
             varDef.lbrack = match();
             varDef.constExp = parseConstExp();
 
-            if (token.getType() != tokenType.RBRACK) errorManager.handleError(index2Token(-1).getLine(), "k");
+            if (token.getType() != tokenType.RBRACK) errorManager.handleError(offset2Token(-1).getLine(), "k");
             else varDef.rbrack = match();
 
         }
@@ -385,7 +395,7 @@ public class Parser {
             BreakStmt stmt=new BreakStmt();
             stmt.breakToken = match();
 
-            if (token.getType() != tokenType.SEMICN) errorManager.handleError(index2Token(-1).getLine(), "i");
+            if (token.getType() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).getLine(), "i");
             else stmt.semicn = match();
            
             return stmt;
@@ -393,7 +403,7 @@ public class Parser {
             ContinueStmt stmt=new ContinueStmt();
             stmt.continueToken = match();
 
-            if (token.getType() != tokenType.SEMICN) errorManager.handleError(index2Token(-1).getLine(), "i");
+            if (token.getType() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).getLine(), "i");
             else stmt.semicn = match();
         
             return stmt;
@@ -404,7 +414,7 @@ public class Parser {
                 stmt.returnExp = parseExp();
             }
 
-            if (token.getType() != tokenType.SEMICN) errorManager.handleError(index2Token(-1).getLine(), "i");
+            if (token.getType() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).getLine(), "i");
             else stmt.semicn = match();
       
             return stmt;
@@ -421,7 +431,7 @@ public class Parser {
             if (token.getType() != tokenType.RPARENT) errorManager.handleError(stmt.lparent.getLine(), "j");
             else stmt.rparent = match();
 
-            if (token.getType() != tokenType.SEMICN) errorManager.handleError(index2Token(-1).getLine(), "i");
+            if (token.getType() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).getLine(), "i");
             else stmt.semicn = match();
 
             return stmt;
@@ -436,17 +446,13 @@ public class Parser {
             //LVal '=' 'getint''('')'';' // h i j
             //LVal '=' 'getchar''('')'';' // h i j
 
-            int currentIndex = this.index;  // 保存当前索引
-            token mytoken=this.token;
-            errorManager.setHandleErrorFlag(false);
+            saveContent();
 
             if(parseLVal()!=null&&token.getType()==tokenType.ASSIGN){
 
-                tokenType nextType=index2Token(1).getType();
+                tokenType nextType=offset2Token(1).getType();
 
-                this.index = currentIndex;
-                this.token = mytoken;
-                errorManager.setHandleErrorFlag(true);
+                restore();
 
                 if(nextType==tokenType.GETINTTK){
                     GetIntStmt stmt=new GetIntStmt();
@@ -490,18 +496,15 @@ public class Parser {
             }else{
                 //[exp];
                 // '(' Exp ')' | LVal | Number | Character | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
-
                 ExpressionStmt stmt=new ExpressionStmt();
 
-                this.index = currentIndex;
-                this.token = mytoken;
-                errorManager.setHandleErrorFlag(true);
+                restore();
 
-                if (token.getType()!=tokenType.SEMICN) {
+                if (token.getType()==tokenType.LPARENT||token.getType()==tokenType.IDENFR||token.getType()==tokenType.INTCON||token.getType()==tokenType.CHRCON||token.getType()==tokenType.PLUS||token.getType()==tokenType.MINU) {
                     stmt.optionalExp = parseExp();
                 }
 
-                if (token.getType() != tokenType.SEMICN) errorManager.handleError(index2Token(-1).getLine(), "i");
+                if (token.getType() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).getLine(), "i");
                 else stmt.semicn = match();
 
                 return stmt;
@@ -558,9 +561,9 @@ public class Parser {
             eqExpPre = eqExp;
             eqExp = new EqExp();
             eqExp.eqExp = eqExpPre;
-            switch (token.getType()) {
-                case EQL, NEQ -> eqExp.op = match();
-            }
+
+            eqExp.op = match();
+
             eqExp.relExp = parseRelExp();
         }
         return eqExp;
@@ -573,9 +576,9 @@ public class Parser {
             relExpPre = relExp;
             relExp = new RelExp();
             relExp.relExp = relExpPre;
-            switch (token.getType()) {
-                case LSS, GEQ, LEQ, GRE -> relExp.relOp = match();
-            }
+
+            relExp.relOp = match();
+
             relExp.addExp = parseAddExp();
         }
         return relExp;
@@ -598,7 +601,7 @@ public class Parser {
         if (token.getType() == tokenType.LBRACK) {
             funcFParam.lbrack = match();
 
-            if (token.getType() != tokenType.RBRACK) errorManager.handleError(index2Token(-1).getLine(), "k");
+            if (token.getType() != tokenType.RBRACK) errorManager.handleError(offset2Token(-1).getLine(), "k");
             else funcFParam.rbrack = match();
 
         }
@@ -607,10 +610,7 @@ public class Parser {
 
     private FuncType parseFuncType() {
         FuncType funcType = new FuncType();
-        switch (token.getType()) {
-            case VOIDTK, INTTK, CHARTK -> funcType.returnType = match();
-        }
-
+        funcType.returnType = match();
         return funcType;
     }
 
