@@ -7,6 +7,7 @@ import frontend.tool.myWriter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Lexer {
@@ -57,7 +58,7 @@ public class Lexer {
             } else if (c == '_' || Character.isLetter(c)) {
                 return handleIdentifier(currentToken);
             } else {
-                return handleKeyWords(currentToken, c);
+                return handleOperator(currentToken, c);
             }
         }
         return null;
@@ -94,6 +95,11 @@ public class Lexer {
             if (currentChar == -1) break;
             char c = (char) currentChar;
             currentToken.append(c);
+            if(c=='\\'){
+                c = (char) reader.read();
+                currentToken.append(c);
+                continue;
+            }
             if (c == '\"') {
                 return new token(currentToken.toString(), tokenType.STRCON, lineNum);
             }
@@ -117,6 +123,16 @@ public class Lexer {
     private token handleIntConst(StringBuilder currentToken) throws IOException {
         while (true) {
             int currentChar = reader.read();
+
+            if (currentChar == -1) {
+                // 处理流结束的情况
+                if (currentToken.length() > 0) {
+                    return new token(currentToken.toString(), tokenType.INTCON, lineNum);
+                } else {
+                    return null;
+                }
+            }
+
             char c = (char) currentChar;
             if (Character.isDigit(c)) {
                 currentToken.append(c);
@@ -130,22 +146,27 @@ public class Lexer {
     private token handleIdentifier(StringBuilder currentToken) throws IOException {
         while (true) {
             int currentChar = reader.read();
+
+            if (currentChar == -1) {
+                // 处理流结束的情况
+                if (currentToken.length() > 0) {
+                    return new token(currentToken.toString(), Objects.requireNonNullElse(tokenType.getTokenType(currentToken.toString()), tokenType.IDENFR), lineNum);
+                } else {
+                    return null;
+                }
+            }
+
             char c = (char) currentChar;
             if (Character.isLetterOrDigit(c) || c == '_') {
                 currentToken.append(c);
             } else {
-                String tokenStr = currentToken.toString();
                 reader.unread(c);
-                if (tokenType.getTokenType(tokenStr) != null) { // Is keyword
-                    return new token(tokenStr, tokenType.getTokenType(tokenStr), lineNum);
-                } else { // Is identifier
-                    return new token(tokenStr, tokenType.IDENFR, lineNum);
-                }
+                return new token(currentToken.toString(), Objects.requireNonNullElse(tokenType.getTokenType(currentToken.toString()), tokenType.IDENFR), lineNum);
             }
         }
     }
 
-    private token handleKeyWords(StringBuilder currentToken, char c) throws IOException {
+    private token handleOperator(StringBuilder currentToken, char c) throws IOException {
         switch (c) {
             case '&':
                 c = (char) reader.read();
@@ -154,7 +175,6 @@ public class Lexer {
                     return new token(currentToken.toString(), tokenType.AND, lineNum);
                 } else {
                     reader.unread(c);
-//                    errorManager.handleError(lineNum,"a");
                     return new token("&", tokenType.AND, lineNum);
                 }
             case '|':
@@ -164,7 +184,6 @@ public class Lexer {
                     return new token(currentToken.toString(), tokenType.OR, lineNum);
                 } else {
                     reader.unread(c);
-//                    errorManager.handleError(lineNum,"a");
                     return new token("|", tokenType.OR, lineNum);
                 }
             case '!':
