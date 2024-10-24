@@ -10,8 +10,8 @@ public class MulExp {
     public token op;
     public UnaryExp unaryExp;
 
-    public void visit(){
-        if(mulExp!=null){
+    public void visit() {
+        if (mulExp != null) {
             mulExp.visit();
             op.visit();
         }

@@ -19,7 +19,7 @@ public class Compiler {
             CompUnit compUnit= parser.parseCompUnit();
             Visitor visitor=new Visitor();//语义分析
             visitor.visit(compUnit);
-            visitor.write();
+            visitor.write(visitor.globalTable);
             errorManager.write();
             myWriter.close();
             errorManager.close();

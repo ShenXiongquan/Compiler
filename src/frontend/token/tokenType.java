@@ -49,7 +49,8 @@ public enum tokenType {
         this.representation = representation;
     }
 
-    tokenType() {}
+    tokenType() {
+    }
 
     public static tokenType getTokenType(String token) {
         for (tokenType tokenType : tokenType.values()) {

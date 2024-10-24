@@ -14,14 +14,14 @@ public class VarDecl {
 
     public token semicn;
 
-    public void visit(){
+    public void visit() {
         bType.visit();
         varDefs.get(0).visit();
-        for(int i=1;i<varDefs.size();i++){
+        for (int i = 1; i < varDefs.size(); i++) {
             comma.visit();
             varDefs.get(i).visit();
         }
-        if(semicn!=null)semicn.visit();
+        if (semicn != null) semicn.visit();
         myWriter.writeNonTerminal("VarDecl");
     }
 }//变量声明

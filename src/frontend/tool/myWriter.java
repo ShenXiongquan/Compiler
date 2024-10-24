@@ -39,9 +39,9 @@ public class myWriter {
         }
     }
 
-    public static void writeSymbol(Symbol symbol){
+    public static void writeSymbol(Symbol symbol) {
         try {
-            writer.write(symbol.tableId+" "+symbol.token+" "+symbol.symbolType.getTypeName()+"\n");
+            writer.write(symbol.tableId + " " + symbol.token + " " + symbol.symbolType.getTypeName() + "\n");
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -10,12 +10,12 @@ public class LVal {
     public Exp exp;
     public token rbrack;
 
-    public void visit(){
+    public void visit() {
         ident.visit();
-        if(lbrack!=null){
+        if (lbrack != null) {
             lbrack.visit();
             exp.visit();
-            if(rbrack!=null)rbrack.visit();
+            if (rbrack != null) rbrack.visit();
         }
         myWriter.writeNonTerminal("LVal");
     }

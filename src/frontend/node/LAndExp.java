@@ -8,8 +8,8 @@ public class LAndExp {
     public token and;
     public LAndExp lAndExp;
 
-    public void visit(){
-        if(lAndExp!=null){
+    public void visit() {
+        if (lAndExp != null) {
             lAndExp.visit();
             and.visit();
         }

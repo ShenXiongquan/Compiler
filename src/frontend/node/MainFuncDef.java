@@ -12,11 +12,11 @@ public class MainFuncDef {
     public token rparent;
     public Block block;
 
-    public void visit(){
+    public void visit() {
         intToken.visit();
         main.visit();
         lparent.visit();
-        if(rparent!=null)rparent.visit();
+        if (rparent != null) rparent.visit();
         block.visit();
         myWriter.writeNonTerminal("MainFuncDef");
     }

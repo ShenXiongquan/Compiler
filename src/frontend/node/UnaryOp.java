@@ -6,7 +6,7 @@ import frontend.tool.myWriter;
 public class UnaryOp {
     public token op;
 
-    public void visit(){
+    public void visit() {
         op.visit();
         myWriter.writeNonTerminal("UnaryOp");
     }

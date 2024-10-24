@@ -95,7 +95,7 @@ public class Lexer {
             if (currentChar == -1) break;
             char c = (char) currentChar;
             currentToken.append(c);
-            if(c=='\\'){
+            if (c == '\\') {
                 c = (char) reader.read();
                 currentToken.append(c);
                 continue;

@@ -6,7 +6,7 @@ import frontend.tool.myWriter;
 public class FuncType {
     public token returnType;
 
-    public void visit(){
+    public void visit() {
         returnType.visit();
         myWriter.writeNonTerminal("FuncType");
     }

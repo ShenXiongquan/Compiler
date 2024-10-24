@@ -10,7 +10,8 @@ public class errorManager {
     private static final FileWriter errorWriter;
 
     private static final TreeMap<Integer, String> errorMap = new TreeMap<>();
-    private static  boolean handleErrorFlag=true;
+    private static boolean handleErrorFlag = true;
+
     static {
         try {
             errorWriter = new FileWriter(errorFilePath);
@@ -24,15 +25,17 @@ public class errorManager {
         errorManager.handleErrorFlag = handleErrorFlag;
     }
 
-    public static boolean handleErrorSwitch(){
+    public static boolean handleErrorSwitch() {
         return handleErrorFlag;
     }
+
     public static void handleError(int tokenLine, String errorType) {
-        errorMap.put(tokenLine,errorType);
+        errorMap.put(tokenLine, errorType);
 
     }
-    public static void write(){
-        for(Map.Entry<Integer, String> entry : errorMap.entrySet()){
+
+    public static void write() {
+        for (Map.Entry<Integer, String> entry : errorMap.entrySet()) {
             try {
                 errorWriter.write(entry.getKey() + " " + entry.getValue() + "\n");
                 errorWriter.flush();
@@ -41,6 +44,7 @@ public class errorManager {
             }
         }
     }
+
     public static void close() {
         try {
             errorWriter.close();
