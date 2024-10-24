@@ -1,5 +1,6 @@
 package frontend.tool;
 
+import frontend.symbol.Symbol;
 import frontend.token.token;
 
 import java.io.FileWriter;
@@ -14,7 +15,7 @@ public class myWriter {
 
     static {
         try {
-            writer = new FileWriter(outputFilePath2);
+            writer = new FileWriter(outputFilePath3);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -27,12 +28,20 @@ public class myWriter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static void writeNonTerminal(String NonTerminal) {
         try {
             writer.write("<" + NonTerminal + ">\n");
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void writeSymbol(Symbol symbol){
+        try {
+            writer.write(symbol.tableId+" "+symbol.token+" "+symbol.symbolType.getTypeName()+"\n");
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -1,6 +1,9 @@
 import frontend.Lexer;
 import frontend.Parser;
+import frontend.Visitor;
+import frontend.node.CompUnit;
 import frontend.tool.errorManager;
+import frontend.tool.myWriter;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,11 +13,15 @@ public class Compiler {
     private static final String inputFilePath = "testfile.txt";
 
     public static void main(String[] args) {
-        try (PushbackReader reader = new PushbackReader(new FileReader(inputFilePath))
-        ) {
-            Lexer lexer = new Lexer(reader);
-            Parser parser = new Parser(lexer);
-            parser.parseCompUnit().visit();
+        try (PushbackReader reader = new PushbackReader(new FileReader(inputFilePath))){
+            Lexer lexer = new Lexer(reader);//词法分析
+            Parser parser = new Parser(lexer);//语法分析
+            CompUnit compUnit= parser.parseCompUnit();
+            Visitor visitor=new Visitor();//语义分析
+            visitor.visit(compUnit);
+            visitor.write();
+            errorManager.write();
+            myWriter.close();
             errorManager.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

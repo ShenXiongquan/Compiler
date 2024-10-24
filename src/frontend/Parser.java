@@ -1,12 +1,18 @@
 package frontend;
 
-import frontend.nonTerminal.stmt.*;
+import frontend.node.blockItem.*;
+import frontend.node.constInitVal.*;
+import frontend.node.decl.*;
+import frontend.node.initVal.*;
+import frontend.node.primaryExp.*;
+import frontend.node.stmt.*;
+import frontend.node.unaryExp.*;
 import frontend.token.token;
 import frontend.token.tokenType;
 import frontend.tool.errorManager;
-import frontend.nonTerminal.*;
-import frontend.nonTerminal.Character;
-import frontend.nonTerminal.Number;
+import frontend.node.*;
+import frontend.node.Character;
+import frontend.node.Number;
 
 
 public class Parser {
@@ -72,18 +78,21 @@ public class Parser {
     }
 
     private Decl parseDecl() {
-        Decl decl = new Decl();
+
         if (token.getType() == tokenType.CONSTTK) {
+            CONSTDecl decl=new CONSTDecl();
             decl.constDecl = parseConstDecl();//常量声明
-        } else if (token.getType() == tokenType.INTTK || token.getType() == tokenType.CHARTK) {
+            return decl;
+        } else {
+            VARDecl decl=new VARDecl();
             decl.varDecl = parseVarDecl();//变量声明
+            return decl;
         }
-        return decl;
     }
 
     private ConstDecl parseConstDecl() {
         ConstDecl constDecl = new ConstDecl();
-        constDecl.Const = match();
+        constDecl._const = match();
         constDecl.bType = parseBType();
         constDecl.constDefs.add(parseConstDef());
 
@@ -112,8 +121,9 @@ public class Parser {
     }
 
     private ConstInitVal parseConstInitVal() {
-        ConstInitVal constInitVal = new ConstInitVal();
+
         if (token.getType() == tokenType.LBRACE) {
+            ConstExpArrayCIV constInitVal = new ConstExpArrayCIV();
             constInitVal.lbrace = match();
             if (token.getType() != tokenType.RBRACE) {
                 constInitVal.constExps.add(parseConstExp());
@@ -123,22 +133,24 @@ public class Parser {
                 }
             }
             constInitVal.rbrace = match();
+            return constInitVal;
             //数组初始化
         } else if (token.getType() == tokenType.STRCON) {
+            StringConstCIV constInitVal = new StringConstCIV();
             constInitVal.stringConst = match();
             //字符串初始化
+            return constInitVal;
         } else {
-            constInitVal.constExps.add(parseConstExp());
+            ConstExpCIV constInitVal=new ConstExpCIV();
+            constInitVal.constExp=parseConstExp();
             //普通变量初始化
+            return constInitVal;
         }
-        return constInitVal;
-    }
 
+    }
     private BType parseBType() {
         BType bType = new BType();
-        switch (token.getType()) {
-            case INTTK, CHARTK -> bType.type = match();
-        }
+        bType.type = match();
         return bType;
     }
 
@@ -168,9 +180,9 @@ public class Parser {
             addExpPre = addExp;
             addExp = new AddExp();
             addExp.addExp = addExpPre;
-            switch (token.getType()) {
-                case PLUS, MINU -> addExp.op = match();
-            }
+
+            addExp.op = match();
+
             addExp.mulExp = parseMulExp();
         }
         return addExp;
@@ -183,39 +195,43 @@ public class Parser {
             mulExpPre = mulExp;
             mulExp = new MulExp();
             mulExp.mulExp = mulExpPre;
-            switch (token.getType()) {
-                case MULT, MOD, DIV -> mulExp.op = match();
-            }
+
+            mulExp.op = match();
+
             mulExp.unaryExp = parseUnaryExp();
         }
         return mulExp;
     }
 
     private UnaryExp parseUnaryExp() {
-        UnaryExp unaryExp = new UnaryExp();
+
         if (token.getType() == tokenType.PLUS || token.getType() == tokenType.MINU || token.getType() == tokenType.NOT) {
+            UnaryOpUE unaryExp=new UnaryOpUE();
             unaryExp.unaryOp = parseUnaryOp();
             unaryExp.unaryExp = parseUnaryExp();
+            return unaryExp;
         } else if (token.getType() == tokenType.IDENFR && offset2Token(1).getType() == tokenType.LPARENT) {
+            FuncCallUE unaryExp=new FuncCallUE();
             unaryExp.ident = match();
             unaryExp.lparent = match();
 
             if (token.getType()==tokenType.LPARENT||token.getType()==tokenType.IDENFR||token.getType()==tokenType.INTCON||token.getType()==tokenType.CHRCON||token.getType()==tokenType.PLUS||token.getType()==tokenType.MINU) unaryExp.funcRParams = parseFuncRParams();//待修改
 
-
             if (token.getType() != tokenType.RPARENT){ if(errorManager.handleErrorSwitch())errorManager.handleError(unaryExp.lparent.getLine(), "j");}
             else unaryExp.rparent = match();
+            return unaryExp;
         } else {
+            PrimaryExpUE unaryExp=new PrimaryExpUE();
             unaryExp.primaryExp = parsePrimaryExp();
+            return unaryExp;
         }
-        return unaryExp;
     }
 
     private UnaryOp parseUnaryOp() {
         UnaryOp unaryOp = new UnaryOp();
-        switch (token.getType()) {
-            case PLUS, MINU, NOT -> unaryOp.op = match();
-        }
+
+        unaryOp.op = match();
+
         return unaryOp;
     }
 
@@ -236,22 +252,27 @@ public class Parser {
     }
 
     private PrimaryExp parsePrimaryExp() {
-        PrimaryExp primaryExp = new PrimaryExp();
+
         if (token.getType() == tokenType.LPARENT) {
+            ExpPE primaryExp=new ExpPE();
             primaryExp.lparent = match();
             primaryExp.exp = parseExp();
-
             if (token.getType() != tokenType.RPARENT){if(errorManager.handleErrorSwitch()) errorManager.handleError(primaryExp.lparent.getLine(), "j");}
             else primaryExp.rparent = match();
-
+            return primaryExp;
         } else if (token.getType() == tokenType.IDENFR) {
+            LValPE primaryExp=new LValPE();
             primaryExp.lVal = parseLVal();
+            return primaryExp;
         } else if (token.getType() == tokenType.INTCON) {
+            NumberPE primaryExp=new NumberPE();
             primaryExp.number = parseNumber();
-        } else if (token.getType() == tokenType.CHRCON) {
+            return primaryExp;
+        } else {
+            CharacterPE primaryExp=new CharacterPE();
             primaryExp.character = parseCharacter();
+            return primaryExp;
         }
-        return primaryExp;
     }
 
     private Character parseCharacter() {
@@ -299,8 +320,8 @@ public class Parser {
     }
 
     private InitVal parseInitVal() {
-        InitVal initVal = new InitVal();
         if (token.getType() == tokenType.LBRACE) {
+            ExpArrayIV initVal =new ExpArrayIV();
             initVal.lbrace = match();
             if (token.getType() != tokenType.RBRACE) {
                 initVal.exps.add(parseExp());
@@ -310,15 +331,19 @@ public class Parser {
                 }
             }
             initVal.rbrace = match();
+            return initVal;
             //数组初始化
         } else if (token.getType() == tokenType.STRCON) {
+            StringConstIV initVal = new StringConstIV();
             initVal.stringConst = match();
             //字符串初始化
+            return initVal;
         } else {
-            initVal.exps.add(parseExp());
+            ExpIV initVal=new ExpIV();
+            initVal.exp=parseExp();
             //普通变量初始化
+            return initVal;
         }
-        return initVal;
     }
 
     private FuncDef parseFuncDef() {
@@ -347,13 +372,17 @@ public class Parser {
     }
 
     private BlockItem parseBlockItem() {
-        BlockItem blockItem = new BlockItem();
+
         if (token.getType() == tokenType.CONSTTK || token.getType() == tokenType.INTTK || token.getType() == tokenType.CHARTK) {
+            DeclBlockItem blockItem=new DeclBlockItem();
             blockItem.decl = parseDecl();
+            return blockItem;
         } else {
+            StmtBlockItem blockItem=new StmtBlockItem();
             blockItem.stmt = parseStmt();
+            return blockItem;
         }
-        return blockItem;
+
     }
 
     private Stmt parseStmt() {
@@ -361,7 +390,7 @@ public class Parser {
             IfStmt stmt=new IfStmt();
             stmt.ifToken = match();
             stmt.lparent = match();
-            stmt.condition = parseCond();
+            stmt.cond = parseCond();
 
             if (token.getType() != tokenType.RPARENT) errorManager.handleError(stmt.lparent.getLine(), "j");
             else stmt.rparent = match();
@@ -576,9 +605,7 @@ public class Parser {
             relExpPre = relExp;
             relExp = new RelExp();
             relExp.relExp = relExpPre;
-
             relExp.relOp = match();
-
             relExp.addExp = parseAddExp();
         }
         return relExp;
