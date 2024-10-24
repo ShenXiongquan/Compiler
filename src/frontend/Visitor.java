@@ -48,8 +48,8 @@ public class Visitor {
     private boolean isConstant(LVal lVal){
         SymbolTable symbolTable=curTable;
         while (true){
-            if(symbolTable.directory.containsKey(lVal.ident.getToken())){
-                SymbolType symbolType=symbolTable.directory.get(lVal.ident.getToken()).symbolType;
+            if(symbolTable.directory.containsKey(lVal.ident.token())){
+                SymbolType symbolType=symbolTable.directory.get(lVal.ident.token()).symbolType;
                 if(symbolType==SymbolType.CONST_INT||symbolType==SymbolType.CONST_CHAR)return true;
                 else if ((symbolType==SymbolType.CONST_INT_ARRAY||symbolType==SymbolType.CONST_CHAR_ARRAY)&&lVal.lbrack!=null) return true;
                 else return false;
@@ -62,7 +62,7 @@ public class Visitor {
     private boolean isIdentifierUndeclared(token ident){
         SymbolTable symbolTable=curTable;
         while (true){
-            if(symbolTable.directory.containsKey(ident.getToken())) return false;
+            if(symbolTable.directory.containsKey(ident.token())) return false;
             if(symbolTable.fatherId==0)break;
             symbolTable=symbolTableMap.get(symbolTable.fatherId);
         }
@@ -72,7 +72,7 @@ public class Visitor {
     private SymbolType getIdentifierType(token ident){
         SymbolTable symbolTable=curTable;
         while (true){
-            if(symbolTable.directory.containsKey(ident.getToken())) return symbolTable.directory.get(ident.getToken()).symbolType;
+            if(symbolTable.directory.containsKey(ident.token())) return symbolTable.directory.get(ident.token()).symbolType;
             if(symbolTable.fatherId==0)break;
             symbolTable=symbolTableMap.get(symbolTable.fatherId);
         }
@@ -124,7 +124,7 @@ public class Visitor {
 
     private void visitConstDef(ConstDef constDef,BType bType) {
         Symbol symbol=new Symbol();
-        if(bType.type.getType()==tokenType.CHARTK){
+        if(bType.type.type()==tokenType.CHARTK){
             if(constDef.lbrack==null) {symbol.symbolType=SymbolType.CONST_CHAR;}
             else {symbol.symbolType=SymbolType.CONST_CHAR_ARRAY;}
         }else{
@@ -133,9 +133,9 @@ public class Visitor {
         }
 
         symbol.tableId=curTable.id;
-        symbol.token=constDef.ident.getToken();
+        symbol.token=constDef.ident.token();
 
-        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(constDef.ident.getLine(),"b");
+        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(constDef.ident.line(),"b");
         else curTable.directory.put(symbol.token,symbol);//b类错误
         if(constDef.lbrack!=null)visitConstExp(constDef.constExp);
         visitConstInitVal(constDef.constInitVal);
@@ -159,7 +159,7 @@ public class Visitor {
 
     private void visitVarDef(VarDef varDef, BType bType) {
         Symbol symbol=new Symbol();
-        if(bType.type.getType()==tokenType.CHARTK){
+        if(bType.type.type()==tokenType.CHARTK){
 
             if(varDef.lbrack==null) {symbol.symbolType=SymbolType.CHAR_VAR;}
             else {symbol.symbolType=SymbolType.CHAR_ARRAY;}
@@ -170,8 +170,8 @@ public class Visitor {
         }
 
         symbol.tableId=curTable.id;
-        symbol.token=varDef.ident.getToken();
-        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(varDef.ident.getLine(),"b");
+        symbol.token=varDef.ident.token();
+        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(varDef.ident.line(),"b");
         else curTable.directory.put(symbol.token,symbol);
         if(varDef.lbrack!=null)visitConstExp(varDef.constExp);
         visitInitVal(varDef.initVal);
@@ -189,20 +189,20 @@ public class Visitor {
 
     private void visitFuncDef(FuncDef funcDef){
         Symbol symbol=new Symbol();
-        if(funcDef.funcType.returnType.getType()==tokenType.CHARTK){
+        if(funcDef.funcType.returnType.type()==tokenType.CHARTK){
             symbol.symbolType=SymbolType.CHAR_FUNC;
 
-        }else if (funcDef.funcType.returnType.getType()==tokenType.INTTK) {
+        }else if (funcDef.funcType.returnType.type()==tokenType.INTTK) {
             symbol.symbolType=SymbolType.INT_FUNC;
         }else {
             symbol.symbolType=SymbolType.VOID_FUNC;
         }
 
 
-        symbol.token=funcDef.ident.getToken();
+        symbol.token=funcDef.ident.token();
         symbol.tableId=curTable.id;
 
-        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(funcDef.ident.getLine(),"b");
+        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(funcDef.ident.line(),"b");
         else curTable.directory.put(symbol.token,symbol);
 
         pushTable();//进入新的作用域，创建新的符号表入栈
@@ -214,16 +214,16 @@ public class Visitor {
             }
         }
 
-        hasReturnValue=(funcDef.funcType.returnType.getType()!=tokenType.VOIDTK);
+        hasReturnValue=(funcDef.funcType.returnType.type()!=tokenType.VOIDTK);
         visitBlock(funcDef.block);
 
-        if(funcDef.funcType.returnType.getType()!=tokenType.VOIDTK){
+        if(funcDef.funcType.returnType.type()!=tokenType.VOIDTK){
             if(funcDef.block.blockItems.isEmpty()){
-                errorManager.handleError(funcDef.block.rbrace.getLine(),"g");
+                errorManager.handleError(funcDef.block.rbrace.line(),"g");
             }else{
                 BlockItem blockItem=funcDef.block.blockItems.get(funcDef.block.blockItems.size()-1);
                 if(!(blockItem instanceof StmtBlockItem)||!(((StmtBlockItem) blockItem).stmt instanceof ReturnStmt)){
-                    errorManager.handleError(funcDef.block.rbrace.getLine(),"g");
+                    errorManager.handleError(funcDef.block.rbrace.line(),"g");
                 }
             }
         }
@@ -235,11 +235,11 @@ public class Visitor {
         pushTable();//进入新的作用域，创建新的符号表入栈
         visitBlock(mainFuncDef.block);
         if(mainFuncDef.block.blockItems.isEmpty()){
-            errorManager.handleError(mainFuncDef.block.rbrace.getLine(),"g");
+            errorManager.handleError(mainFuncDef.block.rbrace.line(),"g");
         }else {
             BlockItem blockItem=mainFuncDef.block.blockItems.get(mainFuncDef.block.blockItems.size()-1);
             if(!(blockItem instanceof StmtBlockItem)||!(((StmtBlockItem) blockItem).stmt instanceof ReturnStmt)){
-                errorManager.handleError(mainFuncDef.block.rbrace.getLine(),"g");
+                errorManager.handleError(mainFuncDef.block.rbrace.line(),"g");
             }
         }
     }
@@ -252,7 +252,7 @@ public class Visitor {
 
     private void visitFuncFParam(FuncFParam funcFParam) {
         Symbol symbol=new Symbol();
-        if(funcFParam.bType.type.getType()==tokenType.INTTK){
+        if(funcFParam.bType.type.type()==tokenType.INTTK){
             if(funcFParam.lbrack!=null){symbol.symbolType=SymbolType.INT_ARRAY;}
             else {symbol.symbolType=SymbolType.INT_VAR;}
         }else {
@@ -260,10 +260,10 @@ public class Visitor {
             else {symbol.symbolType=SymbolType.CHAR_VAR;}
         }
 
-        symbol.token=funcFParam.ident.getToken();
+        symbol.token=funcFParam.ident.token();
         symbol.tableId=curTable.id;
 
-        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(funcFParam.ident.getLine(),"b");
+        if(curTable.directory.containsKey(symbol.token)) errorManager.handleError(funcFParam.ident.line(),"b");
         else curTable.directory.put(symbol.token,symbol);
 
     }//FuncFParam → BType Ident ['[' ']']
@@ -287,7 +287,7 @@ public class Visitor {
 
         if(stmt instanceof AssignStmt){
            LVal lVal=((AssignStmt) stmt).lVal;
-           if(isConstant(lVal))errorManager.handleError(lVal.ident.getLine(),"h");
+           if(isConstant(lVal))errorManager.handleError(lVal.ident.line(),"h");
            visitLVal(lVal);
            visitExp(((AssignStmt) stmt).exp);
         } else if (stmt instanceof ExpressionStmt) {
@@ -312,34 +312,34 @@ public class Visitor {
 
         } else if (stmt instanceof BreakStmt) {
             if(isLoop==0){
-                errorManager.handleError(((BreakStmt) stmt).breakToken.getLine(),"m");
+                errorManager.handleError(((BreakStmt) stmt).breakToken.line(),"m");
             }
         } else if (stmt instanceof ContinueStmt) {
             if(isLoop==0){
-                errorManager.handleError(((ContinueStmt) stmt).continueToken.getLine(),"m");
+                errorManager.handleError(((ContinueStmt) stmt).continueToken.line(),"m");
             }
         } else if (stmt instanceof ReturnStmt) {
             if(((ReturnStmt) stmt).returnExp!=null){
-                if(!hasReturnValue)errorManager.handleError(((ReturnStmt) stmt).returnToken.getLine(),"f");
+                if(!hasReturnValue)errorManager.handleError(((ReturnStmt) stmt).returnToken.line(),"f");
                 visitExp(((ReturnStmt) stmt).returnExp);
             }
         } else if (stmt instanceof GetIntStmt) {
             LVal lVal=((GetIntStmt) stmt).lVal;
-            if(isConstant(lVal))errorManager.handleError(lVal.ident.getLine(),"h");
+            if(isConstant(lVal))errorManager.handleError(lVal.ident.line(),"h");
             visitLVal(lVal);
         } else if (stmt instanceof GetCharStmt) {
             LVal lVal=((GetCharStmt) stmt).lVal;
-            if(isConstant(lVal))errorManager.handleError(lVal.ident.getLine(),"h");
+            if(isConstant(lVal))errorManager.handleError(lVal.ident.line(),"h");
             visitLVal(lVal);
         } else {
             int count =0;
-            String s=((PrintfStmt)stmt).stringConst.getToken();
+            String s=((PrintfStmt)stmt).stringConst.token();
             int len=s.length();
             for(int i=0;i<len;i++){
                 if(s.charAt(i)=='%'&&(s.charAt(i+1)=='d'||s.charAt(i+1)=='c'))count++;
             }
             if(count!=((PrintfStmt) stmt).exps.size()){
-                errorManager.handleError(((PrintfStmt) stmt).printf.getLine(),"l");
+                errorManager.handleError(((PrintfStmt) stmt).printf.line(),"l");
             }
             for(Exp exp:((PrintfStmt) stmt).exps){
                 visitExp(exp);
@@ -347,7 +347,7 @@ public class Visitor {
         }
     }//难处理，可能存在bug
     private void visitForStmt(ForStmt forStmt) {
-        if(isConstant(forStmt.lVal))errorManager.handleError(forStmt.lVal.ident.getLine(),"h");
+        if(isConstant(forStmt.lVal))errorManager.handleError(forStmt.lVal.ident.line(),"h");
         visitLVal(forStmt.lVal);
         visitExp(forStmt.exp);
     }
@@ -359,7 +359,7 @@ public class Visitor {
     }
     private void visitLVal(LVal lVal){
         if(isIdentifierUndeclared(lVal.ident)) {
-            errorManager.handleError(lVal.ident.getLine(),"c");
+            errorManager.handleError(lVal.ident.line(),"c");
         }
         if(lVal.exp!=null)visitExp(lVal.exp);
     }
@@ -376,19 +376,19 @@ public class Visitor {
         }else if (unaryExp instanceof FuncCallUE funcCallUE){
             token ident=funcCallUE.ident;
             if(isIdentifierUndeclared(ident)){
-                errorManager.handleError(ident.getLine(),"c");
+                errorManager.handleError(ident.line(),"c");
             }
-            else if(symbolTableMap.get(1).directory.get(ident.getToken()).paramNum!= (funcCallUE.funcRParams!=null ? funcCallUE.funcRParams.exps.size() : 0)){
-               errorManager.handleError(ident.getLine(),"d");
+            else if(symbolTableMap.get(1).directory.get(ident.token()).paramNum!= (funcCallUE.funcRParams!=null ? funcCallUE.funcRParams.exps.size() : 0)){
+               errorManager.handleError(ident.line(),"d");
             }else{
-                Symbol func=symbolTableMap.get(1).directory.get(ident.getToken());
+                Symbol func=symbolTableMap.get(1).directory.get(ident.token());
                 for(int i=0;i<func.paramNum;i++){
                     SymbolType paramtype=getParamType(((FuncCallUE) unaryExp).funcRParams.exps.get(i));
                     if(paramtype==null&&func.paramTypeList.get(i).getTypeName().endsWith("Array")){
-                        errorManager.handleError(ident.getLine(), "e");//数组参数传变量
+                        errorManager.handleError(ident.line(), "e");//数组参数传变量
                         break;
                     } else if (paramtype!=null&&func.paramTypeList.get(i)!=paramtype) {
-                        errorManager.handleError(ident.getLine(), "e");//数组类型不匹配或者变量参数传数组
+                        errorManager.handleError(ident.line(), "e");//数组类型不匹配或者变量参数传数组
                         break;
                     }
                 }

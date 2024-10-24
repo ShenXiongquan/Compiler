@@ -10,7 +10,7 @@ import java.util.List;
 public class PrintfStmt extends Stmt {
     public token printf;
     public token stringConst;
-    public List<Exp> exps=new ArrayList<>();
+    public final List<Exp> exps=new ArrayList<>();
     public token comma;
 
     public token lparent;

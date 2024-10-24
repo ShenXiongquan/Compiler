@@ -1,11 +1,5 @@
 package frontend.node.constInitVal;
 
-import frontend.node.ConstExp;
-import frontend.token.token;
-import frontend.tool.myWriter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class ConstInitVal {
 

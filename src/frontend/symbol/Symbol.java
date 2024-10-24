@@ -13,5 +13,5 @@ public class Symbol {
 
     public int paramNum;
 
-    public List<SymbolType> paramTypeList=new ArrayList<>();
+    public final List<SymbolType> paramTypeList=new ArrayList<>();
 }

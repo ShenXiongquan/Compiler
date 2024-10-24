@@ -23,7 +23,7 @@ public class myWriter {
 
     public static void writeTerminal(token token) {
         try {
-            writer.write(token.getType() + " " + token.getToken() + "\n");
+            writer.write(token.type() + " " + token.token() + "\n");
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
