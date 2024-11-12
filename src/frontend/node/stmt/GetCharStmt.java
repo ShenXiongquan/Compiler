@@ -10,8 +10,11 @@ public class GetCharStmt extends Stmt {
     public token getchar;
 
     public token assign;
+
     public token lparent;
+
     public token rparent;
+
     public token semicn;
 
     @Override

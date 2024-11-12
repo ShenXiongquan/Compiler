@@ -10,7 +10,7 @@ public class errorManager {
     private static final FileWriter errorWriter;
 
     private static final TreeMap<Integer, String> errorMap = new TreeMap<>();
-    private static boolean handleErrorFlag = true;
+
 
     static {
         try {
@@ -19,14 +19,6 @@ public class errorManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static void setHandleErrorFlag(boolean handleErrorFlag) {
-        errorManager.handleErrorFlag = handleErrorFlag;
-    }
-
-    public static boolean handleErrorSwitch() {
-        return handleErrorFlag;
     }
 
     public static void handleError(int tokenLine, String errorType) {

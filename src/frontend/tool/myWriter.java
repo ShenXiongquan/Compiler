@@ -11,6 +11,10 @@ public class myWriter {
     private static final String outputFilePath1 = "lexer.txt";
     private static final String outputFilePath2 = "parser.txt";
     private static final String outputFilePath3 = "symbol.txt";
+
+    private static final String outputFilePath4 ="llvm_ir.txt";
+
+    private static final String outputFilePath5 ="mips.txt";
     private static final FileWriter writer;
 
     static {

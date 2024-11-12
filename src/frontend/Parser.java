@@ -14,65 +14,54 @@ import frontend.node.*;
 import frontend.node.Character;
 import frontend.node.Number;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Parser {
-    private token token;
-    private final Lexer lexer;
+ 
+    private final List<token> tokens;
     private int index = 0;
-
-    public Parser(Lexer lexer) {
-        this.lexer = lexer;
-        nextToken();
+    private token token;
+    public Parser(List<token> tokens) {
+        this.tokens= tokens;
+        this.token =tokens.get(index);
     }
-
+    
     private token match() {
         token Token = this.token;
-        nextToken();
+        if (index < tokens.size()) {
+            this.token = tokens.get(++index); 
+        }
         return Token;
     }
 
-    private token match(tokenType expected) {
-        if (this.token.type() != expected) {
-            return null;
-        }
-        token Token = this.token;
-        nextToken();
-        return Token;
-    }
-
-    private void nextToken() {
-        if (index < lexer.getTokens().size()) {
-            this.token = lexer.getTokens().get(index++);  // 消费当前 token，移动到下一个
-        }
-    }
-
+    
     private token offset2Token(int offset) {
-        return lexer.getTokens().get(index + offset - 1);
+        return tokens.get(index + offset);
     }
-
+    
     private int tempIndex;
 
     private void saveContent() {
         tempIndex = this.index;  // 保存当前索引
-        errorManager.setHandleErrorFlag(false);
     }
 
     private void restore() {
         this.index = tempIndex;//恢复索引
-        this.token = lexer.getTokens().get(tempIndex - 1);//恢复token
-        errorManager.setHandleErrorFlag(true);
+        this.token = tokens.get(tempIndex - 1);//恢复token
     }
 
     public CompUnit parseCompUnit() {
         CompUnit compUnit = new CompUnit();
-        // 循环解析 Decl 部分
+
         while (token.type() == tokenType.CONSTTK || ((token.type() == tokenType.INTTK || token.type() == tokenType.CHARTK) && offset2Token(2).type() != tokenType.LPARENT)) {
             compUnit.decls.add(parseDecl());
-        }// 循环解析 FuncDef 部分
+        }
         while (token.type() == tokenType.VOIDTK || token.type() == tokenType.CHARTK || (token.type() == tokenType.INTTK && offset2Token(1).type() != tokenType.MAINTK)) {
             compUnit.funcDefs.add(parseFuncDef());
         }
-        // 解析主函数定义 MainFuncDef
+
         compUnit.MainFunctionDef = parseMainFuncDef();
         return compUnit;
     }
@@ -97,10 +86,10 @@ public class Parser {
         constDecl.constDefs.add(parseConstDef());
 
         while (token.type() == tokenType.COMMA) {
-            constDecl.comma = match();
+            constDecl.comma.add(match());
             constDecl.constDefs.add(parseConstDef());
         }
-        if (token.type() != tokenType.SEMICN) errorManager.handleError(constDecl.bType.type.line(), "i");
+        if (token.type() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).line(), "i");
         else constDecl.semicn = match();
 
         return constDecl;
@@ -160,10 +149,10 @@ public class Parser {
         varDecl.bType = parseBType();
         varDecl.varDefs.add(parseVarDef());
         while (token.type() == tokenType.COMMA) {
-            varDecl.comma = match();
+            varDecl.comma.add(match());
             varDecl.varDefs.add(parseVarDef());
         }
-        if (token.type() != tokenType.SEMICN) errorManager.handleError(varDecl.bType.type.line(), "i");
+        if (token.type() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).line(), "i");
         else varDecl.semicn = match();
         return varDecl;
     }
@@ -220,7 +209,7 @@ public class Parser {
                 unaryExp.funcRParams = parseFuncRParams();//待修改
 
             if (token.type() != tokenType.RPARENT) {
-                if (errorManager.handleErrorSwitch()) errorManager.handleError(unaryExp.lparent.line(), "j");
+                 errorManager.handleError(offset2Token(-1).line(), "j");
             } else unaryExp.rparent = match();
             return unaryExp;
         } else {
@@ -242,7 +231,7 @@ public class Parser {
         FuncRParams funcRParams = new FuncRParams();
         funcRParams.exps.add(parseExp());
         while (token.type() == tokenType.COMMA) {
-            funcRParams.comma = match();
+            funcRParams.comma.add(match());
             funcRParams.exps.add(parseExp());
         }
         return funcRParams;
@@ -261,7 +250,7 @@ public class Parser {
             primaryExp.lparent = match();
             primaryExp.exp = parseExp();
             if (token.type() != tokenType.RPARENT) {
-                if (errorManager.handleErrorSwitch()) errorManager.handleError(primaryExp.lparent.line(), "j");
+                errorManager.handleError(offset2Token(-1).line(), "j");
             } else primaryExp.rparent = match();
             return primaryExp;
         } else if (token.type() == tokenType.IDENFR) {
@@ -293,14 +282,13 @@ public class Parser {
 
     private LVal parseLVal() {
         LVal lVal = new LVal();
-        lVal.ident = match(tokenType.IDENFR);
-        if (lVal.ident == null) return null;
+        lVal.ident = match();
         if (token.type() == tokenType.LBRACK) {
             lVal.lbrack = match();
             lVal.exp = parseExp();
 
             if (token.type() != tokenType.RBRACK) {
-                if (errorManager.handleErrorSwitch()) errorManager.handleError(offset2Token(-1).line(), "k");
+                errorManager.handleError(offset2Token(-1).line(), "k");
             } else lVal.rbrack = match();
         }
         return lVal;
@@ -360,7 +348,7 @@ public class Parser {
         if (token.type() == tokenType.CHARTK || token.type() == tokenType.INTTK)
             funcDef.funcFParams = parseFuncFParams();//待修改
 
-        if (token.type() != tokenType.RPARENT) errorManager.handleError(funcDef.lparent.line(), "j");
+        if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
         else funcDef.rparent = match();
 
         funcDef.block = parseBlock();
@@ -398,7 +386,7 @@ public class Parser {
             stmt.lparent = match();
             stmt.cond = parseCond();
 
-            if (token.type() != tokenType.RPARENT) errorManager.handleError(stmt.lparent.line(), "j");
+            if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
             else stmt.rparent = match();
 
             stmt.thenStmt = parseStmt();
@@ -463,7 +451,7 @@ public class Parser {
                 stmt.exps.add(parseExp());
             }
 
-            if (token.type() != tokenType.RPARENT) errorManager.handleError(stmt.lparent.line(), "j");
+            if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
             else stmt.rparent = match();
 
             if (token.type() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).line(), "i");
@@ -476,14 +464,12 @@ public class Parser {
             stmt.block = parseBlock();
             return stmt;
         } else {
-
             //LVal '=' Exp ';' // h i
             //LVal '=' 'getint''('')'';' // h i j
             //LVal '=' 'getchar''('')'';' // h i j
-
             saveContent();
-
-            if (parseLVal() != null && token.type() == tokenType.ASSIGN) {
+            parseLVal();
+            if (token.type() == tokenType.ASSIGN) {
 
                 tokenType nextType = offset2Token(1).type();
 
@@ -496,10 +482,10 @@ public class Parser {
                     stmt.getint = match();
                     stmt.lparent = match();
 
-                    if (token.type() != tokenType.RPARENT) errorManager.handleError(stmt.lparent.line(), "j");
+                    if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
                     else stmt.rparent = match();
 
-                    if (token.type() != tokenType.SEMICN) errorManager.handleError(stmt.lparent.line(), "i");
+                    if (token.type() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).line(), "i");
                     else stmt.semicn = match();
 
                     return stmt;
@@ -510,10 +496,10 @@ public class Parser {
                     stmt.getchar = match();
                     stmt.lparent = match();
 
-                    if (token.type() != tokenType.RPARENT) errorManager.handleError(stmt.lparent.line(), "j");
+                    if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
                     else stmt.rparent = match();
 
-                    if (token.type() != tokenType.SEMICN) errorManager.handleError(stmt.lparent.line(), "i");
+                    if (token.type() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).line(), "i");
                     else stmt.semicn = match();
 
                     return stmt;
@@ -523,7 +509,7 @@ public class Parser {
                     stmt.assign = match();
                     stmt.exp = parseExp();
 
-                    if (token.type() != tokenType.SEMICN) errorManager.handleError(stmt.assign.line(), "i");
+                    if (token.type() != tokenType.SEMICN) errorManager.handleError(offset2Token(-1).line(), "i");
                     else stmt.semicn = match();
 
                     return stmt;
@@ -531,10 +517,9 @@ public class Parser {
             } else {
                 //[exp];
                 // '(' Exp ')' | LVal | Number | Character | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
-                ExpressionStmt stmt = new ExpressionStmt();
-
                 restore();
 
+                ExpressionStmt stmt = new ExpressionStmt();
                 if (token.type() == tokenType.LPARENT || token.type() == tokenType.IDENFR || token.type() == tokenType.INTCON || token.type() == tokenType.CHRCON || token.type() == tokenType.PLUS || token.type() == tokenType.MINU) {
                     stmt.optionalExp = parseExp();
                 }
@@ -621,7 +606,7 @@ public class Parser {
         FuncFParams funcFParams = new FuncFParams();
         funcFParams.funcFParams.add(parseFuncFParam());
         while (token.type() == tokenType.COMMA) {
-            funcFParams.comma = match();
+            funcFParams.comma.add(match()) ;
             funcFParams.funcFParams.add(parseFuncFParam());
         }
         return funcFParams;
@@ -653,7 +638,7 @@ public class Parser {
         mainFuncDef.main = match();
         mainFuncDef.lparent = match();
 
-        if (token.type() != tokenType.RPARENT) errorManager.handleError(mainFuncDef.lparent.line(), "j");
+        if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
         else mainFuncDef.rparent = match();
 
         mainFuncDef.block = parseBlock();

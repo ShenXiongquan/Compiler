@@ -26,25 +26,13 @@ import java.util.*;
 
 
 public class Visitor {
-    public SymbolTable globalTable = new SymbolTable();//先创建全局符号表
+    public final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
     private SymbolTable curTable = globalTable;
-
-    private void enterScope() {
-        SymbolTable preTable = curTable;
-        curTable = new SymbolTable();
-        curTable.pre = preTable;
-        preTable.next.add(curTable);
-
-    }
-
-    private void exitScope() {
-        curTable = curTable.pre;
-    }
-
     private int isLoop = 0;
     private boolean hasReturnValue = false;
 
     private boolean isConstant(LVal lVal) {
+
         SymbolTable symbolTable = curTable;
         do {
             if (symbolTable.directory.containsKey(lVal.ident.token())) {
@@ -61,13 +49,14 @@ public class Visitor {
     }//判断是常量
 
     private boolean isIdentifierUndeclared(token ident) {
-        SymbolTable symbolTable = curTable;
-        do {
-            if (symbolTable.directory.containsKey(ident.token())) return false;
-            symbolTable = symbolTable.pre;
-        } while (symbolTable != null);
-
-        return true;
+        return curTable.getSymbol(ident.token())==null;
+//        SymbolTable symbolTable = curTable;
+//        do {
+//            if (symbolTable.directory.containsKey(ident.token())) return false;
+//            symbolTable = symbolTable.pre;
+//        } while (symbolTable != null);
+//
+//        return true;
     }//未声明的符号
 
     private SymbolType getIdentifierType(token ident) {
@@ -144,8 +133,8 @@ public class Visitor {
         symbol.tableId = curTable.id;
         symbol.token = constDef.ident.token();
 
-        if (curTable.directory.containsKey(symbol.token)) errorManager.handleError(constDef.ident.line(), "b");
-        else curTable.directory.put(symbol.token, symbol);//b类错误
+        if(!curTable.addSymbol(symbol)) errorManager.handleError(constDef.ident.line(), "b");
+
         if (constDef.lbrack != null) visitConstExp(constDef.constExp);
         visitConstInitVal(constDef.constInitVal);
     }
@@ -186,8 +175,8 @@ public class Visitor {
 
         symbol.tableId = curTable.id;
         symbol.token = varDef.ident.token();
-        if (curTable.directory.containsKey(symbol.token)) errorManager.handleError(varDef.ident.line(), "b");
-        else curTable.directory.put(symbol.token, symbol);
+        if(!curTable.addSymbol(symbol)) errorManager.handleError(varDef.ident.line(), "b");
+
         if (varDef.lbrack != null) visitConstExp(varDef.constExp);
         visitInitVal(varDef.initVal);
     }
@@ -213,19 +202,17 @@ public class Visitor {
             symbol.symbolType = SymbolType.VOID_FUNC;
         }
 
-
         symbol.token = funcDef.ident.token();
         symbol.tableId = curTable.id;
+        if(!curTable.addSymbol(symbol))errorManager.handleError(funcDef.ident.line(), "b");
 
-        if (curTable.directory.containsKey(symbol.token)) errorManager.handleError(funcDef.ident.line(), "b");
-        else curTable.directory.put(symbol.token, symbol);
 
-        enterScope();//进入新的作用域，创建新的符号表入栈
+        curTable=curTable.pushScope();//进入新的作用域，创建新的符号表入栈
         if (funcDef.funcFParams != null) {
             visitFuncFParams(funcDef.funcFParams);
             symbol.paramNum = funcDef.funcFParams.funcFParams.size();
             for (Symbol param : curTable.directory.values()) {
-                symbol.paramTypeList.add(param.symbolType);
+                symbol.paramList.add(param);
             }
         }
 
@@ -247,7 +234,7 @@ public class Visitor {
 
     private void visitMainFuncDef(MainFuncDef mainFuncDef) {
         hasReturnValue = true;
-        enterScope();//进入新的作用域
+        curTable=curTable.pushScope();//进入新的作用域
         visitBlock(mainFuncDef.block);
         if (mainFuncDef.block.blockItems.isEmpty()) {
             errorManager.handleError(mainFuncDef.block.rbrace.line(), "g");
@@ -285,7 +272,7 @@ public class Visitor {
         symbol.token = funcFParam.ident.token();
         symbol.tableId = curTable.id;
 
-        if (curTable.directory.containsKey(symbol.token)) errorManager.handleError(funcFParam.ident.line(), "b");
+        if(!curTable.addSymbol(symbol))errorManager.handleError(funcFParam.ident.line(), "b");
         else curTable.directory.put(symbol.token, symbol);
 
     }//FuncFParam → BType Ident ['[' ']']
@@ -294,7 +281,7 @@ public class Visitor {
         for (BlockItem blockItem : block.blockItems) {
             visitBlockItem(blockItem);
         }
-        exitScope();//退出当前作用域
+        curTable=curTable.popScope();//退出当前作用域
     }
 
     private void visitBlockItem(BlockItem blockItem) {
@@ -321,7 +308,7 @@ public class Visitor {
             }
 
         } else if (stmt instanceof BlockStmt blockStmt) {
-            enterScope(); // 进入新的作用域
+            curTable=curTable.pushScope(); // 进入新的作用域
             visitBlock(blockStmt.block);
 
         } else if (stmt instanceof IfStmt ifStmt) {
@@ -410,6 +397,7 @@ public class Visitor {
     }
 
     private void visitLVal(LVal lVal) {
+
         if (isIdentifierUndeclared(lVal.ident)) {
             errorManager.handleError(lVal.ident.line(), "c");
         }
@@ -437,10 +425,10 @@ public class Visitor {
                 Symbol func = globalTable.directory.get(ident.token());
                 for (int i = 0; i < func.paramNum; i++) {
                     SymbolType paramtype = getParamType(((FuncCallUE) unaryExp).funcRParams.exps.get(i));
-                    if (paramtype == null && func.paramTypeList.get(i).getTypeName().endsWith("Array")) {
+                    if (paramtype == null && func.paramList.get(i).symbolType.getTypeName().endsWith("Array")) {
                         errorManager.handleError(ident.line(), "e");//数组参数传变量
                         break;
-                    } else if (paramtype != null && func.paramTypeList.get(i) != paramtype) {
+                    } else if (paramtype != null && func.paramList.get(i).symbolType != paramtype) {
                         errorManager.handleError(ident.line(), "e");//数组类型不匹配或者变量参数传数组
                         break;
                     }

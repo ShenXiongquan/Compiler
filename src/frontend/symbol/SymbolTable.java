@@ -6,12 +6,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SymbolTable {
-    private static int globalId = 0;
+
+    public  enum  Type{
+        func,array,var
+    }
+    private static int globalId = 0;//符号表id
 
     public SymbolTable pre; // 指向外层符号表的指针
 
-    public List<SymbolTable> next; // 指向内层符号表的指针
-    public final int id; 		// 当前符号表的id。
+    public final List<SymbolTable> next; // 指向内层符号表的指针
+    public final int id; 	// 当前符号表的id。
 
     public final LinkedHashMap<String, Symbol> directory = new LinkedHashMap<>();
 
@@ -21,10 +25,43 @@ public class SymbolTable {
         this.pre = null;
     }
 
-    public Symbol getSymbol(String token){
-        return directory.get(token);
+    public SymbolTable pushScope() {
+        SymbolTable newTable= new SymbolTable();
+        newTable.pre = this;
+        this.next.add(newTable);
+        return newTable;
+    }
+    public SymbolTable popScope() {
+        return this.pre;
     }
 
+// 添加新符号到符号表中
+    public boolean addSymbol(Symbol symbol) {
+        if (existInScope(symbol.token)) {
+            return false; // 重复定义，返回false
+        }
+        directory.put(symbol.token, symbol);
+        return true; // 成功插入
+    }
+
+//查询是否重定义
+    public boolean existInScope(String token) {
+        return directory.containsKey(token);
+    }
+//查找符号
+    public Symbol getSymbol(String token) {
+
+        Symbol symbol = directory.get(token);
+        if (symbol != null) {
+            return symbol;
+        }
+        // 如果当前作用域没有，向外层符号表查找
+        if (pre != null) {
+            return pre.getSymbol(token);
+        }
+
+        return null;
+    }
 
 }
 

@@ -5,7 +5,6 @@ public enum SymbolType {
         CONST_CHAR("ConstChar"),
         CHAR_VAR("Char"),
         VOID_FUNC("VoidFunc"),
-
         CONST_INT("ConstInt"),
         INT_VAR("Int"),
         CHAR_FUNC("CharFunc"),

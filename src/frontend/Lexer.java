@@ -12,6 +12,7 @@ import java.util.Objects;
 
 public class Lexer {
 
+
     private int lineNum = 1;
 
     private final PushbackReader reader;

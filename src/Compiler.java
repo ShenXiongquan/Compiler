@@ -15,7 +15,7 @@ public class Compiler {
     public static void main(String[] args) {
         try (PushbackReader reader = new PushbackReader(new FileReader(inputFilePath))){
             Lexer lexer = new Lexer(reader);//词法分析
-            Parser parser = new Parser(lexer);//语法分析
+            Parser parser = new Parser(lexer.getTokens());//语法分析
             CompUnit compUnit= parser.parseCompUnit();
             Visitor visitor=new Visitor();//语义分析
             visitor.visit(compUnit);

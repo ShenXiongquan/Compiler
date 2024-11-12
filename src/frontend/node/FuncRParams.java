@@ -8,12 +8,12 @@ import java.util.List;
 
 public class FuncRParams {
     public final List<Exp> exps=new ArrayList<>();
-    public token comma;
+    public List<token> comma=new ArrayList<>();
 
     public void visit(){
         exps.get(0).visit();
         for(int i=1;i<exps.size();i++){
-            comma.visit();
+            comma.get(i-1).visit();
             exps.get(i).visit();
         }
         myWriter.writeNonTerminal("FuncRParams");
