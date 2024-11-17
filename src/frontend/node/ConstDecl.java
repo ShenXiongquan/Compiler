@@ -1,13 +1,16 @@
 package frontend.node;
 
 
+import frontend.Visitor;
+import frontend.ir.type.IntegerType;
 import frontend.token.token;
+import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConstDecl {
+public class ConstDecl extends node{
     public token _const;
     public BType bType ;
     public final List<ConstDef> constDefs = new ArrayList<>();
@@ -16,16 +19,24 @@ public class ConstDecl {
 
     public token semicn;
 
-    public void visit(){
-        _const.visit();
-        bType.visit();
-        constDefs.get(0).visit();
+    public void print(){
+        _const.print();
+        bType.print();
+        constDefs.get(0).print();
         for (int i=1;i<constDefs.size();i++){
-            comma.get(i-1).visit();
-            constDefs.get(i).visit();
+            comma.get(i-1).print();
+            constDefs.get(i).print();
         }
-        if(semicn!=null)semicn.visit();
+        if(semicn!=null)semicn.print();
         myWriter.writeNonTerminal("ConstDecl");
     }
-
+    @Override
+    public void visit() {
+        if(bType.type.type()== tokenType.CHARTK){
+            Visitor.ValueType= IntegerType.i8;
+        }else{
+            Visitor.ValueType= IntegerType.i32;
+        }
+        constDefs.forEach(ConstDef::visit);
+    }
 }//常量声明

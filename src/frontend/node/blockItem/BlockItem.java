@@ -1,7 +1,9 @@
 package frontend.node.blockItem;
 
 
-public abstract class BlockItem {
+import frontend.node.node;
 
-    public abstract void visit();
+public abstract class BlockItem extends node {
+
+    public abstract void print();
 }//语句块项

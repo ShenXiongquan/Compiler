@@ -12,11 +12,16 @@ public class AssignStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        lVal.visit();
-        assign.visit();
-        exp.visit();
-        if (semicn != null) semicn.visit();
+    public void print() {
+        lVal.print();
+        assign.print();
+        exp.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

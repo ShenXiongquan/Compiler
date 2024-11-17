@@ -6,7 +6,7 @@ import frontend.tool.myWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VarDecl {
+public class VarDecl extends node {
 
     public BType bType;
     public final List<VarDef> varDefs = new ArrayList<>();
@@ -14,14 +14,18 @@ public class VarDecl {
 
     public token semicn;
 
-    public void visit() {
-        bType.visit();
-        varDefs.get(0).visit();
+    public void print() {
+        bType.print();
+        varDefs.get(0).print();
         for (int i = 1; i < varDefs.size(); i++) {
-            comma.get(i-1).visit();
-            varDefs.get(i).visit();
+            comma.get(i-1).print();
+            varDefs.get(i).print();
         }
-        if (semicn != null) semicn.visit();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("VarDecl");
+    }
+    @Override
+    public void visit() {
+        varDefs.forEach(VarDef::visit);
     }
 }//变量声明

@@ -1,13 +1,69 @@
 package frontend.ir;
 
+import frontend.ir.type.Type;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * llvm的基类，一切皆value
- * LLVM 中的标识符分为两种类型：全局的和局部的。
- * 全局的标识符包括函数名和全局变量，会加一个 @ 前缀，局部的标识符会加一个 % 前缀。
- * #0 指出了函数的 attribute group。由于每个函数的 attribute 很多，而且不同函数的 attributes 往往相同，
- * 因此将相同的 attributes 合并为一个 attribute group，从而使 IR 更加简洁清晰。
+ * 在 LLVM 的设计中，Value 是所有“值”的基类，包括常量、变量、指令等。它的主要任务是提供统一的接口，让各种值类型都能在 IR 中使用，并且可以互相引用、追踪使用者（User）
+ * 每一个value都是或大或小的单元，小的value组成大的value
  */
 public abstract class Value {
 
+    public static final String GLOBAL_PREFIX = "@";
+    public static final String LOCAL_PREFIX = "%";
+    /**
+     * 临时变量命名,临时变量只在函数的形参和instruction中产生
+     */
+    public static int VarNum=0;
 
+
+    private String llvm_name;//value的llvm表示
+    /**
+     * 一切value皆有自己的类型
+     */
+    private Type type;//value的类型
+    /**
+     * 使用value的user
+     */
+    private List<User> users=new ArrayList<>();
+    public Value(String llvm_name, Type valueType){
+        this.llvm_name = llvm_name;
+        this.type = valueType;
+    }
+    public void addUser(User user){
+        users.add(user);
+    }
+    public void removeUser(User user) {
+        users.remove(user);
+    }
+
+    /**
+     * @param type 设置值的类型
+     */
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    /**
+     * @return value的类型
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
+     * @return value的名称
+     */
+    public String getName() {
+        return llvm_name;
+    }
+
+    public abstract String ir();
 }
+
+//    public static final String GLOBAL_NAME_PREFIX = "g_";
+//    public static final String LOCAL_NAME_PREFIX = "v";
+//    public static final String FPARAM_NAME_PREFIX = "f";

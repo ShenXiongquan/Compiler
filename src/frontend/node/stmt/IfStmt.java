@@ -17,17 +17,20 @@ public class IfStmt extends Stmt {
     public Stmt elseStmt;  // 这可能为null，如果没有else分支的话
 
     @Override
-    public void visit() {
-        ifToken.visit();
-        lparent.visit();
-        cond.visit();
-        if (rparent != null) rparent.visit();
-        thenStmt.visit();
+    public void print() {
+        ifToken.print();
+        lparent.print();
+        cond.print();
+        if (rparent != null) rparent.print();
+        thenStmt.print();
         if (elseToken != null) {
-            elseToken.visit();
-            elseStmt.visit();
+            elseToken.print();
+            elseStmt.print();
         }
         myWriter.writeNonTerminal("Stmt");
     }
+    @Override
+    public void visit() {
 
+    }
 }

@@ -15,16 +15,22 @@ public class myWriter {
     private static final String outputFilePath4 ="llvm_ir.txt";
 
     private static final String outputFilePath5 ="mips.txt";
-    private static final FileWriter writer;
+    private static  FileWriter writer;
 
     static {
         try {
-            writer = new FileWriter(outputFilePath3);
+            writer = new FileWriter(outputFilePath4);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
+    public myWriter(String path){
+        try {
+            this.writer=new FileWriter(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static void writeTerminal(token token) {
         try {
             writer.write(token.type() + " " + token.token() + "\n");
@@ -46,6 +52,15 @@ public class myWriter {
     public static void writeSymbol(Symbol symbol) {
         try {
             writer.write(symbol.tableId + " " + symbol.token + " " + symbol.symbolType.getTypeName() + "\n");
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void writeIr(String ir){
+        try {
+            writer.write(ir);
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -7,8 +7,12 @@ public class BlockStmt extends Stmt {
     public Block block;
 
     @Override
-    public void visit() {
-        block.visit();
+    public void print() {
+        block.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+    @Override
+    public void visit() {
+
     }
 }

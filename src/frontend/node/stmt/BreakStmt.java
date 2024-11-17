@@ -8,9 +8,14 @@ public class BreakStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        breakToken.visit();
-        if (semicn != null) semicn.visit();
+    public void print() {
+        breakToken.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

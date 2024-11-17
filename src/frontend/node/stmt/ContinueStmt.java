@@ -9,9 +9,13 @@ public class ContinueStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        continueToken.visit();
-        if (semicn != null) semicn.visit();
+    public void print() {
+        continueToken.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+    @Override
+    public void visit() {
+
     }
 }

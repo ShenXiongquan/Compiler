@@ -3,17 +3,21 @@ package frontend.node;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
-public class LAndExp {
+public class LAndExp extends node{
     public EqExp eqExp;
     public token and;
     public LAndExp lAndExp;
 
-    public void visit() {
+    public void print() {
         if (lAndExp != null) {
-            lAndExp.visit();
-            and.visit();
+            lAndExp.print();
+            and.print();
         }
-        eqExp.visit();
+        eqExp.print();
         myWriter.writeNonTerminal("LAndExp");
+    }
+    @Override
+    public void visit() {
+
     }
 }//逻辑与表达式

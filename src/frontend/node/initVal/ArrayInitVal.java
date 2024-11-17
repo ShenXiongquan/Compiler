@@ -7,23 +7,28 @@ import frontend.tool.myWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExpArrayIV extends InitVal{
+public class ArrayInitVal extends InitVal{
     public token lbrace;
     public final List<Exp> exps=new ArrayList<>();
     public token comma;
     public token rbrace;
 
     @Override
-    public void visit() {
-        lbrace.visit();
+    public void print() {
+        lbrace.print();
         if(!exps.isEmpty()){
-            exps.get(0).visit();
+            exps.get(0).print();
             for(int i=1;i<exps.size();i++){
-                comma.visit();
-                exps.get(i).visit();
+                comma.print();
+                exps.get(i).print();
             }
         }
-        rbrace.visit();
+        rbrace.print();
         myWriter.writeNonTerminal("InitVal");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

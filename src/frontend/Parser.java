@@ -3,6 +3,8 @@ package frontend;
 import frontend.node.blockItem.*;
 import frontend.node.constInitVal.*;
 import frontend.node.decl.*;
+import frontend.node.decl.ConstDecl;
+import frontend.node.decl.VarDecl;
 import frontend.node.initVal.*;
 import frontend.node.primaryExp.*;
 import frontend.node.stmt.*;
@@ -14,34 +16,33 @@ import frontend.node.*;
 import frontend.node.Character;
 import frontend.node.Number;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class Parser {
  
     private final List<token> tokens;
-    private int index = 0;
+    private int index = 0;//索引和当前的token保持一致
     private token token;
     public Parser(List<token> tokens) {
         this.tokens= tokens;
         this.token =tokens.get(index);
     }
-    
+
+    //匹配所给的终结符
     private token match() {
         token Token = this.token;
-        if (index < tokens.size()) {
+        if (index < tokens.size()-1) {
             this.token = tokens.get(++index); 
         }
         return Token;
     }
 
-    
     private token offset2Token(int offset) {
         return tokens.get(index + offset);
     }
     
-    private int tempIndex;
+    private int tempIndex;//回溯保存索引值
 
     private void saveContent() {
         tempIndex = this.index;  // 保存当前索引
@@ -49,7 +50,7 @@ public class Parser {
 
     private void restore() {
         this.index = tempIndex;//恢复索引
-        this.token = tokens.get(tempIndex - 1);//恢复token
+        this.token = tokens.get(tempIndex);//恢复token
     }
 
     public CompUnit parseCompUnit() {
@@ -69,18 +70,18 @@ public class Parser {
     private Decl parseDecl() {
 
         if (token.type() == tokenType.CONSTTK) {
-            CONSTDecl decl = new CONSTDecl();
+            ConstDecl decl = new ConstDecl();
             decl.constDecl = parseConstDecl();//常量声明
             return decl;
         } else {
-            VARDecl decl = new VARDecl();
+            VarDecl decl = new VarDecl();
             decl.varDecl = parseVarDecl();//变量声明
             return decl;
         }
     }
 
-    private ConstDecl parseConstDecl() {
-        ConstDecl constDecl = new ConstDecl();
+    private frontend.node.ConstDecl parseConstDecl() {
+        frontend.node.ConstDecl constDecl = new frontend.node.ConstDecl();
         constDecl._const = match();
         constDecl.bType = parseBType();
         constDecl.constDefs.add(parseConstDef());
@@ -112,7 +113,7 @@ public class Parser {
     private ConstInitVal parseConstInitVal() {
 
         if (token.type() == tokenType.LBRACE) {
-            ConstExpArrayCIV constInitVal = new ConstExpArrayCIV();
+            ArrayConstInitVal constInitVal = new ArrayConstInitVal();
             constInitVal.lbrace = match();
             if (token.type() != tokenType.RBRACE) {
                 constInitVal.constExps.add(parseConstExp());
@@ -125,12 +126,12 @@ public class Parser {
             return constInitVal;
             //数组初始化
         } else if (token.type() == tokenType.STRCON) {
-            StringConstCIV constInitVal = new StringConstCIV();
+            StringConstInitVal constInitVal = new StringConstInitVal();
             constInitVal.stringConst = match();
             //字符串初始化
             return constInitVal;
         } else {
-            ConstExpCIV constInitVal = new ConstExpCIV();
+            ExpConstInitVal constInitVal = new ExpConstInitVal();
             constInitVal.constExp = parseConstExp();
             //普通变量初始化
             return constInitVal;
@@ -144,8 +145,8 @@ public class Parser {
         return bType;
     }
 
-    private VarDecl parseVarDecl() {
-        VarDecl varDecl = new VarDecl();
+    private frontend.node.VarDecl parseVarDecl() {
+        frontend.node.VarDecl varDecl = new frontend.node.VarDecl();
         varDecl.bType = parseBType();
         varDecl.varDefs.add(parseVarDef());
         while (token.type() == tokenType.COMMA) {
@@ -314,7 +315,7 @@ public class Parser {
 
     private InitVal parseInitVal() {
         if (token.type() == tokenType.LBRACE) {
-            ExpArrayIV initVal = new ExpArrayIV();
+            ArrayInitVal initVal = new ArrayInitVal();
             initVal.lbrace = match();
             if (token.type() != tokenType.RBRACE) {
                 initVal.exps.add(parseExp());
@@ -327,12 +328,12 @@ public class Parser {
             return initVal;
             //数组初始化
         } else if (token.type() == tokenType.STRCON) {
-            StringConstIV initVal = new StringConstIV();
+            StringInitVal initVal = new StringInitVal();
             initVal.stringConst = match();
             //字符串初始化
             return initVal;
         } else {
-            ExpIV initVal = new ExpIV();
+            ExpInitVal initVal = new ExpInitVal();
             initVal.exp = parseExp();
             //普通变量初始化
             return initVal;
@@ -530,7 +531,7 @@ public class Parser {
                 return stmt;
             }
         }
-    }//难，可能出bug
+    }
 
     private ForStmt parseForStmt() {
         ForStmt forStmt = new ForStmt();

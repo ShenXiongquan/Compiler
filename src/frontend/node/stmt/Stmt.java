@@ -1,8 +1,10 @@
 package frontend.node.stmt;
 
 
-public abstract class Stmt {
-    public abstract void visit();
+import frontend.node.node;
+
+public abstract class Stmt extends node {
+    public abstract void print();
 }
 
 

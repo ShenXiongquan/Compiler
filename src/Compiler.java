@@ -1,6 +1,7 @@
 import frontend.Lexer;
 import frontend.Parser;
 import frontend.Visitor;
+import frontend.ir.Model;
 import frontend.node.CompUnit;
 import frontend.tool.errorManager;
 import frontend.tool.myWriter;
@@ -19,7 +20,9 @@ public class Compiler {
             CompUnit compUnit= parser.parseCompUnit();
             Visitor visitor=new Visitor();//语义分析
             visitor.visit(compUnit);
-            visitor.write(visitor.globalTable);
+            compUnit.visit();
+            System.out.print(Visitor.model.ir());
+            myWriter.writeIr(Visitor.model.ir());
             errorManager.write();
             myWriter.close();
             errorManager.close();

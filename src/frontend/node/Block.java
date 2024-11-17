@@ -6,15 +6,20 @@ import frontend.tool.myWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Block {
+public class Block extends node{
     public token lbrace;
     public final List<BlockItem> blockItems=new ArrayList<>();
     public token rbrace;
 
-    public void visit(){
-        lbrace.visit();
-        if(!blockItems.isEmpty()) for (BlockItem blockItem:blockItems) blockItem.visit();
-        rbrace.visit();
+    public void print(){
+        lbrace.print();
+        if(!blockItems.isEmpty()) for (BlockItem blockItem:blockItems) blockItem.print();
+        rbrace.print();
         myWriter.writeNonTerminal("Block");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

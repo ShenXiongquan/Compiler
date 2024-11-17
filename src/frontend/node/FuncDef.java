@@ -3,7 +3,7 @@ package frontend.node;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
-public class FuncDef {
+public class FuncDef extends node{
     public FuncType funcType;
     public token ident;
 
@@ -13,13 +13,17 @@ public class FuncDef {
     public token rparent;
     public Block block;
 
-    public void visit(){
-        funcType.visit();
-        ident.visit();
-        lparent.visit();
-        if(funcFParams!=null)funcFParams.visit();
-        if(rparent!=null)rparent.visit();
-        block.visit();
+    public void print(){
+        funcType.print();
+        ident.print();
+        lparent.print();
+        if(funcFParams!=null)funcFParams.print();
+        if(rparent!=null)rparent.print();
+        block.print();
         myWriter.writeNonTerminal("FuncDef");
+    }
+    @Override
+    public void visit() {
+
     }
 }//函数声明FuncDef → FuncType Ident '(' [FuncFParams] ')' Block

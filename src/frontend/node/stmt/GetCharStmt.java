@@ -18,13 +18,18 @@ public class GetCharStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        lVal.visit();
-        assign.visit();
-        getchar.visit();
-        lparent.visit();
-        if (rparent != null) rparent.visit();
-        if (semicn != null) semicn.visit();
+    public void print() {
+        lVal.print();
+        assign.print();
+        getchar.print();
+        lparent.print();
+        if (rparent != null) rparent.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

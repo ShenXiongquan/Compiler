@@ -3,19 +3,22 @@ package frontend.node;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
-public class RelExp {
+public class RelExp extends node {
 
     public AddExp addExp;
     public RelExp relExp;
     public token relOp;
 
-    public void visit(){
+    public void print(){
         if(relExp!=null){
-            relExp.visit();
-            relOp.visit();
+            relExp.print();
+            relOp.print();
         }
-        addExp.visit();
+        addExp.print();
         myWriter.writeNonTerminal("RelExp");
     }
+    @Override
+    public void visit() {
 
+    }
 }//关系表达式

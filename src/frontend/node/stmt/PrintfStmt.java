@@ -19,16 +19,20 @@ public class PrintfStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        printf.visit();
-        lparent.visit();
-        stringConst.visit();
+    public void print() {
+        printf.print();
+        lparent.print();
+        stringConst.print();
         if (!exps.isEmpty()) for (Exp exp : exps) {
-            comma.visit();
-            exp.visit();
+            comma.print();
+            exp.print();
         }
-        if (rparent != null) rparent.visit();
-        if (semicn != null) semicn.visit();
+        if (rparent != null) rparent.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+    @Override
+    public void visit() {
+
     }
 }

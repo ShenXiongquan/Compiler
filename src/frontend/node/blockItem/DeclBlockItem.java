@@ -7,7 +7,12 @@ public class DeclBlockItem extends BlockItem{
 
 
     @Override
+    public void print() {
+        decl.print();
+    }
+
+    @Override
     public void visit() {
-        decl.visit();
+
     }
 }

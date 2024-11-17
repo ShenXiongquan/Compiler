@@ -1,8 +1,14 @@
 package frontend.node.unaryExp;
 
 
-public abstract class UnaryExp {
+import frontend.node.node;
+
+public abstract class UnaryExp extends node {
+
     //UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
+    public abstract void print();
+
+
     public abstract void visit();
 
 }

@@ -11,9 +11,14 @@ public class ExpressionStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        if (optionalExp != null) optionalExp.visit();
-        if (semicn != null) semicn.visit();
+    public void print() {
+        if (optionalExp != null) optionalExp.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

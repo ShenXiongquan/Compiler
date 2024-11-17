@@ -20,16 +20,20 @@ public class LoopStmt extends Stmt {
     public Stmt forBody;
 
     @Override
-    public void visit() {
-        forToken.visit();
-        lparent.visit();
-        if (initForStmt != null) initForStmt.visit();
-        semicn1.visit();
-        if (forCondition != null) forCondition.visit();
-        semicn2.visit();
-        if (updateForStmt != null) updateForStmt.visit();
-        rparent.visit();
-        forBody.visit();
+    public void print() {
+        forToken.print();
+        lparent.print();
+        if (initForStmt != null) initForStmt.print();
+        semicn1.print();
+        if (forCondition != null) forCondition.print();
+        semicn2.print();
+        if (updateForStmt != null) updateForStmt.print();
+        rparent.print();
+        forBody.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+    @Override
+    public void visit() {
+
     }
 }

@@ -7,15 +7,20 @@ import java.util.List;
 
 public class SymbolTable {
 
-    public  enum  Type{
-        func,array,var
-    }
-    private static int globalId = 0;//符号表id
+    /**
+     * 每个符号表唯一标识符，自增
+     */
+    private static int globalId = 0;
+    /**
+     * 指向外层符号表的指针
+     */
+    public SymbolTable pre;
 
-    public SymbolTable pre; // 指向外层符号表的指针
-
-    public final List<SymbolTable> next; // 指向内层符号表的指针
-    public final int id; 	// 当前符号表的id。
+    /**
+     * 指向内层符号表的指针
+     */
+    public final List<SymbolTable> next;
+    public final int id; // 当前符号表的id。
 
     public final LinkedHashMap<String, Symbol> directory = new LinkedHashMap<>();
 

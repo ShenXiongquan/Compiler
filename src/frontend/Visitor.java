@@ -1,9 +1,15 @@
 package frontend;
 
+import frontend.ir.BasicBlock;
+import frontend.ir.Model;
+import frontend.ir.Value;
+import frontend.ir.type.Type;
 import frontend.node.*;
 import frontend.node.decl.*;
 import frontend.node.blockItem.*;
 import frontend.node.constInitVal.*;
+import frontend.node.decl.ConstDecl;
+import frontend.node.decl.VarDecl;
 import frontend.node.initVal.*;
 import frontend.node.primaryExp.*;
 import frontend.node.stmt.*;
@@ -26,11 +32,42 @@ import java.util.*;
 
 
 public class Visitor {
-    public final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
-    private SymbolTable curTable = globalTable;
-    private int isLoop = 0;
-    private boolean hasReturnValue = false;
+    public static final Model model=new Model();
+    public static final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
+    public static SymbolTable curTable = globalTable;
+    public static int isLoop = 0;
+    public static boolean hasReturnValue = false;
 
+    // 接下来是一些语义分析和中间代码生成需要用到的综合属性和继承属性，继承属性由上往下传，综合属性由下往上传，以此解决一些值传递的问题，全部设为静态变量
+    /**
+     * 继承属性，Value的类型，在常变量的定义中，initial中会用到
+     */
+    public static Type ValueType;
+    /**
+     *
+     */
+
+    /**
+     * 综合属性:各种指令的结果,特别是对于exp的值
+     */
+    public static Value upValue;
+    /**
+     * constExp的计算值
+     */
+    public static int upConstValue;
+    /**
+     * 判断表达式是否可计算的，constExp是一定可计算的
+     */
+    public static boolean calAble;
+    /**
+     * 当前基本块
+     */
+    public static BasicBlock curBlock;
+
+
+    public static boolean isGlobal(){
+        return curTable==globalTable;
+    }
     private boolean isConstant(LVal lVal) {
 
         SymbolTable symbolTable = curTable;
@@ -100,14 +137,14 @@ public class Visitor {
     }
 
     private void visitDecl(Decl decl) {
-        if (decl instanceof CONSTDecl) {
-            visitConstDecl(((CONSTDecl) decl).constDecl);
-        } else if (decl instanceof VARDecl) {
-            visitVarDecl((((VARDecl) decl).varDecl));
+        if (decl instanceof ConstDecl) {
+            visitConstDecl(((ConstDecl) decl).constDecl);
+        } else if (decl instanceof VarDecl) {
+            visitVarDecl((((VarDecl) decl).varDecl));
         }
     }
 
-    private void visitConstDecl(ConstDecl constDecl) {
+    private void visitConstDecl(frontend.node.ConstDecl constDecl) {
 
         for (ConstDef constDef : constDecl.constDefs) {
             visitConstDef(constDef, constDecl.bType);
@@ -140,16 +177,16 @@ public class Visitor {
     }
 
     private void visitConstInitVal(ConstInitVal constInitVal) {
-        if (constInitVal instanceof ConstExpCIV constExpCIV) {
-            visitConstExp(constExpCIV.constExp);
-        } else if (constInitVal instanceof ConstExpArrayCIV constExpArrayCIV) {
+        if (constInitVal instanceof ExpConstInitVal expConstInitVal) {
+            visitConstExp(expConstInitVal.constExp);
+        } else if (constInitVal instanceof ArrayConstInitVal constExpArrayCIV) {
             for (ConstExp constExp : constExpArrayCIV.constExps) {
                 visitConstExp(constExp);
             }
         }
     }
 
-    private void visitVarDecl(VarDecl varDecl) {
+    private void visitVarDecl(frontend.node.VarDecl varDecl) {
         for (VarDef varDef : varDecl.varDefs) {
             visitVarDef(varDef, varDecl.bType);
         }
@@ -182,10 +219,10 @@ public class Visitor {
     }
 
     private void visitInitVal(InitVal initVal) {
-        if (initVal instanceof ExpIV expIV) {
-            visitExp(expIV.exp);
-        } else if (initVal instanceof ExpArrayIV expArrayIV) {
-            for (Exp exp : expArrayIV.exps) {
+        if (initVal instanceof ExpInitVal expInitVal) {
+            visitExp(expInitVal.exp);
+        } else if (initVal instanceof ArrayInitVal arrayInitVal) {
+            for (Exp exp : arrayInitVal.exps) {
                 visitExp(exp);
             }
         }
@@ -211,9 +248,7 @@ public class Visitor {
         if (funcDef.funcFParams != null) {
             visitFuncFParams(funcDef.funcFParams);
             symbol.paramNum = funcDef.funcFParams.funcFParams.size();
-            for (Symbol param : curTable.directory.values()) {
-                symbol.paramList.add(param);
-            }
+            symbol.paramList.addAll(curTable.directory.values());
         }
 
         hasReturnValue = (funcDef.funcType.returnType.type() != tokenType.VOIDTK);

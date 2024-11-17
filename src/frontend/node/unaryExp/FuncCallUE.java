@@ -12,11 +12,16 @@ public class FuncCallUE extends UnaryExp{
 
 
     @Override
-    public void visit() {
-        ident.visit();
-        lparent.visit();
-        if(funcRParams!=null)funcRParams.visit();
-        if(rparent!=null)rparent.visit();
+    public void print() {
+        ident.print();
+        lparent.print();
+        if(funcRParams!=null)funcRParams.print();
+        if(rparent!=null)rparent.print();
         myWriter.writeNonTerminal("UnaryExp");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }

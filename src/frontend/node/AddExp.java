@@ -1,19 +1,55 @@
 package frontend.node;
 
+import frontend.Visitor;
+import frontend.ir.Value;
+import frontend.ir.instructions.BinaryOperations.add;
+import frontend.ir.instructions.BinaryOperations.sub;
 import frontend.token.token;
+import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
-public class AddExp {
+public class AddExp extends node{
     public AddExp addExp;
     public MulExp mulExp;
     public token op;
 
-    public void visit(){
+    public void print(){
         if(addExp!=null){
-            addExp.visit();
-            op.visit();
+            addExp.print();
+            op.print();
         }
-        mulExp.visit();
+        mulExp.print();
         myWriter.writeNonTerminal("AddExp");
+    }
+
+    @Override
+    public void visit() {
+        if(Visitor.calAble){
+            if(addExp!=null){
+                addExp.visit();
+                int a=Visitor.upConstValue;
+                mulExp.visit();
+                int b=Visitor.upConstValue;
+                if(op.type()==tokenType.PLUS)Visitor.upConstValue =a+b;
+                else Visitor.upConstValue =a-b;
+                System.out.println("add result:"+Visitor.upConstValue);
+            }else{
+                mulExp.visit();
+            }
+        }else{
+            if(addExp!=null){
+                addExp.visit();
+                Value a=Visitor.upValue;
+                mulExp.visit();
+                Value b=Visitor.upValue;
+                if(op.type()==tokenType.PLUS){
+                    Visitor.curBlock.addInstruction(new add( a, b, Visitor.curBlock));
+                }else{
+                    Visitor.curBlock.addInstruction(new sub( a, b, Visitor.curBlock));
+                }
+            }else{
+                mulExp.visit();
+            }
+        }
     }
 }//加减表达式

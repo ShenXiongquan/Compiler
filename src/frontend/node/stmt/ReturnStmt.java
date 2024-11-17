@@ -11,10 +11,14 @@ public class ReturnStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void visit() {
-        returnToken.visit();
-        if (returnExp != null) returnExp.visit();
-        if (semicn != null) semicn.visit();
+    public void print() {
+        returnToken.print();
+        if (returnExp != null) returnExp.print();
+        if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
+    }
+    @Override
+    public void visit() {
+
     }
 }

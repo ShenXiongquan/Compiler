@@ -3,12 +3,17 @@ package frontend.node.initVal;
 import frontend.node.Exp;
 import frontend.tool.myWriter;
 
-public class ExpIV extends InitVal{
+public class ExpInitVal extends InitVal{
     public Exp exp;
 
     @Override
-    public void visit() {
-        exp.visit();
+    public void print() {
+        exp.print();
         myWriter.writeNonTerminal("InitVal");
+    }
+
+    @Override
+    public void visit() {
+
     }
 }
