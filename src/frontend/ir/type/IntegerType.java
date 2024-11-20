@@ -9,9 +9,12 @@ package frontend.ir.type;
  */
 public class IntegerType extends Type {
 
-    public static  IntegerType i32=new IntegerType(32);
+    public static final IntegerType i64=new IntegerType(64);
+    public static final   IntegerType i32=new IntegerType(32);
 
-    public static IntegerType i8 =new IntegerType(8);
+    public static final IntegerType i8 =new IntegerType(8);
+
+    public static final IntegerType i1 =new IntegerType(1);
 
     private int bitWidth;  // 用于表示整数的位宽，例如 32 表示 32 位整数
 
@@ -20,6 +23,15 @@ public class IntegerType extends Type {
         this.bitWidth = bitWidth;
     }
 
+    @Override
+    public boolean isInt32() {
+        return bitWidth==32;
+    }
+
+    @Override
+    public boolean isInt8() {
+        return bitWidth==8;
+    }
 
     @Override
     public int getSize() {
@@ -33,5 +45,11 @@ public class IntegerType extends Type {
     @Override
     public String ir() {
         return "i"+bitWidth;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof IntegerType))return false;
+        return this.bitWidth==((IntegerType)obj).bitWidth;
     }
 }

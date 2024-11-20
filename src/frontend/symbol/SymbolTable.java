@@ -1,6 +1,8 @@
 package frontend.symbol;
 
 
+import frontend.Visitor;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,7 +17,6 @@ public class SymbolTable {
      * 指向外层符号表的指针
      */
     public SymbolTable pre;
-
     /**
      * 指向内层符号表的指针
      */
@@ -43,19 +44,24 @@ public class SymbolTable {
 // 添加新符号到符号表中
     public boolean addSymbol(Symbol symbol) {
         if (existInScope(symbol.token)) {
-            return false; // 重复定义，返回false
+            return false;
         }
+
         directory.put(symbol.token, symbol);
-        return true; // 成功插入
+        return true;
     }
 
 //查询是否重定义
     public boolean existInScope(String token) {
         return directory.containsKey(token);
     }
-//查找符号
-    public Symbol getSymbol(String token) {
 
+    /**
+     * 查找符号是否定义
+     * @param token 符号token
+     * @return
+     */
+    public Symbol getSymbol(String token) {
         Symbol symbol = directory.get(token);
         if (symbol != null) {
             return symbol;

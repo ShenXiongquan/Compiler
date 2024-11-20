@@ -39,13 +39,17 @@ public class AddExp extends node{
         }else{
             if(addExp!=null){
                 addExp.visit();
-                Value a=Visitor.upValue;
+                Value a=zext(Visitor.upValue);;
                 mulExp.visit();
-                Value b=Visitor.upValue;
+                Value b=zext(Visitor.upValue);
                 if(op.type()==tokenType.PLUS){
-                    Visitor.curBlock.addInstruction(new add( a, b, Visitor.curBlock));
+                    add add=new add(a, b);
+                    Visitor.curBlock.addInstruction(add);
+                    Visitor.upValue=add;
                 }else{
-                    Visitor.curBlock.addInstruction(new sub( a, b, Visitor.curBlock));
+                    sub sub=new sub( a, b);
+                    Visitor.curBlock.addInstruction(sub);
+                    Visitor.upValue=sub;
                 }
             }else{
                 mulExp.visit();

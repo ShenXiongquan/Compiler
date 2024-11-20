@@ -19,6 +19,6 @@ public class ExpressionStmt extends Stmt {
 
     @Override
     public void visit() {
-
+        if(optionalExp!=null)optionalExp.visit();
     }
 }

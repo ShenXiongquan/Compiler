@@ -12,6 +12,6 @@ public class StmtBlockItem extends BlockItem {
 
     @Override
     public void visit() {
-
+        stmt.visit();
     }
 }

@@ -1,5 +1,10 @@
 package frontend.node.stmt;
 
+import frontend.Visitor;
+import frontend.ir.instructions.MemInstructions.store;
+import frontend.ir.instructions.OtherInstructions.call;
+import frontend.ir.type.IntegerType;
+import frontend.ir.type.PointerType;
 import frontend.node.LVal;
 
 import frontend.token.token;
@@ -30,6 +35,13 @@ public class GetCharStmt extends Stmt {
 
     @Override
     public void visit() {
-
+        Visitor.lValNotLoad=true;
+        lVal.visit();
+        Visitor.lValNotLoad=false;
+        call call=new call(Visitor.model.getchar());
+        Visitor.curBlock.addInstruction(call);
+        IntegerType expectedType= (IntegerType) ((PointerType)Visitor.upValue.getType()).getPointedType();
+        store store=new store(expectedType.isInt8()?trunc(call):call,Visitor.upValue);
+        Visitor.curBlock.addInstruction(store);
     }
 }

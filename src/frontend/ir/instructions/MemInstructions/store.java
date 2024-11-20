@@ -1,9 +1,6 @@
 package frontend.ir.instructions.MemInstructions;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.Value;
-import frontend.ir.type.PointerType;
-import frontend.ir.type.Type;
 import frontend.ir.type.VoidType;
 
 import java.util.ArrayList;
@@ -12,8 +9,12 @@ import java.util.ArrayList;
  * 	store <ty> <value>, ptr <pointer>	写内存
  */
 public class store extends MemInstr{
-    public store(Value value, Value pointer, BasicBlock block) {
-        super(new VoidType(), new ArrayList<>(){{add(value);add(pointer);}}, block);
+    /**
+     * @param storedValue 要存储的值
+     * @param pointer     存储的地址
+     */
+    public store(Value storedValue, Value pointer) {
+        super(new VoidType(), new ArrayList<>(){{add(storedValue);add(pointer);}});
     }
 
     @Override

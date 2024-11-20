@@ -1,10 +1,8 @@
 package frontend.ir.instructions.MemInstructions;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.Value;
 import frontend.ir.type.ArrayType;
 import frontend.ir.type.PointerType;
-import frontend.ir.type.Type;
 
 import java.util.ArrayList;
 
@@ -15,26 +13,22 @@ public class getelementptr extends MemInstr{
     private Value ptrval;
 
     /**
-     *
-     * @param ptrval 初始指针
+     * @param ptrval  初始指针
      * @param offset1 偏移量1
-     * @param block
      */
-    public getelementptr(Value ptrval,Value offset1, BasicBlock block) {
-        super(new PointerType(ptrval.getType()), new ArrayList<>(){{add(offset1);}}, block);
+    public getelementptr(Value ptrval,Value offset1) {
+        super(ptrval.getType(), new ArrayList<>(){{add(offset1);}});
         this.ptrval=ptrval;
         this.valueType=((PointerType) ptrval.getType()).getPointedType();
     }
 
     /**
-     *
-     * @param ptrval 初值指针
+     * @param ptrval  初值指针
      * @param offset1 偏移量1
      * @param offset2 偏移量2
-     * @param block
      */
-    public getelementptr(Value ptrval,Value offset1,Value offset2, BasicBlock block) {
-        super(new PointerType(((ArrayType)ptrval.getType()).getElementType()),new ArrayList<>(){{add(offset1);add(offset2);}}, block);
+    public getelementptr(Value ptrval,Value offset1,Value offset2) {
+        super(new PointerType(((ArrayType)((PointerType)ptrval.getType()).getPointedType()).getElementType()),new ArrayList<>(){{add(offset1);add(offset2);}});
         this.ptrval=ptrval;
         this.valueType=((PointerType) ptrval.getType()).getPointedType();
     }

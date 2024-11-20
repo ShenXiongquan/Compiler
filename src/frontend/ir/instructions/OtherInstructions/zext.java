@@ -1,9 +1,9 @@
 package frontend.ir.instructions.OtherInstructions;
 
-import frontend.ir.BasicBlock;
+import frontend.ir.Function;
 import frontend.ir.Value;
 import frontend.ir.instructions.Instruction;
-import frontend.ir.type.Type;
+import frontend.ir.type.IntegerType;
 
 import java.util.ArrayList;
 
@@ -12,17 +12,15 @@ import java.util.ArrayList;
  */
 public class zext extends Instruction {
     /**
-     * @param name      指令的返回值
-     * @param valueType 指令返回值类型
-     * @param operands  指令的操作数
-     * @param block     指令的所在的块
+     * 对于扩展，只有在涉及表达式的运算的时候，才可能需要扩展为i32
+     * @param value 被扩展的数
      */
-    public zext(String name, Type valueType, ArrayList<Value> operands, BasicBlock block) {
-        super(name, valueType, operands, block);
+    public zext( Value value) {
+        super(LOCAL_PREFIX + (Function.VarNum++), IntegerType.i32, new ArrayList<>(){{add(value);}});
     }
 
     @Override
     public String ir() {
-        return null;
+        return getName()+" = zext "+getOperand(0).getType().ir()+" "+getOperand(0).getName()+" to "+getType().ir();
     }
 }

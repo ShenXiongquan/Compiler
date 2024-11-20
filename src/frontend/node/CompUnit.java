@@ -5,10 +5,7 @@ import frontend.ir.Function;
 import frontend.ir.GlobalValue;
 import frontend.ir.GlobalVariable;
 import frontend.ir.Model;
-import frontend.ir.type.FunctionType;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.Type;
-import frontend.ir.type.VoidType;
+import frontend.ir.type.*;
 import frontend.node.decl.Decl;
 import frontend.tool.myWriter;
 
@@ -31,11 +28,11 @@ public class CompUnit extends node{
     public void visit(){
 
         //加入已有的声明函数
-        Visitor.model.addGlobalValue(new Function("getint",new IntegerType(32),false));
-        Visitor.model.addGlobalValue(new Function("getchar",new IntegerType(8),false));
-        Visitor.model.addGlobalValue(new Function("putint",new VoidType(),false));
-        Visitor.model.addGlobalValue(new Function("putch",new VoidType(),false));
-        Visitor.model.addGlobalValue(new Function("putstr",new VoidType(),false));
+        Visitor.model.addGlobalValue(new Function("getint",IntegerType.i32,false));
+        Visitor.model.addGlobalValue(new Function("getchar",IntegerType.i32,false));
+        Visitor.model.addGlobalValue(new Function("putint",new VoidType(),false,IntegerType.i32));
+        Visitor.model.addGlobalValue(new Function("putch",new VoidType(),false,IntegerType.i32));
+        Visitor.model.addGlobalValue(new Function("putstr",new VoidType(),false,new PointerType(IntegerType.i8)));
 
         decls.forEach(Decl::visit);
         funcDefs.forEach(FuncDef::visit);

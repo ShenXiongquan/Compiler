@@ -1,6 +1,9 @@
 package frontend.node;
 
+import frontend.Visitor;
+import frontend.ir.type.IntegerType;
 import frontend.token.token;
+import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
 import java.util.ArrayList;
@@ -26,6 +29,8 @@ public class VarDecl extends node {
     }
     @Override
     public void visit() {
+        bType.visit();
+
         varDefs.forEach(VarDef::visit);
     }
 }//变量声明

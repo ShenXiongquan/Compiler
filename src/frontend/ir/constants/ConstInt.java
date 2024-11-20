@@ -4,9 +4,11 @@ import frontend.ir.type.IntegerType;
 
 public class ConstInt extends Constant{
 
-    public static ConstInt zero=new ConstInt(new IntegerType(32),0);
+    public static ConstInt zero=new ConstInt(IntegerType.i32,0);
 
-    public static ConstInt zeroI8=new ConstInt(new IntegerType(8),0);
+    public static ConstInt zeroI8=new ConstInt(IntegerType.i8,0);
+
+    public static ConstInt zeroI64=new ConstInt(IntegerType.i64,0);
     private int value;
     private int bitWidth;
 
@@ -17,6 +19,9 @@ public class ConstInt extends Constant{
         this.value = value;
     }
 
+    public void setBitWidth(int bitWidth) {
+        this.bitWidth = bitWidth;
+    }
 
     public int getValue() {
         return value;

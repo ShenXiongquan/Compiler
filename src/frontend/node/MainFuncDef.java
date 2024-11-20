@@ -1,7 +1,19 @@
 package frontend.node;
 
+import frontend.Visitor;
+import frontend.ir.BasicBlock;
+import frontend.ir.Function;
+import frontend.ir.Parameter;
+import frontend.ir.instructions.ControlFlowInstructions.ret;
+import frontend.ir.instructions.Instruction;
+import frontend.ir.instructions.MemInstructions.alloca;
+import frontend.ir.instructions.MemInstructions.store;
+import frontend.ir.type.IntegerType;
+import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
+
+import java.util.ArrayList;
 
 public class MainFuncDef extends node {
     public token intToken;
@@ -23,5 +35,16 @@ public class MainFuncDef extends node {
     @Override
     public void visit() {
 
+        Visitor.curTable=Visitor.curTable.pushScope();
+        Visitor.parameters =new ArrayList<>();
+        Function.VarNum=0;
+        Function function=new Function(main.token(), IntegerType.i32,Visitor.parameters,true);
+        Visitor.curFunc=function;
+        Visitor.model.addGlobalValue(function);
+        Visitor.curTable.pre.addSymbol(new Symbol(main.token(), function));
+        Visitor.curBlock= new BasicBlock(function);
+        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        block.visit();
+        Visitor.curTable=Visitor.curTable.popScope();
     }
 }//主函数声明MainFuncDef → 'int' 'main' '(' ')' Block

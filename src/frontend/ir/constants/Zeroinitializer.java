@@ -15,10 +15,6 @@ public class Zeroinitializer extends Constant{
         this.length= valueType.getSize();
     }
 
-    public int getLength() {
-        return length;
-    }
-
 
     @Override
     public String ir() {

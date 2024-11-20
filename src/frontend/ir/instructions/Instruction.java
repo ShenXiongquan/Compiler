@@ -1,5 +1,6 @@
 package frontend.ir.instructions;
 
+import frontend.Visitor;
 import frontend.ir.BasicBlock;
 import frontend.ir.User;
 import frontend.ir.Value;
@@ -17,13 +18,12 @@ public abstract class Instruction extends User {
     BasicBlock parentBlock;
 
     /**
-     * @param name 指令的返回值名称
+     * @param name       指令的返回值名称
      * @param returnType 指令返回值类型
-     * @param operands 指令的操作数
-     * @param block 指令的所在的块
+     * @param operands   指令的操作数
      */
-    public Instruction(String name, Type returnType, ArrayList<Value> operands,BasicBlock block) {
+    public Instruction(String name, Type returnType, ArrayList<Value> operands) {
         super(name, returnType,operands);
-        this.parentBlock=block;
+        this.parentBlock= Visitor.curBlock;
     }
 }

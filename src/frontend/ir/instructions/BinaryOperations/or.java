@@ -1,6 +1,5 @@
 package frontend.ir.instructions.BinaryOperations;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.Value;
 import frontend.ir.type.IntegerType;
 
@@ -9,8 +8,8 @@ import frontend.ir.type.IntegerType;
  */
 public class or extends BinaryOperation{
 
-    public or( Value op1, Value op2, BasicBlock parent){
-        super(new IntegerType(32), op1, op2, parent);
+    public or( Value op1, Value op2){
+        super(IntegerType.i1, op1, op2);
     }
 
     @Override

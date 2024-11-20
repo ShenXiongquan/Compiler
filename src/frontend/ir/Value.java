@@ -12,12 +12,11 @@ import java.util.List;
  */
 public abstract class Value {
 
-    public static final String GLOBAL_PREFIX = "@";
-    public static final String LOCAL_PREFIX = "%";
+    protected static final String GLOBAL_PREFIX = "@";
+    protected static final String LOCAL_PREFIX = "%";
     /**
      * 临时变量命名,临时变量只在函数的形参和instruction中产生
      */
-    public static int VarNum=0;
 
 
     private String llvm_name;//value的llvm表示
@@ -28,7 +27,7 @@ public abstract class Value {
     /**
      * 使用value的user
      */
-    private List<User> users=new ArrayList<>();
+    private final List<User> users=new ArrayList<>();
     public Value(String llvm_name, Type valueType){
         this.llvm_name = llvm_name;
         this.type = valueType;
@@ -40,12 +39,6 @@ public abstract class Value {
         users.remove(user);
     }
 
-    /**
-     * @param type 设置值的类型
-     */
-    public void setType(Type type) {
-        this.type = type;
-    }
 
     /**
      * @return value的类型
@@ -61,7 +54,7 @@ public abstract class Value {
         return llvm_name;
     }
 
-    public abstract String ir();
+    protected abstract String ir();
 }
 
 //    public static final String GLOBAL_NAME_PREFIX = "g_";

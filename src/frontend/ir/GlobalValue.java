@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class GlobalValue extends Value{
 
     public GlobalValue(String name, Type valueType) {
-        super(Value.GLOBAL_PREFIX+name, valueType);
+        super(GLOBAL_PREFIX+name, valueType);
     }
 
     public abstract String ir();

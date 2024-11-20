@@ -1,9 +1,13 @@
 package frontend.ir;
 
-import frontend.ir.type.Type;
+import frontend.ir.instructions.ControlFlowInstructions.ControlFlowInstr;
+import frontend.ir.type.LabelType;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import frontend.ir.instructions.Instruction;
+
 /**
  * 表示LLVM中的基本块，每个基本块由多个指令组成
  * 是中间代码树的第三层
@@ -15,7 +19,7 @@ public class BasicBlock extends Value {
     /**
      * 基本块包含的指令
      */
-    private List<Instruction> Instructions;
+    private final List<Instruction> instructions=new ArrayList<>();
     /**
      * 基本块的父作用域
      */
@@ -23,11 +27,9 @@ public class BasicBlock extends Value {
     private List<BasicBlock> predecessors;   // 前驱基本块列表
     private List<BasicBlock> successors;     // 后继基本块列表
 
-
     // 构造函数
-    public BasicBlock(String name, Type valueType, Value parent) {
-        super(name, valueType);
-        this.Instructions = new ArrayList<>();
+    public BasicBlock(Value parent) {
+        super("%"+(Function.VarNum++), new LabelType());
         this.predecessors = new ArrayList<>();
         this.successors = new ArrayList<>();
         this.parent = parent;
@@ -37,24 +39,23 @@ public class BasicBlock extends Value {
      * 添加一条指令到基本块中。
      */
     public void addInstruction(Instruction Instruction) {
-        if (isTerminatorPresent()) {
-            throw new IllegalStateException("Cannot add more Instructions after a terminator.");
-        }
-        Instructions.add(Instruction);
+        instructions.add(Instruction);
     }
 
     /**
-     * 检查最后一条指令是否是终结指令。
+     * 检查指令是否是终结指令。
      */
-    public boolean isTerminatorPresent() {
-        return true;
+    public boolean isJumpInstruction(Instruction instruction) {
+        return instruction instanceof ControlFlowInstr;
     }
-
+    public Instruction getLastInstruction(){
+        return instructions.isEmpty()?null:instructions.get(instructions.size() - 1);
+    }
     /**
      * 获取基本块的指令列表。
      */
     public List<Instruction> getInstructions() {
-        return Instructions;
+        return instructions;
     }
 
     /**
@@ -102,9 +103,10 @@ public class BasicBlock extends Value {
     @Override
     public String ir() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getName()).append(":").append("\n");
-        for (Instruction inst : Instructions) {
-            sb.append("  ").append(inst.ir()).append("\n");
+        sb.append(getName().substring(1)).append(":");
+        sb.append("\n");
+        for (Instruction inst : instructions) {
+            sb.append("    ").append(inst.ir()).append("\n");
         }
         return sb.toString();
     }

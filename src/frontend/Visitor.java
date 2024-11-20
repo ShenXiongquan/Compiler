@@ -1,8 +1,6 @@
 package frontend;
 
-import frontend.ir.BasicBlock;
-import frontend.ir.Model;
-import frontend.ir.Value;
+import frontend.ir.*;
 import frontend.ir.type.Type;
 import frontend.node.*;
 import frontend.node.decl.*;
@@ -32,6 +30,7 @@ import java.util.*;
 
 
 public class Visitor {
+
     public static final Model model=new Model();
     public static final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
     public static SymbolTable curTable = globalTable;
@@ -43,9 +42,6 @@ public class Visitor {
      * 继承属性，Value的类型，在常变量的定义中，initial中会用到
      */
     public static Type ValueType;
-    /**
-     *
-     */
 
     /**
      * 综合属性:各种指令的结果,特别是对于exp的值
@@ -56,18 +52,42 @@ public class Visitor {
      */
     public static int upConstValue;
     /**
+     *
+     */
+    public static ArrayList<Value> upArrayValue;
+    /**
      * 判断表达式是否可计算的，constExp是一定可计算的
      */
     public static boolean calAble;
     /**
+     * 当前的函数
+     */
+    public static Function curFunc;
+    /**
      * 当前基本块
      */
     public static BasicBlock curBlock;
-
+    /**
+     * 函数声明形参
+     */
+    public static ArrayList<Parameter> parameters;
+    /**
+     * 函数调用实参
+     */
+    public static ArrayList<Value> args;
+    /**
+     * 函数返回类型
+     */
+    public static Type returnType;
+    /**
+     * 在等号左侧，或者是函数调用中的情况，无需加载
+     */
+    public static boolean lValNotLoad;
 
     public static boolean isGlobal(){
         return curTable==globalTable;
     }
+
     private boolean isConstant(LVal lVal) {
 
         SymbolTable symbolTable = curTable;
@@ -87,13 +107,6 @@ public class Visitor {
 
     private boolean isIdentifierUndeclared(token ident) {
         return curTable.getSymbol(ident.token())==null;
-//        SymbolTable symbolTable = curTable;
-//        do {
-//            if (symbolTable.directory.containsKey(ident.token())) return false;
-//            symbolTable = symbolTable.pre;
-//        } while (symbolTable != null);
-//
-//        return true;
     }//未声明的符号
 
     private SymbolType getIdentifierType(token ident) {
@@ -247,7 +260,7 @@ public class Visitor {
         curTable=curTable.pushScope();//进入新的作用域，创建新的符号表入栈
         if (funcDef.funcFParams != null) {
             visitFuncFParams(funcDef.funcFParams);
-            symbol.paramNum = funcDef.funcFParams.funcFParams.size();
+            symbol.paramNum = funcDef.funcFParams.arguments.size();
             symbol.paramList.addAll(curTable.directory.values());
         }
 
@@ -283,7 +296,7 @@ public class Visitor {
 
     private void visitFuncFParams(FuncFParams funcFParams) {
 
-        for (FuncFParam funcFParam : funcFParams.funcFParams) {
+        for (FuncFParam funcFParam : funcFParams.arguments) {
             visitFuncFParam(funcFParam);
         }
     }

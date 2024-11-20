@@ -2,7 +2,6 @@ package frontend.ir;
 
 import frontend.ir.type.FunctionType;
 import frontend.ir.type.Type;
-import frontend.symbol.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,45 +17,37 @@ import java.util.List;
  * declare void @putstr(i8*)
  */
 public class Function extends GlobalValue{
+
+    public static int VarNum=0;
     private final LinkedList<BasicBlock> basicBlocks = new LinkedList<>(); // 函数中的基本块列表
-    class Argument extends Value{
-
-        public Argument(int num, Type valueType) {
-            super(Value.LOCAL_PREFIX+num,valueType);
-        }
-
-        @Override
-        public String ir() {
-            return getType().ir()+" "+ getName();
-        }
-    }
     private final boolean isDefine; // 是否是内建函数
+    private final ArrayList<Parameter> parameters; // 函数的形参列表
 
-    private final List<Argument> arguments = new ArrayList<>(); // 函数的形参列表
-
-
-    private final SymbolTable symbolTable=new SymbolTable();
     private boolean sideEffect = false; // 函数是否具有副作用
     private final HashSet<Function> callers = new HashSet<>(); // 调用该函数的其他函数
 
     /**
-     *
-     * @param name 函数名
+     * @param name       函数名
      * @param returnType 函数的返回类型
-     * @param isDefine 函数是否为自定义
-     * @param args 函数的形参类型
+     * @param parasType   函数的形参类型
+     * @param isDefine   函数是否为自定义
      */
-    public Function(String name, Type returnType, boolean isDefine, Type ...args) {
-        super(name, new FunctionType(returnType,List.of(args)));
-
+    public Function(String name, Type returnType, boolean isDefine,Type... parasType) {
+        super(name, new FunctionType(returnType));
         this.isDefine = isDefine;
-
-        for (int i = 0; i < getType().getParmNum(); i++){
-            Argument argument = new Argument(i, getType().getParameterList().get(i));
-            arguments.add(argument);
-            addFunctionSymbol(argument);
+        this.parameters =new ArrayList<>();
+        for (Type type : parasType) {
+            Parameter parameter = new Parameter(null,type);
+            parameters.add(parameter);
         }
     }
+
+    public Function(String name, Type returnType, ArrayList<Parameter> parameters, boolean isDefine) {
+        super(name, new FunctionType(returnType));
+        this.parameters = parameters;
+        this.isDefine = isDefine;
+    }
+
 
     public void setSideEffect(boolean sideEffect) {
         this.sideEffect = sideEffect;
@@ -68,10 +59,6 @@ public class Function extends GlobalValue{
 
     public HashSet<Function> getCallers() {
         return callers;
-    }
-
-    public void addFunctionSymbol(Value value) {
-
     }
 
     public BasicBlock getFirstBlock() {
@@ -90,20 +77,41 @@ public class Function extends GlobalValue{
         return (FunctionType) super.getType();
     }
 
+    public ArrayList<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public  int getParaNum() {
+        return parameters.size();
+    }
+
+    public void addBasicBlocks(BasicBlock block){
+        basicBlocks.add(block);
+    }
+
     //define dso_local i32 @main(){}
     //declare i32 @getint()
     @Override
     public String ir() {
         StringBuilder sb = new StringBuilder(isDefine ? "define dso_local ":"declare " );
-        sb.append(this.getType().getReturnType().ir()+" "+this.getName()+"(");
-        if (!arguments.isEmpty()) {
-            sb.append(arguments.get(0).ir());
-            for (int i = 1; i < arguments.size(); i++) {
-                sb.append(", ");
-                sb.append(arguments.get(i).ir());
+        sb.append(getType().getReturnType().ir()).append(" ").append(getName()).append("(");
+        if (!parameters.isEmpty()) {
+            if(isDefine){
+                sb.append(parameters.get(0).ir());
+                for (int i = 1; i < parameters.size(); i++) {
+                    sb.append(", ");
+                    sb.append(parameters.get(i).ir());
+                }
+            }else {
+                sb.append(parameters.get(0).getType().ir());
+                for (int i = 1; i < parameters.size(); i++) {
+                    sb.append(", ");
+                    sb.append(parameters.get(i).getType().ir());
+                }
             }
         }
         sb.append(")");
+
         if(isDefine){
             sb.append("{\n");
             for(BasicBlock basicBlock:basicBlocks){

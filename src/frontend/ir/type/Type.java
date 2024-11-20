@@ -11,4 +11,9 @@ public abstract class Type{
 
     public abstract String ir();
 
+    public boolean isInt32(){
+        return false;
+    }
+
+    public  boolean isInt8(){return false;}
 }

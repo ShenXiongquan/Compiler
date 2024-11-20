@@ -1,6 +1,5 @@
 package frontend.ir.instructions.MemInstructions;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.Value;
 import frontend.ir.type.PointerType;
 
@@ -12,8 +11,8 @@ import java.util.ArrayList;
  */
 public class load extends MemInstr{
 
-    public load(Value pointer,BasicBlock block) {
-        super(((PointerType)(pointer.getType())).getPointedType(), new ArrayList<>(){{add(pointer);}},block);
+    public load(Value pointer) {
+        super(((PointerType)(pointer.getType())).getPointedType(), new ArrayList<>(){{add(pointer);}});
     }
 
     @Override

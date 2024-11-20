@@ -32,11 +32,7 @@ public class ConstDecl extends node{
     }
     @Override
     public void visit() {
-        if(bType.type.type()== tokenType.CHARTK){
-            Visitor.ValueType= IntegerType.i8;
-        }else{
-            Visitor.ValueType= IntegerType.i32;
-        }
+        bType.visit();
         constDefs.forEach(ConstDef::visit);
     }
 }//常量声明

@@ -605,10 +605,10 @@ public class Parser {
 
     private FuncFParams parseFuncFParams() {
         FuncFParams funcFParams = new FuncFParams();
-        funcFParams.funcFParams.add(parseFuncFParam());
+        funcFParams.arguments.add(parseFuncFParam());
         while (token.type() == tokenType.COMMA) {
             funcFParams.comma.add(match()) ;
-            funcFParams.funcFParams.add(parseFuncFParam());
+            funcFParams.arguments.add(parseFuncFParam());
         }
         return funcFParams;
     }

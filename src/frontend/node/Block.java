@@ -20,6 +20,8 @@ public class Block extends node{
 
     @Override
     public void visit() {
-
+        for(BlockItem blockItem:blockItems){
+            blockItem.visit();
+        }
     }
 }

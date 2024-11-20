@@ -1,8 +1,9 @@
 package frontend.ir.instructions.MemInstructions;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.type.PointerType;
 import frontend.ir.type.Type;
+
+import java.util.ArrayList;
 
 /**
  * <result> = alloca <type>	分配内存,返回值是一个指针
@@ -11,10 +12,10 @@ public class alloca extends MemInstr{
 
 
     /**
-     * alloca返回值是指令类型
+     * alloca返回值是指针类型
      */
-    public alloca(Type valueType, BasicBlock block) {
-        super(new PointerType(valueType),null, block);
+    public alloca(Type valueType) {
+        super(new PointerType(valueType),new ArrayList<>());
         this.valueType=valueType;
     }
 

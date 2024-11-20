@@ -10,4 +10,5 @@ public class VoidType extends Type{
     public String ir() {
         return "void";
     }
+
 }

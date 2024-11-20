@@ -5,7 +5,6 @@ import frontend.node.decl.Decl;
 public class DeclBlockItem extends BlockItem{
     public Decl decl;
 
-
     @Override
     public void print() {
         decl.print();
@@ -13,6 +12,6 @@ public class DeclBlockItem extends BlockItem{
 
     @Override
     public void visit() {
-
+        decl.visit();
     }
 }

@@ -15,6 +15,6 @@ public class NumberPE extends PrimaryExp{
 
     @Override
     public void visit() {
-        Visitor.upConstValue= Integer.parseInt(number.intConst.token());
+        number.visit();
     }
 }

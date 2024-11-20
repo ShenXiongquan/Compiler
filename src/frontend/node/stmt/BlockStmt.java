@@ -13,6 +13,6 @@ public class BlockStmt extends Stmt {
     }
     @Override
     public void visit() {
-
+        block.visit();
     }
 }

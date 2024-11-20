@@ -1,30 +1,40 @@
 package frontend.ir;
 
 import frontend.ir.constants.Constant;
-import frontend.ir.type.Type;
+import frontend.ir.type.PointerType;
 
 /**
  * 全局变量，全局数组，全局字符串，全局常量，树的第二层
+ * @.str = private unnamed_addr constant [4 x i8] c" - \00", align 1
+ * @.str.1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
  */
 public class GlobalVariable extends GlobalValue{
+    private static int num=0;
     private boolean isConstant;     // 是否是常量
-
     private Constant initial;
 
+    private boolean isPrintStr;
+
     /**
-     * @param name 全局变量名
-     * @param type 变量类型
-     * @param initial 变量的初值
+     * @param name       全局变量名
+     * @param initial    变量的初值
      * @param isConstant 是否为常量
      */
-    public GlobalVariable(String name, Type type, Constant initial,boolean isConstant) {
-        super(name, type);
+    public GlobalVariable(String name, Constant initial, boolean isConstant) {
+        super(name, new PointerType(initial.getType()));
         this.isConstant = isConstant;
         this.initial=initial;
+        this.isPrintStr=false;
     }
 
+    public GlobalVariable(Constant initial){
+        super(".str."+(num++),new PointerType(initial.getType()));
+        this.initial=initial;
+        this.isPrintStr=true;
+    }
     @Override
     public String ir() {
-        return getName() + " = dso_local " + ((isConstant) ? "constant " : "global ") + getType().ir() + " " +initial.ir();
+        if(isPrintStr)return getName()+" = private unnamed_addr constant "+ ((PointerType)getType()).getPointedType().ir() + " " +initial.ir()+", align 1";
+        else return getName() + " = dso_local " + ((isConstant) ? "constant " : "global ") + ((PointerType)getType()).getPointedType().ir() + " " +initial.ir();
     }
 }

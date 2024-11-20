@@ -1,6 +1,5 @@
 package frontend.ir.instructions.BinaryOperations;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.Value;
 import frontend.ir.type.IntegerType;
 
@@ -8,8 +7,8 @@ import frontend.ir.type.IntegerType;
  * <result> = add <ty> <op1>, <op2>
  */
 public class add extends BinaryOperation{
-    public add( Value op1, Value op2, BasicBlock parent){
-        super(new IntegerType(32), op1, op2, parent);
+    public add( Value op1, Value op2){
+        super(IntegerType.i32, op1, op2);
     }
 
     @Override

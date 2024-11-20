@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FuncFParams extends node{
-    public final List<FuncFParam> funcFParams=new ArrayList<>();
+    public final List<FuncFParam> arguments =new ArrayList<>();
     public List<token> comma=new ArrayList<>();
 
     public void print(){
-        funcFParams.get(0).print();
-        for(int i=1;i<funcFParams.size();i++){
+        arguments.get(0).print();
+        for(int i = 1; i< arguments.size(); i++){
             comma.get(i-1).print();
-            funcFParams.get(i).print();
+            arguments.get(i).print();
         }
         myWriter.writeNonTerminal("FuncFParams");
     }
@@ -22,5 +22,8 @@ public class FuncFParams extends node{
     @Override
     public void visit() {
 
+        for(FuncFParam funcFParam: arguments){
+            funcFParam.visit();
+        }
     }
 }//函数形参表

@@ -22,40 +22,47 @@ public class MulExp extends node {
         unaryExp.print();
         myWriter.writeNonTerminal("MulExp");
     }
+
     @Override
     public void visit() {
-        if(Visitor.calAble){
-            if(mulExp!=null){
+        if (Visitor.calAble) {
+            if (mulExp != null) {
                 mulExp.visit();
-                int a=Visitor.upConstValue;
+                int a = Visitor.upConstValue;
                 unaryExp.visit();
-                int b=Visitor.upConstValue;
-                if(op.type()== tokenType.MULT){
-                    Visitor.upConstValue =a*b;
-                }else if(op.type()==tokenType.DIV){
-                    Visitor.upConstValue =a/b;
+                int b = Visitor.upConstValue;
+                if (op.type() == tokenType.MULT) {
+                    Visitor.upConstValue = a * b;
+                } else if (op.type() == tokenType.DIV) {
+                    Visitor.upConstValue = a / b;
 
-                }else {
-                    Visitor.upConstValue =a%b;
+                } else {
+                    Visitor.upConstValue = a % b;
                 }
-                System.out.println("mul result:"+Visitor.upConstValue);
-            }else{
+                System.out.println("mul result:" + Visitor.upConstValue);
+            } else {
                 unaryExp.visit();
             }
-        }else{
-            if(mulExp!=null){
+        } else {
+            if (mulExp != null) {
                 mulExp.visit();
-                Value a=Visitor.upValue;
+                Value a = zext(Visitor.upValue);
                 unaryExp.visit();
-                Value b=Visitor.upValue;
-                if(op.type()== tokenType.MULT){
-                    Visitor.curBlock.addInstruction(new mul( a,b,Visitor.curBlock));
-                }else if(op.type()==tokenType.DIV){
-                    Visitor.curBlock.addInstruction(new sdiv( a,b,Visitor.curBlock));
-                }else {
-                    Visitor.curBlock.addInstruction(new srem( a,b,Visitor.curBlock));
+                Value b = zext(Visitor.upValue);
+                if (op.type() == tokenType.MULT) {
+                    mul mul = new mul(a, b);
+                    Visitor.curBlock.addInstruction(mul);
+                    Visitor.upValue = mul;
+                } else if (op.type() == tokenType.DIV) {
+                    sdiv sdiv = new sdiv(a, b);
+                    Visitor.curBlock.addInstruction(sdiv);
+                    Visitor.upValue = sdiv;
+                } else {
+                    srem srem = new srem(a, b);
+                    Visitor.curBlock.addInstruction(srem);
+                    Visitor.upValue = srem;
                 }
-            }else{
+            } else {
                 unaryExp.visit();
             }
         }

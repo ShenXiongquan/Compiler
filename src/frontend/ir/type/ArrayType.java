@@ -9,19 +9,19 @@ package frontend.ir.type;
  * @c = dso_local global [8 x i8] c"foobar\00\00", align 1
  */
 public class ArrayType extends Type{
-    private Type elementType; // 数组的元素类型
+    private IntegerType elementType; // 数组的元素类型
     private int size;
     private int elementNum;
 
     // 构造方法
     public ArrayType(Type elementType, int elementNum) {
-        this.elementType = elementType;
+        this.elementType = (IntegerType) elementType;
         this.elementNum =elementNum;
         this.size = elementNum*elementType.getSize();
     }
 
     // 获取元素类型
-    public Type getElementType() {
+    public IntegerType getElementType() {
         return elementType;
     }
 

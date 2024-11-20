@@ -1,5 +1,7 @@
 package frontend.node;
 
+import frontend.Visitor;
+import frontend.ir.constants.ConstInt;
 import frontend.tool.myWriter;
 
 public class Exp extends node{
