@@ -6,15 +6,14 @@ import frontend.ir.Value;
 import frontend.ir.constants.ConstInt;
 import frontend.ir.constants.ConstStr;
 import frontend.ir.instructions.MemInstructions.getelementptr;
-import frontend.ir.instructions.OtherInstructions.call;
+import frontend.ir.instructions.MixedInstructions.call;
 import frontend.ir.type.ArrayType;
 import frontend.ir.type.IntegerType;
 import frontend.node.Exp;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PrintfStmt extends Stmt {
     public token printf;
@@ -42,12 +41,13 @@ public class PrintfStmt extends Stmt {
     }
     @Override
     public void visit() {
-
-        String rawString = stringConst.token().substring(1,stringConst.token().length()-1); // 获取字符串常量的值
+        // 获取字符串常量的值（去除前后的引号）
+        String rawString = stringConst.token().substring(1, stringConst.token().length() - 1);
         List<String> parts = new ArrayList<>();
+        Map<String, GlobalVariable> stringPool = new HashMap<>(); // 获取全局字符串池
 
         int lastIndex = 0;
-        // 遍历 stringConst，找到占位符 (%d, %c)
+        // 遍历 rawString，找到占位符 (%d, %c)
         for (int i = 0; i < rawString.length(); i++) {
             if (rawString.charAt(i) == '%' && i + 1 < rawString.length()) {
                 // 添加之前的普通字符串部分
@@ -65,33 +65,45 @@ public class PrintfStmt extends Stmt {
             parts.add(rawString.substring(lastIndex));
         }
 
-        for (int i=0,j=0;i< parts.size();i++) {
-            String constStr=parts.get(i);
-            if(constStr.equals("%d")){
+        for (int i = 0, j = 0; i < parts.size(); i++) {
+            String constStr = parts.get(i);
+            if (constStr.equals("%d")) {
+                // 处理 %d 占位符
                 exps.get(j++).visit();
-                Value output=zext(Visitor.upValue);
-                call call=new call(Visitor.model.putint(),output);
+                Value output = zext(Visitor.upValue);
+                call call = new call(Visitor.model.putint(), output);
                 Visitor.curBlock.addInstruction(call);
             } else if (constStr.equals("%c")) {
+                // 处理 %c 占位符
                 exps.get(j++).visit();
-                Value output=zext(Visitor.upValue);
-                call call=new call(Visitor.model.putchar(),output);
+                Value output = zext(Visitor.upValue);
+                call call = new call(Visitor.model.putchar(), output);
                 Visitor.curBlock.addInstruction(call);
-            }else {
-                int len=constStr.length();
-                for(int t=0;t<len;t++){
-                    if(constStr.charAt(t)=='\\'){
-                        len--;t++;
+            } else {
+                // 处理普通字符串部分
+                if (!stringPool.containsKey(constStr)) {
+                    // 如果字符串未声明，创建全局变量并加入全局字符串池
+                    int len = constStr.length();
+                    for (int t = 0; t < len; t++) {
+                        if (constStr.charAt(t) == '\\') {
+                            len--;t++;
+                        }
                     }
+                    GlobalVariable printStr = new GlobalVariable(new ConstStr(new ArrayType(IntegerType.i8, len + 1), constStr));
+                    Visitor.model.addGlobalStr(printStr);
+                    stringPool.put(constStr, printStr); // 缓存该字符串到池中
                 }
-                GlobalVariable printStr=new GlobalVariable(new ConstStr(new ArrayType(IntegerType.i8,len+1),constStr));
-                Visitor.model.addGlobalStr(printStr);
-                getelementptr getelementptr=new getelementptr(printStr, ConstInt.zeroI64,ConstInt.zeroI64);
+
+                // 获取已声明的全局变量
+                GlobalVariable printStr = stringPool.get(constStr);
+
+                // 构建 getelementptr 和打印调用指令
+                getelementptr getelementptr = new getelementptr(printStr, ConstInt.zeroI64, ConstInt.zeroI64);
                 Visitor.curBlock.addInstruction(getelementptr);
-                call call=new call(Visitor.model.putstr(),getelementptr);
+                call call = new call(Visitor.model.putstr(), getelementptr);
                 Visitor.curBlock.addInstruction(call);
             }
-
         }
     }
+
 }

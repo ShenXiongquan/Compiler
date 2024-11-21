@@ -34,13 +34,23 @@ public class UnaryOpUE extends UnaryExp {
             if (unaryOp.op.type() == tokenType.MINU) {
                 Value op1 = ConstInt.zero;
                 Value op2 = zext(Visitor.upValue);
-                sub sub = new sub(op1, op2);
-                Visitor.curBlock.addInstruction(sub);
-                Visitor.upValue = sub;
+                if(op2 instanceof ConstInt){
+                    Visitor.upConstValue=-Visitor.upConstValue;
+                    Visitor.upValue=new ConstInt(IntegerType.i32,Visitor.upConstValue);
+                }else{
+                    sub sub = new sub(op1, op2);
+                    Visitor.curBlock.addInstruction(sub);
+                    Visitor.upValue = sub;
+                }
             } else if (unaryOp.op.type() == tokenType.NOT) {
-                icmp icmp=new icmp(frontend.ir.instructions.BinaryOperations.icmp.EQ,Visitor.upValue,new ConstInt((IntegerType) Visitor.upValue.getType(),0));
-                Visitor.curBlock.addInstruction(icmp);
-                Visitor.upValue=icmp;
+                if(Visitor.upValue instanceof ConstInt){
+                    Visitor.upConstValue=Visitor.upConstValue == 0 ? 1 : 0;
+                    Visitor.upValue=new ConstInt(IntegerType.i1,Visitor.upConstValue);
+                }else{
+                    icmp ICMP=new icmp(icmp.EQ,zext(Visitor.upValue),ConstInt.zero);
+                    Visitor.curBlock.addInstruction(ICMP);
+                    Visitor.upValue=ICMP;
+                }
             }
         }
 

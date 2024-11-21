@@ -1,5 +1,8 @@
 package frontend.node.stmt;
 
+import frontend.Visitor;
+import frontend.ir.BasicBlock;
+import frontend.ir.instructions.ControlFlowInstructions.br;
 import frontend.node.Cond;
 
 import frontend.token.token;
@@ -11,10 +14,9 @@ public class IfStmt extends Stmt {
     public Cond cond;
 
     public token rparent;
-    public Stmt thenStmt;
-
+    public Stmt trueStmt;
     public token elseToken;
-    public Stmt elseStmt;  // 这可能为null，如果没有else分支的话
+    public Stmt falseStmt;  // 这可能为null，如果没有else分支的话
 
     @Override
     public void print() {
@@ -22,15 +24,34 @@ public class IfStmt extends Stmt {
         lparent.print();
         cond.print();
         if (rparent != null) rparent.print();
-        thenStmt.print();
+        trueStmt.print();
         if (elseToken != null) {
             elseToken.print();
-            elseStmt.print();
+            falseStmt.print();
         }
         myWriter.writeNonTerminal("Stmt");
     }
     @Override
     public void visit() {
+        Visitor.trueBlock=new BasicBlock();
+        BasicBlock nextBlock=new BasicBlock();
+        Visitor.falseBlock=(falseStmt!=null)?new BasicBlock():nextBlock;
 
+        cond.visit();
+
+        Visitor.curBlock=Visitor.trueBlock;
+        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        trueStmt.visit();
+        br br=new br(nextBlock);
+        Visitor.curBlock.addInstruction(br);
+        if(falseStmt!=null){
+            Visitor.curBlock=Visitor.falseBlock;
+            Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+            falseStmt.visit();
+            br=new br(nextBlock);
+            Visitor.curBlock.addInstruction(br);
+        }
+        Visitor.curBlock=nextBlock;
+        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
     }
 }

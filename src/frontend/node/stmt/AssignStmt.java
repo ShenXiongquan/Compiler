@@ -39,6 +39,7 @@ public class AssignStmt extends Stmt {
         if(src instanceof ConstInt) src=new ConstInt(expectedType,((ConstInt) src).getValue());
         else if (expectedType == IntegerType.i32) src = zext(src);
         else src = trunc(src);
+
         store store = new store(src, dst);
         Visitor.curBlock.addInstruction(store);
     }

@@ -3,8 +3,8 @@ package frontend.node;
 
 import frontend.Visitor;
 import frontend.ir.Value;
-import frontend.ir.instructions.OtherInstructions.trunc;
-import frontend.ir.instructions.OtherInstructions.zext;
+import frontend.ir.instructions.MixedInstructions.trunc;
+import frontend.ir.instructions.MixedInstructions.zext;
 
 
 public abstract class node {

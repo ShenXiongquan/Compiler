@@ -1,5 +1,6 @@
 package frontend.ir;
 
+import frontend.Visitor;
 import frontend.ir.instructions.ControlFlowInstructions.ControlFlowInstr;
 import frontend.ir.type.LabelType;
 
@@ -28,11 +29,11 @@ public class BasicBlock extends Value {
     private List<BasicBlock> successors;     // 后继基本块列表
 
     // 构造函数
-    public BasicBlock(Value parent) {
+    public BasicBlock() {
         super("%"+(Function.VarNum++), new LabelType());
         this.predecessors = new ArrayList<>();
         this.successors = new ArrayList<>();
-        this.parent = parent;
+        this.parent = Visitor.curFunc;
     }
 
     /**

@@ -33,7 +33,6 @@ public class br extends ControlFlowInstr {
      */
     public br(Value condition, BasicBlock trueBlock, BasicBlock falseBlock) {
         super(new VoidType(), new ArrayList<>() {{
-            add(condition);
             add(trueBlock);
             add(falseBlock);
         }});

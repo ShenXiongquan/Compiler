@@ -18,6 +18,6 @@ public class ExpConstInitVal extends ConstInitVal{
     @Override
     public void visit() {
          constExp.visit();
-         Visitor.upValue=new ConstInt((IntegerType) Visitor.ValueType,Visitor.upConstValue);
+         Visitor.upValue=new ConstInt((IntegerType) Visitor.ValueType,Visitor.upConstValue);//全局和局部常量
     }
 }

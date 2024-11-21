@@ -83,7 +83,24 @@ public class Visitor {
      * 在等号左侧，或者是函数调用中的情况，无需加载
      */
     public static boolean lValNotLoad;
+    /**
+     * 正确块的栈
+     */
+    public static BasicBlock trueBlock;
+    /**
+     * 错误块的栈
+     */
+    public static BasicBlock falseBlock;
+    /**
+     * lor之间基本块的跳转
+     */
+    public static final ArrayDeque<BasicBlock> LorBlocks=new ArrayDeque<>();//最一组lorBlocks
+    /**
+     * and之间基本快的跳转
+     */
+    public static List<ArrayDeque<BasicBlock>> AndBlocks;//里面每个队列存一组Blocks,最右侧的blocks加入正确的blocks
 
+    public static int AndIndex;
     public static boolean isGlobal(){
         return curTable==globalTable;
     }
@@ -361,9 +378,9 @@ public class Visitor {
 
         } else if (stmt instanceof IfStmt ifStmt) {
             visitCond(ifStmt.cond);
-            visitStmt(ifStmt.thenStmt);
-            if (ifStmt.elseStmt != null) {
-                visitStmt(ifStmt.elseStmt);
+            visitStmt(ifStmt.trueStmt);
+            if (ifStmt.falseStmt != null) {
+                visitStmt(ifStmt.falseStmt);
             }
 
         } else if (stmt instanceof LoopStmt loopStmt) {

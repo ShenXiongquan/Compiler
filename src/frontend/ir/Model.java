@@ -11,7 +11,7 @@ public class Model {
      * model中的GlobalValue
      */
     private static int strNum=5;
-    private LinkedList<GlobalValue> globalValues=new LinkedList<>();
+    private final LinkedList<GlobalValue> globalValues=new LinkedList<>();
 
     public void addGlobalValue(GlobalValue globalValue){
         globalValues.add(globalValue);

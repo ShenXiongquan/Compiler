@@ -1,10 +1,8 @@
-package frontend.ir.instructions.OtherInstructions;
+package frontend.ir.instructions.MixedInstructions;
 
-import frontend.ir.BasicBlock;
 import frontend.ir.Function;
 import frontend.ir.Value;
 import frontend.ir.instructions.Instruction;
-import frontend.ir.type.Type;
 import frontend.ir.type.VoidType;
 
 import java.util.ArrayList;

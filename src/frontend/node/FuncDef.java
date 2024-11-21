@@ -49,7 +49,7 @@ public class FuncDef extends node{
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
         Visitor.curTable.pre.addSymbol(new Symbol(ident.token(), function));
-        Visitor.curBlock= new BasicBlock(function);
+        Visitor.curBlock= new BasicBlock();
         Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
 
         for(Parameter parameter :Visitor.parameters){

@@ -19,8 +19,8 @@ public class ConstInt extends Constant{
         this.value = value;
     }
 
-    public void setBitWidth(int bitWidth) {
-        this.bitWidth = bitWidth;
+    public boolean isZero(){
+        return this.value==0;
     }
 
     public int getValue() {

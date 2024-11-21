@@ -1,15 +1,12 @@
 package frontend.node.unaryExp;
 
 import frontend.Visitor;
-import frontend.ir.Parameter;
 import frontend.ir.Value;
-import frontend.ir.instructions.OtherInstructions.call;
+import frontend.ir.instructions.MixedInstructions.call;
 import frontend.node.FuncRParams;
 import frontend.token.token;
 import frontend.tool.myWriter;
 import frontend.ir.Function;
-
-import java.util.ArrayList;
 
 public class FuncCallUE extends UnaryExp{
     public token lparent;

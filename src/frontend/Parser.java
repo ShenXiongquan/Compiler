@@ -390,10 +390,10 @@ public class Parser {
             if (token.type() != tokenType.RPARENT) errorManager.handleError(offset2Token(-1).line(), "j");
             else stmt.rparent = match();
 
-            stmt.thenStmt = parseStmt();
+            stmt.trueStmt = parseStmt();
             if (token.type() == tokenType.ELSETK) {
                 stmt.elseToken = match();
-                stmt.elseStmt = parseStmt();
+                stmt.falseStmt = parseStmt();
             }
             return stmt;
         } else if (token.type() == tokenType.FORTK) {
@@ -583,7 +583,7 @@ public class Parser {
             eqExp = new EqExp();
             eqExp.eqExp = eqExpPre;
 
-            eqExp.op = match();
+            eqExp.eqOp = match();
 
             eqExp.relExp = parseRelExp();
         }

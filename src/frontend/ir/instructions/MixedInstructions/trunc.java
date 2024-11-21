@@ -1,4 +1,4 @@
-package frontend.ir.instructions.OtherInstructions;
+package frontend.ir.instructions.MixedInstructions;
 
 import frontend.ir.Function;
 import frontend.ir.Value;
