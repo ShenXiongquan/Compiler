@@ -26,7 +26,7 @@ public class CompUnit extends node{
     }
 
     public void visit(){
-
+        System.out.println("全局符号表:"+Visitor.curTable.id);
         //加入已有的声明函数
         Visitor.model.addGlobalValue(new Function("getint",IntegerType.i32,false));
         Visitor.model.addGlobalValue(new Function("getchar",IntegerType.i32,false));
@@ -37,6 +37,7 @@ public class CompUnit extends node{
         decls.forEach(Decl::visit);
         funcDefs.forEach(FuncDef::visit);
         MainFunctionDef.visit();
+
     }
 
 

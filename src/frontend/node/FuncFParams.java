@@ -1,5 +1,6 @@
 package frontend.node;
 
+import frontend.ir.Parameter;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -19,11 +20,16 @@ public class FuncFParams extends node{
         myWriter.writeNonTerminal("FuncFParams");
     }
 
+
+    public void visit(ArrayList<Parameter> parameters) {
+
+        for(FuncFParam funcFParam: arguments){
+            funcFParam.visit(parameters);
+        }
+    }
+
     @Override
     public void visit() {
 
-        for(FuncFParam funcFParam: arguments){
-            funcFParam.visit();
-        }
     }
 }//函数形参表

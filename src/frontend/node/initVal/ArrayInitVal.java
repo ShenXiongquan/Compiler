@@ -37,30 +37,29 @@ public class ArrayInitVal extends InitVal {
     public void visit() {
         if (Visitor.isGlobal()) {//全局数组初始化
             if (exps.isEmpty()) {
-                Visitor.upValue = new Zeroinitializer((ArrayType) Visitor.ValueType);
+                Visitor.upValue = new Zeroinitializer(new ArrayType(Visitor.ValueType, Visitor.ArraySize));
             } else {
                 ArrayList<ConstInt> array = new ArrayList<>();
-                int num = ((ArrayType) Visitor.ValueType).getElementNum();
-                IntegerType elementType = ((ArrayType) Visitor.ValueType).getElementType();
-                for (int i = 0; i < num; i++) {
+                for (int i = 0; i < Visitor.ArraySize; i++) {
                     if (i < exps.size()) {
                         exps.get(i).visit();
-                        array.add(new ConstInt(elementType, Visitor.upConstValue));
+                        array.add(new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue));
                     } else {
-                        array.add(new ConstInt(elementType, 0));
+                        array.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
                     }
                 }
-                Visitor.upValue = new ConstArray((ArrayType) Visitor.ValueType, array);
+                Visitor.upValue = new ConstArray(new ArrayType(Visitor.ValueType, Visitor.ArraySize), array);
             }
         } else {//局部数组初始化
-            for (Exp exp : exps) {
-                exp.visit();
-                IntegerType elementType = ((ArrayType) Visitor.ValueType).getElementType();
-                if (Visitor.upValue instanceof ConstInt) Visitor.upValue = new ConstInt(elementType, ((ConstInt) Visitor.upValue).getValue());
-                else if (elementType.isInt32()) Visitor.upValue = zext(Visitor.upValue);
-                else Visitor.upValue = trunc(Visitor.upValue);
+            for (int i = 0; i < Visitor.ArraySize; i++) {
+                if (i < exps.size()) {
+                    exps.get(i).visit();
+                    if (Visitor.ValueType.isInt32()) Visitor.upArrayValue.add(zext(Visitor.upValue));
+                    else Visitor.upArrayValue.add(trunc(Visitor.upValue));
 
-                Visitor.upArrayValue.add(Visitor.upValue);
+                } else {
+                    Visitor.upArrayValue.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
+                }
             }
         }
     }

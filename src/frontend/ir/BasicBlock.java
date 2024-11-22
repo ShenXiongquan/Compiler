@@ -2,6 +2,7 @@ package frontend.ir;
 
 import frontend.Visitor;
 import frontend.ir.instructions.ControlFlowInstructions.ControlFlowInstr;
+import frontend.ir.instructions.ControlFlowInstructions.br;
 import frontend.ir.type.LabelType;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import frontend.ir.instructions.Instruction;
  * 结束指令：基本块的最后一条指令是一个“终结指令”（Terminator Instruction），如br（条件跳转或无条件跳转）或ret（返回），这些指令控制着程序的下一步执行流向。
  */
 public class BasicBlock extends Value {
+    private static int blockNum=0;
+
     /**
      * 基本块包含的指令
      */
@@ -30,7 +33,7 @@ public class BasicBlock extends Value {
 
     // 构造函数
     public BasicBlock() {
-        super("%"+(Function.VarNum++), new LabelType());
+        super("%block"+(blockNum++), new LabelType());
         this.predecessors = new ArrayList<>();
         this.successors = new ArrayList<>();
         this.parent = Visitor.curFunc;
@@ -109,6 +112,7 @@ public class BasicBlock extends Value {
         for (Instruction inst : instructions) {
             sb.append("    ").append(inst.ir()).append("\n");
         }
+
         return sb.toString();
     }
 }

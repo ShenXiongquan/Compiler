@@ -30,9 +30,7 @@ public class GetIntStmt extends Stmt {
     }
     @Override
     public void visit() {
-        Visitor.lValNotLoad=true;
         lVal.visit();
-        Visitor.lValNotLoad=false;
         call call=new call(Visitor.model.getint());
         Visitor.curBlock.addInstruction(call);
         IntegerType expectedType= (IntegerType) ((PointerType)Visitor.upValue.getType()).getPointedType();

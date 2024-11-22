@@ -19,7 +19,7 @@ public abstract class Value {
      */
 
 
-    private String llvm_name;//value的llvm表示
+    protected String llvm_name;//value的llvm表示
     /**
      * 一切value皆有自己的类型
      */

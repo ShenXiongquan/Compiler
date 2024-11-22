@@ -33,25 +33,30 @@ public class IfStmt extends Stmt {
     }
     @Override
     public void visit() {
-        Visitor.trueBlock=new BasicBlock();
-        BasicBlock nextBlock=new BasicBlock();
-        Visitor.falseBlock=(falseStmt!=null)?new BasicBlock():nextBlock;
-
+        BasicBlock trueBlock=new BasicBlock();
+        BasicBlock endBlock=new BasicBlock();
+        BasicBlock falseBlock=(falseStmt!=null)?new BasicBlock():endBlock;
+        Visitor.trueBlock.add(trueBlock);
+        Visitor.falseBlock.add(falseBlock);
+       //if()
         cond.visit();
 
-        Visitor.curBlock=Visitor.trueBlock;
+        Visitor.curBlock=trueBlock;
         Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
         trueStmt.visit();
-        br br=new br(nextBlock);
+        br br=new br(endBlock);
         Visitor.curBlock.addInstruction(br);
-        if(falseStmt!=null){
-            Visitor.curBlock=Visitor.falseBlock;
+
+        if(falseStmt!=null){//else{}
+            Visitor.curBlock=falseBlock;
             Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
             falseStmt.visit();
-            br=new br(nextBlock);
+            br=new br(endBlock);
             Visitor.curBlock.addInstruction(br);
         }
-        Visitor.curBlock=nextBlock;
+
+
+        Visitor.curBlock=endBlock;
         Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
     }
 }

@@ -25,7 +25,7 @@ public class ConstArray extends Constant{
     @Override
     public String ir() {
         StringBuilder sb = new StringBuilder("[");
-        int len=((ArrayType)getType()).getElementNum();
+        int len=((ArrayType)getType()).getArraySize();
         for (int i = 0; i <len ; i++){
             sb.append(getArrayElement(i).getType().ir()).append(" ").append(getArrayElement(i).getName());
             if( i<len-1 )sb.append(", ");

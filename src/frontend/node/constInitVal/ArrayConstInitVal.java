@@ -40,22 +40,18 @@ public class ArrayConstInitVal extends ConstInitVal {
 
 
             if(Visitor.isGlobal()&&constExps.isEmpty()){//全局空数组
-               Visitor.upValue=new Zeroinitializer((ArrayType) Visitor.ValueType);
+               Visitor.upValue=new Zeroinitializer(new ArrayType(Visitor.ValueType,Visitor.ArraySize));
             }else {//全局非空数组和局部常量数组
                 ArrayList<ConstInt> array = new ArrayList<>();
-                int num = ((ArrayType) Visitor.ValueType).getElementNum();
-                IntegerType elementType= ((ArrayType) Visitor.ValueType).getElementType();
-
-                for (int i = 0; i < num; i++) {
+                for (int i = 0; i < Visitor.ArraySize; i++) {
                     if(i<constExps.size()){
                         constExps.get(i).visit();
-                        array.add(new ConstInt(elementType,Visitor.upConstValue));
+                        array.add(new ConstInt((IntegerType) Visitor.ValueType,Visitor.upConstValue));
                     }else {
-                        array.add(new ConstInt(elementType, 0));
+                        array.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
                     }
                 }
-
-                Visitor.upValue = new ConstArray((ArrayType) Visitor.ValueType,array);
+                Visitor.upValue = new ConstArray(new ArrayType(Visitor.ValueType,Visitor.ArraySize),array);
             }
     }
 }

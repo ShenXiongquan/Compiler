@@ -31,7 +31,7 @@ public class LVal extends node {
     }
 
     /**
-     * LVal 必须是当前作用域内、该 Exp 语句之前有定义的变量或常量；对于赋值号左边的 LVal 必须是变量,难处理，可能存在bug
+     * LVal传常量或者地址，加不加载由上层来决定
      */
     @Override
     public void visit() {
@@ -39,45 +39,42 @@ public class LVal extends node {
         Symbol symbol = Visitor.curTable.getSymbol(ident.token());
         Value lVal = symbol.value;
 
-        if (lVal.getType() instanceof IntegerType) {//常量
-            if (Visitor.calAble) {
-                Visitor.upConstValue = ((ConstInt) lVal).getValue();
-            }
+        if (lVal.getType() instanceof IntegerType) {//传常量
+            Visitor.upConstValue = ((ConstInt) lVal).getValue();
             Visitor.upValue = new ConstInt(IntegerType.i32, ((ConstInt) lVal).getValue());
-
-        } else if (lVal.getType() instanceof PointerType pointerType) {//指针变量,比如alloca分配得到的地址
+        } else if (lVal.getType() instanceof PointerType pointerType) {//传地址
             Type pointedType = pointerType.getPointedType();
             if (pointedType instanceof IntegerType) {
                 Visitor.upValue = lVal;
             } else if (pointedType instanceof ArrayType) {
-                //对于非形参的数组
+                //对于数组
                 if (exp == null) {
                     getelementptr getelementptr = new getelementptr(lVal, ConstInt.zero, ConstInt.zero);//获取数组基地址
                     Visitor.curBlock.addInstruction(getelementptr);
-                    Visitor.upValue = getelementptr;
+                    Visitor.upValue = getelementptr;//传数组基地址
                 } else {
-                    exp.visit();
+                    exp.visit();//数组索引
                     Visitor.upValue = zext(Visitor.upValue);
+
                     getelementptr getelementptr = new getelementptr(lVal, ConstInt.zero, Visitor.upValue);//获取数组元素地址
                     Visitor.curBlock.addInstruction(getelementptr);
-                    Visitor.upValue = getelementptr;
+                    Visitor.upValue = getelementptr;//传数组元素地址
                 }
             } else {
-                //数组形参的使用会涉及二重指针
-                if (exp == null) {
+                //数组形参的使用会涉及二重指针,假设a是函数参数,f(int a[])
+                if (exp == null) { //a;
                     load load = new load(lVal);//获取数组基地址
                     Visitor.curBlock.addInstruction(load);
-                    Visitor.upValue = load;
-                } else {
-                    load load = new load(lVal);
+                    Visitor.upValue = load;//传数组基地址
+                } else { //a[exp];
+                    load load = new load(lVal);//获取数组基地址
                     Visitor.curBlock.addInstruction(load);
-                    exp.visit();
+                    exp.visit();//获取数组索引
                     Visitor.upValue = zext(Visitor.upValue);
                     getelementptr getelementptr = new getelementptr(load, Visitor.upValue);//获取数组元素地址
                     Visitor.curBlock.addInstruction(getelementptr);
-                    Visitor.upValue = getelementptr;
+                    Visitor.upValue = getelementptr;//传数组元素地址
                 }
-
             }
         } else {
             throw new UnsupportedOperationException("Unsupported type: " + lVal.getType().ir());

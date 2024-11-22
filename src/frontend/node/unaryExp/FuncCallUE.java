@@ -8,6 +8,8 @@ import frontend.token.token;
 import frontend.tool.myWriter;
 import frontend.ir.Function;
 
+import java.util.ArrayList;
+
 public class FuncCallUE extends UnaryExp{
     public token lparent;
     public token ident;
@@ -30,10 +32,11 @@ public class FuncCallUE extends UnaryExp{
 
         Function function= (Function) Visitor.curTable.getSymbol(ident.token()).value;
 
-        Visitor.parameters=function.getParameters();
-        if(funcRParams!=null)funcRParams.visit();
+        ArrayList<Value> args=new ArrayList<>();
+        if(funcRParams!=null)funcRParams.visit(function.getParameters(),args);
 
-        call call=new call(function,Visitor.args.toArray(Value[]::new));
+        System.out.println("函数实参个数:"+args);
+        call call=new call(function,args.toArray(Value[]::new));
         Visitor.curBlock.addInstruction(call);
         Visitor.upValue=call;
     }

@@ -8,6 +8,7 @@ import frontend.ir.instructions.ControlFlowInstructions.ret;
 import frontend.ir.instructions.Instruction;
 import frontend.ir.instructions.MemInstructions.alloca;
 import frontend.ir.instructions.MemInstructions.store;
+import frontend.ir.type.VoidType;
 import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -40,19 +41,19 @@ public class FuncDef extends node{
         funcType.visit();
 
         Visitor.curTable=Visitor.curTable.pushScope();
-        Visitor.parameters =new ArrayList<>();
+        ArrayList<Parameter>parameters =new ArrayList<>();
 
         Function.VarNum=0;
-        if(funcFParams!=null) funcFParams.visit();
+        if(funcFParams!=null) funcFParams.visit(parameters);
 
-        Function function=new Function(ident.token(),Visitor.returnType,Visitor.parameters,true);
+        Function function=new Function(ident.token(),Visitor.returnType,parameters,true);
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
         Visitor.curTable.pre.addSymbol(new Symbol(ident.token(), function));
         Visitor.curBlock= new BasicBlock();
         Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
 
-        for(Parameter parameter :Visitor.parameters){
+        for(Parameter parameter :parameters){
             System.out.println("函数参数类型: "+parameter.getType().ir());
             alloca alloca = new alloca(parameter.getType());
             Visitor.curBlock.addInstruction(alloca);
@@ -63,12 +64,11 @@ public class FuncDef extends node{
         }
 
         block.visit();
+        Visitor.curTable=Visitor.curTable.popScope();
         Instruction last=Visitor.curBlock.getLastInstruction();
-        if(!Visitor.curBlock.isJumpInstruction(last)){
+        if(function.getType().getReturnType() instanceof VoidType&&!Visitor.curBlock.isJumpInstruction(last)){
            ret ret=new ret();
            Visitor.curBlock.addInstruction(ret);
         }
-        Visitor.curTable=Visitor.curTable.popScope();
-
     }
 }//函数声明FuncDef → FuncType Ident '(' [FuncFParams] ')' Block

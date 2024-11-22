@@ -32,8 +32,5 @@ public class ConstInt extends Constant{
         return String.valueOf(value);
     }
 
-    @Override
-    public String getName() {
-        return ir();
-    }
+
 }

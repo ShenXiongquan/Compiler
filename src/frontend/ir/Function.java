@@ -1,5 +1,8 @@
 package frontend.ir;
 
+import frontend.ir.instructions.ControlFlowInstructions.ControlFlowInstr;
+import frontend.ir.instructions.ControlFlowInstructions.br;
+import frontend.ir.instructions.Instruction;
 import frontend.ir.type.FunctionType;
 import frontend.ir.type.Type;
 
@@ -114,7 +117,8 @@ public class Function extends GlobalValue{
 
         if(isDefine){
             sb.append("{\n");
-            for(BasicBlock basicBlock:basicBlocks){
+            for (BasicBlock basicBlock : basicBlocks) {
+                if(basicBlock.getInstructions().isEmpty())continue;
                 sb.append(basicBlock.ir()).append("\n");
             }
             sb.append("}");
@@ -124,3 +128,8 @@ public class Function extends GlobalValue{
 
 
 }
+
+// 检查是否需要添加无条件跳转
+//                if (basicBlock.getInstructions().isEmpty() || !(basicBlock.getLastInstruction() instanceof ControlFlowInstr)) {
+//                        basicBlock.addInstruction(new br(basicBlocks.get(i+1)));
+//                        }

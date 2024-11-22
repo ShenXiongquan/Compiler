@@ -44,15 +44,19 @@ public class Visitor {
     public static Type ValueType;
 
     /**
+     * 继承属性，数组元素个数
+     */
+    public static int ArraySize;
+    /**
      * 综合属性:各种指令的结果,特别是对于exp的值
      */
     public static Value upValue;
     /**
-     * constExp的计算值
+     * constExp的计算值，综合属性
      */
     public static int upConstValue;
     /**
-     *
+     *综合属性，局部数组的
      */
     public static ArrayList<Value> upArrayValue;
     /**
@@ -68,29 +72,17 @@ public class Visitor {
      */
     public static BasicBlock curBlock;
     /**
-     * 函数声明形参
-     */
-    public static ArrayList<Parameter> parameters;
-    /**
-     * 函数调用实参
-     */
-    public static ArrayList<Value> args;
-    /**
-     * 函数返回类型
+     * 函数返回类型,继承属性
      */
     public static Type returnType;
     /**
-     * 在等号左侧，或者是函数调用中的情况，无需加载
-     */
-    public static boolean lValNotLoad;
-    /**
      * 正确块的栈
      */
-    public static BasicBlock trueBlock;
+    public static Stack<BasicBlock> trueBlock=new Stack<>();
     /**
      * 错误块的栈
      */
-    public static BasicBlock falseBlock;
+    public static Stack<BasicBlock> falseBlock=new Stack<>();
     /**
      * lor之间基本块的跳转
      */
@@ -99,8 +91,21 @@ public class Visitor {
      * and之间基本快的跳转
      */
     public static List<ArrayDeque<BasicBlock>> AndBlocks;//里面每个队列存一组Blocks,最右侧的blocks加入正确的blocks
-
+    /**
+     * 结合上面的属性一起使用
+     */
     public static int AndIndex;
+    /**
+     * continue跳转的基本块
+     */
+    public  static final Stack<BasicBlock> continueToBlocks=new Stack<>();
+    /**
+     * break跳转的基本块
+     */
+    public  static final Stack<BasicBlock> breakToBlocks=new Stack<>();
+
+    public static final HashMap<String, GlobalVariable> stringPool = new HashMap<>(); // 获取全局字符串池
+
     public static boolean isGlobal(){
         return curTable==globalTable;
     }

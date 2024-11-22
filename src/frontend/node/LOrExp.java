@@ -46,13 +46,13 @@ public class LOrExp extends node{
             ArrayDeque<BasicBlock> AndBlockDeque=new ArrayDeque<>();
             Visitor.AndBlocks.add(AndBlockDeque);
             lAndExp.label();
-            AndBlockDeque.add(Visitor.trueBlock);
+            AndBlockDeque.add(Visitor.trueBlock.peek());
             Visitor.LorBlocks.add((BasicBlock) Visitor.upValue);
         }else{//最左侧,第一个lAndExp
             ArrayDeque<BasicBlock> AndBlockDeque=new ArrayDeque<>();
             Visitor.AndBlocks.add(AndBlockDeque);
             lAndExp.label();
-            AndBlockDeque.add(Visitor.trueBlock);
+            AndBlockDeque.add(Visitor.trueBlock.peek());
         }
     }
 }//逻辑或表达式

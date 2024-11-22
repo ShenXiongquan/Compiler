@@ -19,6 +19,8 @@ public abstract class Constant  extends Value {
         super(null, valueType);
     }
 
-
+    public String getName() {
+        return ir();
+    }
 
 }

@@ -30,7 +30,9 @@ public class LAndExp extends node {
             Visitor.curBlock = Visitor.AndBlocks.get(Visitor.AndIndex).pop(); // 更新当前块
             eqExp.visit();
         } else { // 最底层逻辑
-            if (Visitor.AndIndex != 0) Visitor.curBlock = Visitor.AndBlocks.get(Visitor.AndIndex).pop(); // 更新为最左侧块
+            if (Visitor.AndIndex != 0) {
+                Visitor.curBlock = Visitor.AndBlocks.get(Visitor.AndIndex).pop();
+            } // 更新为最左侧块
             eqExp.visit();
         }
         handleBr();
@@ -41,21 +43,23 @@ public class LAndExp extends node {
      */
     private void handleBr() {
         BasicBlock LorRightBlock = Visitor.LorBlocks.peekFirst(); // || 的右侧块
-        System.out.println("现在||右侧的块:" + LorRightBlock.getName());
+
         BasicBlock AndRightBlock = Visitor.AndBlocks.get(Visitor.AndIndex).peekFirst(); // && 的右侧块
-        System.out.println("现在&&右侧的块:" + AndRightBlock.getName());
+
 
         br br;
-        System.out.println("类型：" + Visitor.upValue);
-
         if (Visitor.upValue instanceof ConstInt constInt) {
             // 常量优化
             br = constInt.isZero() ? new br(LorRightBlock) : new br(AndRightBlock);
         } else {
             // 非常量逻辑
-            icmp ICMP = new icmp(icmp.NE, zext(Visitor.upValue), ConstInt.zero); // 判断不为0
-            Visitor.curBlock.addInstruction(ICMP);
-            br = new br(ICMP, AndRightBlock, LorRightBlock);
+            if (Visitor.upValue.getType().isInt1()) {
+                br = new br(Visitor.upValue, AndRightBlock, LorRightBlock);
+            } else {
+                icmp ICMP = new icmp(icmp.NE, zext(Visitor.upValue), ConstInt.zero); // 判断不为0
+                Visitor.curBlock.addInstruction(ICMP);
+                br = new br(ICMP, AndRightBlock, LorRightBlock);
+            }
         }
         Visitor.curBlock.addInstruction(br); // 添加 br 指令
     }

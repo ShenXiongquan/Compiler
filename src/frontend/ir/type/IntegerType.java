@@ -32,7 +32,9 @@ public class IntegerType extends Type {
     public boolean isInt8() {
         return bitWidth==8;
     }
-
+    public boolean isInt1() {
+        return bitWidth==1;
+    }
     @Override
     public int getSize() {
         return bitWidth/8;

@@ -31,13 +31,13 @@ public class MainFuncDef extends node {
     public void visit() {
 
         Visitor.curTable=Visitor.curTable.pushScope();
-        Visitor.parameters =new ArrayList<>();
         Function.VarNum=0;
-        Function function=new Function(main.token(), IntegerType.i32,Visitor.parameters,true);
+        Function function=new Function(main.token(), IntegerType.i32,new ArrayList<>(),true);
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
         Visitor.curTable.pre.addSymbol(new Symbol(main.token(), function));
         Visitor.curBlock= new BasicBlock();
+        
         Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
         block.visit();
         Visitor.curTable=Visitor.curTable.popScope();

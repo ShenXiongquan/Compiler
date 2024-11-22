@@ -43,7 +43,6 @@ public class VarDef extends node {
 
     @Override
     public void visit() {
-        // 提取关键信息，提高可读性
         String variableName = ident.token(); // 变量名
         boolean isGlobal = Visitor.isGlobal(); // 是否为全局变量
         boolean isArray = (constExp != null); // 是否为数组
@@ -71,7 +70,8 @@ public class VarDef extends node {
             }
         } else { // 数组变量
             constExp.visit(); // 处理数组维度
-            Visitor.ValueType = new ArrayType(Visitor.ValueType, Visitor.upConstValue); // 构建数组类型
+            Visitor.ArraySize=Visitor.upConstValue;
+            ArrayType arrayType = new ArrayType(Visitor.ValueType, Visitor.ArraySize); // 构建数组类型
 
             if (isGlobal) { // 全局数组
                 if (initialized) {
@@ -79,11 +79,11 @@ public class VarDef extends node {
                     initVal.visit();
                     Visitor.calAble = false;
                 }
-                GlobalVariable globalVariable = new GlobalVariable(variableName, initialized ? (Constant) Visitor.upValue : new Zeroinitializer((ArrayType) Visitor.ValueType), false);
+                GlobalVariable globalVariable = new GlobalVariable(variableName, initialized ? (Constant) Visitor.upValue : new Zeroinitializer(arrayType), false);
                 Visitor.model.addGlobalValue(globalVariable);
                 Visitor.curTable.addSymbol(new Symbol(variableName, globalVariable));
             } else { // 局部数组
-                alloca alloca = new alloca(Visitor.ValueType); // 分配空间
+                alloca alloca = new alloca(arrayType); // 分配空间
                 Visitor.curBlock.addInstruction(alloca);
                 Visitor.curTable.addSymbol(new Symbol(variableName, alloca));
                 if (initialized) {

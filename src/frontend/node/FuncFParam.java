@@ -6,6 +6,8 @@ import frontend.ir.type.PointerType;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
+import java.util.ArrayList;
+
 public class FuncFParam extends node {
     public BType bType;
     public token ident;
@@ -22,14 +24,18 @@ public class FuncFParam extends node {
         myWriter.writeNonTerminal("FuncFParam");
     }
 
-    @Override
-    public void visit() {
+
+    public void visit(ArrayList<Parameter> parameters) {
         bType.visit();
         if (lbrack != null) {
-            System.out.println("数组参数");
             Visitor.ValueType = new PointerType(Visitor.ValueType);
         }
         Parameter parameter = new Parameter(ident.token(),Visitor.ValueType);
-        Visitor.parameters.add(parameter);
+        parameters.add(parameter);
+    }
+
+    @Override
+    public void visit() {
+
     }
 }//函数形参FuncFParam → BType Ident ['[' ']']

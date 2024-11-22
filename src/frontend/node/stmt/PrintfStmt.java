@@ -41,10 +41,9 @@ public class PrintfStmt extends Stmt {
     }
     @Override
     public void visit() {
-        // 获取字符串常量的值（去除前后的引号）
         String rawString = stringConst.token().substring(1, stringConst.token().length() - 1);
         List<String> parts = new ArrayList<>();
-        Map<String, GlobalVariable> stringPool = new HashMap<>(); // 获取全局字符串池
+
 
         int lastIndex = 0;
         // 遍历 rawString，找到占位符 (%d, %c)
@@ -56,7 +55,7 @@ public class PrintfStmt extends Stmt {
                 }
                 // 添加占位符
                 parts.add("%" + rawString.charAt(i + 1));
-                i++; // 跳过占位符
+                i++;
                 lastIndex = i + 1;
             }
         }
@@ -81,7 +80,7 @@ public class PrintfStmt extends Stmt {
                 Visitor.curBlock.addInstruction(call);
             } else {
                 // 处理普通字符串部分
-                if (!stringPool.containsKey(constStr)) {
+                if (!Visitor.stringPool.containsKey(constStr)) {
                     // 如果字符串未声明，创建全局变量并加入全局字符串池
                     int len = constStr.length();
                     for (int t = 0; t < len; t++) {
@@ -91,11 +90,11 @@ public class PrintfStmt extends Stmt {
                     }
                     GlobalVariable printStr = new GlobalVariable(new ConstStr(new ArrayType(IntegerType.i8, len + 1), constStr));
                     Visitor.model.addGlobalStr(printStr);
-                    stringPool.put(constStr, printStr); // 缓存该字符串到池中
+                    Visitor.stringPool.put(constStr, printStr); // 缓存该字符串到池中
                 }
 
                 // 获取已声明的全局变量
-                GlobalVariable printStr = stringPool.get(constStr);
+                GlobalVariable printStr = Visitor.stringPool.get(constStr);
 
                 // 构建 getelementptr 和打印调用指令
                 getelementptr getelementptr = new getelementptr(printStr, ConstInt.zeroI64, ConstInt.zeroI64);

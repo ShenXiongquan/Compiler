@@ -1,8 +1,10 @@
 package frontend.node;
 
 import frontend.Visitor;
+import frontend.ir.Parameter;
+import frontend.ir.Value;
+import frontend.ir.constants.ConstInt;
 import frontend.ir.type.IntegerType;
-import frontend.ir.type.PointerType;
 import frontend.ir.type.Type;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -22,24 +24,27 @@ public class FuncRParams extends node{
         }
         myWriter.writeNonTerminal("FuncRParams");
     }
-    @Override
-    public void visit() {
+
+    public void visit(ArrayList<Parameter> parameters, ArrayList<Value> args) {
 
         int i=0;
-        Visitor.args=new ArrayList<>();
+
         for(Exp exp:exps){
-            Type paraType=Visitor.parameters.get(i++).getType();
-            Visitor.lValNotLoad=paraType instanceof PointerType;
+            Type paraType=parameters.get(i++).getType();
+            System.out.println("参数类型:"+paraType.ir());
             exp.visit();
-            Visitor.lValNotLoad=false;
 
             if(paraType instanceof IntegerType expectedType){
                 if(expectedType.isInt32())Visitor.upValue=zext(Visitor.upValue);
                 else Visitor.upValue=trunc(Visitor.upValue);
-            }
+            }//如果参数不是指针类型的，需要考虑扩展
 
-            Visitor.args.add(Visitor.upValue);
+            args.add(Visitor.upValue);
         }
+    }
+
+    @Override
+    public void visit() {
 
     }
 }//函数实参表

@@ -32,6 +32,7 @@ public class RelExp extends node {
             Value b=zext(Visitor.upValue);int rightConst = Visitor.upConstValue;
             if (a instanceof ConstInt && b instanceof ConstInt) {
                 // 常量折叠优化
+                System.out.println("左值:"+a.getName()+" "+leftConst+"右值:"+b.getName()+" "+rightConst);
 
                 if (relOp.type() == tokenType.LSS) {
                     Visitor.upConstValue = (leftConst < rightConst) ? 1 : 0;

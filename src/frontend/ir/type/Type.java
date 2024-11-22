@@ -16,4 +16,6 @@ public abstract class Type{
     }
 
     public  boolean isInt8(){return false;}
+
+    public boolean isInt1(){return false;}
 }

@@ -1,6 +1,7 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
+import frontend.ir.BasicBlock;
 import frontend.ir.Function;
 import frontend.ir.constants.ConstInt;
 import frontend.ir.instructions.ControlFlowInstructions.ret;
@@ -30,12 +31,12 @@ public class ReturnStmt extends Stmt {
         }else{
             returnExp.visit();
             IntegerType expectedType= (IntegerType) ((Function)Visitor.curBlock.getParent()).getType().getReturnType();
-            if(Visitor.upValue instanceof ConstInt) Visitor.upValue=new ConstInt(expectedType,((ConstInt) Visitor.upValue).getValue());
-            else if(expectedType.isInt32())Visitor.upValue=zext(Visitor.upValue);
+            if(expectedType.isInt32())Visitor.upValue=zext(Visitor.upValue);
             else Visitor.upValue=trunc(Visitor.upValue);
-
             ret=new ret(Visitor.upValue);
         }
         Visitor.curBlock.addInstruction(ret);
+        Visitor.curBlock=new BasicBlock();
+        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
     }
 }

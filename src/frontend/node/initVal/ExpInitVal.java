@@ -22,8 +22,7 @@ public class ExpInitVal extends InitVal{
         if(Visitor.isGlobal()){//全局变量初始化
             Visitor.upValue=new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue);
         }else{//局部变量初始化
-            if(Visitor.upValue instanceof ConstInt) Visitor.upValue=new ConstInt((IntegerType) Visitor.ValueType,((ConstInt) Visitor.upValue).getValue());
-            else if (Visitor.ValueType.isInt32()) Visitor.upValue = zext(Visitor.upValue);
+            if (Visitor.ValueType.isInt32()) Visitor.upValue = zext(Visitor.upValue);
             else Visitor.upValue = trunc(Visitor.upValue);
         }
     }

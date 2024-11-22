@@ -11,13 +11,13 @@ package frontend.ir.type;
 public class ArrayType extends Type{
     private IntegerType elementType; // 数组的元素类型
     private int size;
-    private int elementNum;
+    private int ArraySize;
 
     // 构造方法
-    public ArrayType(Type elementType, int elementNum) {
+    public ArrayType(Type elementType, int ArraySize) {
         this.elementType = (IntegerType) elementType;
-        this.elementNum =elementNum;
-        this.size = elementNum*elementType.getSize();
+        this.ArraySize = ArraySize;
+        this.size = ArraySize *elementType.getSize();
     }
 
     // 获取元素类型
@@ -30,12 +30,12 @@ public class ArrayType extends Type{
         return size;
     }
 
-    public int getElementNum() {
-        return elementNum;
+    public int getArraySize() {
+        return ArraySize;
     }
 
     @Override
     public String ir() {
-        return "[" + elementNum + " x " + elementType.ir() + "]";
+        return "[" + ArraySize + " x " + elementType.ir() + "]";
     }
 }

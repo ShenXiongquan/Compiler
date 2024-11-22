@@ -8,7 +8,7 @@ import frontend.ir.type.IntegerType;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
-public class StringInitVal extends InitVal{
+public class StringInitVal extends InitVal {
     public token stringConst;
 
     @Override
@@ -19,12 +19,16 @@ public class StringInitVal extends InitVal{
 
     @Override
     public void visit() {
-        String s=stringConst.token().substring(1, stringConst.token().length() - 1);
-        if(Visitor.isGlobal()){
-            Visitor.upValue=new ConstStr((ArrayType)Visitor.ValueType,s);
-        }else{
-            for(char c:s.toCharArray()){
-                Visitor.upArrayValue.add(new ConstInt(IntegerType.i8,c));
+        String s = stringConst.token().substring(1, stringConst.token().length() - 1);
+        if (Visitor.isGlobal()) {
+            Visitor.upValue = new ConstStr(new ArrayType(Visitor.ValueType, Visitor.ArraySize), s);
+        } else {
+            for (int i = 0; i < Visitor.ArraySize; i++) {
+                if (i < s.length()) {
+                    Visitor.upArrayValue.add(new ConstInt(IntegerType.i8, s.charAt(i)));
+                } else {
+                    Visitor.upArrayValue.add(ConstInt.zeroI8);
+                }
             }
         }
     }

@@ -28,16 +28,13 @@ public class AssignStmt extends Stmt {
 
     @Override
     public void visit() {
-        Visitor.lValNotLoad = true;
         lVal.visit();
-        Visitor.lValNotLoad = false;
         Value dst = Visitor.upValue;
         exp.visit();
         Value src = Visitor.upValue;
 
         IntegerType expectedType = (IntegerType) ((PointerType) dst.getType()).getPointedType();
-        if(src instanceof ConstInt) src=new ConstInt(expectedType,((ConstInt) src).getValue());
-        else if (expectedType == IntegerType.i32) src = zext(src);
+        if (expectedType.isInt32()) src = zext(src);
         else src = trunc(src);
 
         store store = new store(src, dst);

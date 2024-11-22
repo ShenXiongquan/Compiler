@@ -18,6 +18,6 @@ public class StringConstInitVal extends ConstInitVal{
     @Override
     public void visit() {
         String s=stringConst.token().substring(1, stringConst.token().length() - 1);
-        Visitor.upValue=new ConstStr((ArrayType) Visitor.ValueType, s);
+        Visitor.upValue=new ConstStr(new ArrayType(Visitor.ValueType,Visitor.ArraySize) , s);
     }
 }
