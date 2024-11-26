@@ -2,16 +2,16 @@ package frontend.node;
 
 
 import frontend.Visitor;
-import frontend.ir.GlobalVariable;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.constants.Constant;
-import frontend.ir.constants.Zeroinitializer;
-import frontend.ir.instructions.MemInstructions.alloca;
-import frontend.ir.instructions.MemInstructions.getelementptr;
-import frontend.ir.instructions.MemInstructions.store;
-import frontend.ir.type.ArrayType;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.GlobalVariable;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.constants.Constant;
+import frontend.llvm_ir.constants.Zeroinitializer;
+import frontend.llvm_ir.instructions.MemInstructions.alloca;
+import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
+import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.type.ArrayType;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.node.initVal.InitVal;
 import frontend.symbol.Symbol;
 import frontend.token.token;
@@ -41,7 +41,6 @@ public class VarDef extends node {
         myWriter.writeNonTerminal("VarDef");
     }
 
-    @Override
     public void visit() {
         String variableName = ident.token(); // 变量名
         boolean isGlobal = Visitor.isGlobal(); // 是否为全局变量

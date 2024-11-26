@@ -1,14 +1,14 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.MemInstructions.getelementptr;
-import frontend.ir.instructions.MemInstructions.load;
-import frontend.ir.type.ArrayType;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.PointerType;
-import frontend.ir.type.Type;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
+import frontend.llvm_ir.instructions.MemInstructions.load;
+import frontend.llvm_ir.type.ArrayType;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.PointerType;
+import frontend.llvm_ir.type.Type;
 import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -33,7 +33,6 @@ public class LVal extends node {
     /**
      * LVal传常量或者地址，加不加载由上层来决定
      */
-    @Override
     public void visit() {
         //lval需要查符号表
         Symbol symbol = Visitor.curTable.getSymbol(ident.token());

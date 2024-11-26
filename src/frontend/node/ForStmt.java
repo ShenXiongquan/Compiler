@@ -1,11 +1,10 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.MemInstructions.store;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.PointerType;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.PointerType;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -20,7 +19,6 @@ public class ForStmt extends node{
         exp.print();
         myWriter.writeNonTerminal("ForStmt");
     }
-    @Override
     public void visit() {
         lVal.visit();
         Value dst = Visitor.upValue;

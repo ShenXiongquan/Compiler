@@ -1,10 +1,10 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
-import frontend.ir.instructions.MemInstructions.store;
-import frontend.ir.instructions.MixedInstructions.call;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.PointerType;
+import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.instructions.MixedInstructions.call;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.PointerType;
 import frontend.node.LVal;
 
 import frontend.token.token;
@@ -33,7 +33,6 @@ public class GetCharStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
 
-    @Override
     public void visit() {
         lVal.visit();
         call call=new call(Visitor.model.getchar());

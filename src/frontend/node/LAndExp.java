@@ -1,12 +1,11 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.BasicBlock;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.BinaryOperations.icmp;
-import frontend.ir.instructions.ControlFlowInstructions.br;
-import frontend.node.stmt.LoopStmt;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.instructions.BinaryOperations.icmp;
+import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -67,13 +66,13 @@ public class LAndExp extends node {
     public void label() {
         if (lAndExp != null) {
             lAndExp.label();
-            BasicBlock block = new BasicBlock();
-            Visitor.curFunc.addBasicBlocks(block);
+            BasicBlock block = new BasicBlock("Block_and"+Function.andNum++);
+            Visitor.curFunc.addBasicBlock(block);
             Visitor.AndBlocks.get(Visitor.AndBlocks.size() - 1).add(block);
         } else {//最左侧,第一个eqExp
             if (Visitor.AndBlocks.size() != 1) {
-                BasicBlock block = new BasicBlock();
-                Visitor.curFunc.addBasicBlocks(block);
+                BasicBlock block = new BasicBlock("Block_or"+ Function.orNum++);
+                Visitor.curFunc.addBasicBlock(block);
                 Visitor.AndBlocks.get(Visitor.AndBlocks.size() - 1).add(block);
                 Visitor.upValue = block;
             }

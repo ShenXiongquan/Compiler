@@ -1,11 +1,11 @@
 package frontend.node.constInitVal;
 
 import frontend.Visitor;
-import frontend.ir.constants.ConstArray;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.constants.Zeroinitializer;
-import frontend.ir.type.ArrayType;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.constants.ConstArray;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.constants.Zeroinitializer;
+import frontend.llvm_ir.type.ArrayType;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.node.ConstExp;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -35,7 +35,6 @@ public class ArrayConstInitVal extends ConstInitVal {
         myWriter.writeNonTerminal("ConstInitVal");
     }
 
-    @Override
     public void visit() {
 
 

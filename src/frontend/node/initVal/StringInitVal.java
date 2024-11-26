@@ -1,10 +1,10 @@
 package frontend.node.initVal;
 
 import frontend.Visitor;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.constants.ConstStr;
-import frontend.ir.type.ArrayType;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.constants.ConstStr;
+import frontend.llvm_ir.type.ArrayType;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -17,7 +17,6 @@ public class StringInitVal extends InitVal {
         myWriter.writeNonTerminal("InitVal");
     }
 
-    @Override
     public void visit() {
         String s = stringConst.token().substring(1, stringConst.token().length() - 1);
         if (Visitor.isGlobal()) {

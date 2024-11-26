@@ -1,11 +1,10 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.Parameter;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.Type;
+import frontend.llvm_ir.Parameter;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.Type;
 import frontend.token.token;
 import frontend.tool.myWriter;
 import java.util.ArrayList;
@@ -43,8 +42,4 @@ public class FuncRParams extends node{
         }
     }
 
-    @Override
-    public void visit() {
-
-    }
 }//函数实参表

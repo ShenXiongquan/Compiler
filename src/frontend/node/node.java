@@ -2,31 +2,24 @@ package frontend.node;
 
 
 import frontend.Visitor;
-import frontend.ir.Parameter;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.MemInstructions.load;
-import frontend.ir.instructions.MixedInstructions.trunc;
-import frontend.ir.instructions.MixedInstructions.zext;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.PointerType;
-
-import java.util.ArrayList;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.instructions.MemInstructions.load;
+import frontend.llvm_ir.instructions.MixedInstructions.trunc;
+import frontend.llvm_ir.instructions.MixedInstructions.zext;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.PointerType;
 
 
 public abstract class node {
 
-    public abstract void visit();
-
     //对于zext和trunc，有三种类型，一种是常量，一种是变量，一种是指针
     protected Value zext(Value value) {
-        System.out.println("可能需要转化的类型:"+value.getType().ir());
         if (value instanceof ConstInt constInt) {
             value = new ConstInt(IntegerType.i32, constInt.getValue());
         } else if (value.getType() instanceof PointerType) {
             load load = new load(value);
             Visitor.curBlock.addInstruction(load);
-            System.out.println("load的类型:"+load.getType().ir());
             value=load;
             if (!value.getType().isInt32()) {
                 zext zext = new zext(value);

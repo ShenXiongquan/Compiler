@@ -2,7 +2,7 @@ package frontend.symbol;
 
 
 import frontend.Visitor;
-import frontend.ir.Value;
+import frontend.llvm_ir.Value;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,12 +1,11 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.GlobalVariable;
-import frontend.ir.constants.ConstArray;
-import frontend.ir.constants.Constant;
-import frontend.ir.instructions.MemInstructions.alloca;
-import frontend.ir.instructions.MemInstructions.store;
-import frontend.ir.type.ArrayType;
+import frontend.llvm_ir.GlobalVariable;
+import frontend.llvm_ir.constants.Constant;
+import frontend.llvm_ir.instructions.MemInstructions.alloca;
+import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.type.ArrayType;
 import frontend.node.constInitVal.ConstInitVal;
 import frontend.symbol.Symbol;
 import frontend.token.token;
@@ -33,7 +32,6 @@ public class ConstDef extends node {
         myWriter.writeNonTerminal("ConstDef");
     }
 
-    @Override
     public void visit() {
         //常量是一定可以计算初始值的，在声明时就必须赋值，且无法改变，但是全局常量需要声明出来，局部常量则无需多加处理
         //全局和局部常量加入符号表即可，后续直接从符号表中取出具体的值进行使用

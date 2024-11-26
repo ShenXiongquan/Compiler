@@ -1,11 +1,10 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
-import frontend.ir.BasicBlock;
-import frontend.ir.Function;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.ControlFlowInstructions.ret;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.instructions.ControlFlowInstructions.ret;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.node.Exp;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -23,7 +22,6 @@ public class ReturnStmt extends Stmt {
         if (semicn != null) semicn.print();
         myWriter.writeNonTerminal("Stmt");
     }
-    @Override
     public void visit() {
         ret ret;
         if(returnExp==null){
@@ -36,7 +34,7 @@ public class ReturnStmt extends Stmt {
             ret=new ret(Visitor.upValue);
         }
         Visitor.curBlock.addInstruction(ret);
-        Visitor.curBlock=new BasicBlock();
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.curBlock=new BasicBlock("Block_return"+Function.returnNum++);
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
     }
 }

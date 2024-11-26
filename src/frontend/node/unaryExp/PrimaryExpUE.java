@@ -13,7 +13,6 @@ public class PrimaryExpUE extends UnaryExp{
         myWriter.writeNonTerminal("UnaryExp");
     }
 
-    @Override
     public void visit() {
         primaryExp.visit();
     }

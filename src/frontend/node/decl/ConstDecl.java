@@ -8,7 +8,6 @@ public class ConstDecl extends Decl{
         constDecl.print();
     }
 
-    @Override
     public void visit() {
         constDecl.visit();
     }

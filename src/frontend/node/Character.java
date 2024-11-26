@@ -1,8 +1,8 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -14,7 +14,6 @@ public class Character extends node {
         myWriter.writeNonTerminal("Character");
     }
 
-    @Override
     public void visit() {
         int c;
         String s = charConst.token().substring(1, charConst.token().length() - 1);

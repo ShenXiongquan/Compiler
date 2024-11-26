@@ -14,7 +14,6 @@ public class BlockStmt extends Stmt {
 
         myWriter.writeNonTerminal("Stmt");
     }
-    @Override
     public void visit() {
         Visitor.curTable=Visitor.curTable.pushScope();
         block.visit();

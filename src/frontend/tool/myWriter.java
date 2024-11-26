@@ -11,7 +11,6 @@ public class myWriter {
     private static final String outputFilePath1 = "lexer.txt";
     private static final String outputFilePath2 = "parser.txt";
     private static final String outputFilePath3 = "symbol.txt";
-
     private static final String outputFilePath4 ="llvm_ir.txt";
 
     private static final String outputFilePath5 ="mips.txt";
@@ -26,11 +25,12 @@ public class myWriter {
     }
     public myWriter(String path){
         try {
-            this.writer=new FileWriter(path);
+            writer=new FileWriter(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     public static void writeTerminal(token token) {
         try {
             writer.write(token.type() + " " + token.token() + "\n");

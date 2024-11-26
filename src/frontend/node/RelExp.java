@@ -1,10 +1,10 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.BinaryOperations.icmp;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.instructions.BinaryOperations.icmp;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
 import frontend.token.tokenType;
 import frontend.tool.myWriter;
@@ -23,7 +23,6 @@ public class RelExp extends node {
         addExp.print();
         myWriter.writeNonTerminal("RelExp");
     }
-    @Override
     public void visit() {
         if(relExp!=null){
             relExp.visit();

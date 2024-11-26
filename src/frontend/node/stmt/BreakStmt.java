@@ -1,8 +1,9 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
-import frontend.ir.BasicBlock;
-import frontend.ir.instructions.ControlFlowInstructions.br;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -17,11 +18,10 @@ public class BreakStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
 
-    @Override
     public void visit() {
        br br=new br(Visitor.breakToBlocks.peek());
        Visitor.curBlock.addInstruction(br);
-       Visitor.curBlock=new BasicBlock();
-       Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+       Visitor.curBlock=new BasicBlock("Block_break"+ Function.breakNum++);
+       Visitor.curFunc.addBasicBlock(Visitor.curBlock);
     }
 }

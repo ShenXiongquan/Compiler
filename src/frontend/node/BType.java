@@ -1,7 +1,7 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
 import frontend.token.tokenType;
 
@@ -12,7 +12,6 @@ public class BType extends node{
         type.print();
     }
 
-    @Override
     public void visit() {
         if(type.type()== tokenType.CHARTK){
             Visitor.ValueType= IntegerType.i8;

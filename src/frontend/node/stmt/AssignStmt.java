@@ -1,11 +1,10 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.MemInstructions.store;
-import frontend.ir.type.IntegerType;
-import frontend.ir.type.PointerType;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.PointerType;
 import frontend.node.Exp;
 import frontend.node.LVal;
 import frontend.token.token;
@@ -26,7 +25,6 @@ public class AssignStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
 
-    @Override
     public void visit() {
         lVal.visit();
         Value dst = Visitor.upValue;

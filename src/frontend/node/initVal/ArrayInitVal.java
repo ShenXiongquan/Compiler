@@ -1,11 +1,11 @@
 package frontend.node.initVal;
 
 import frontend.Visitor;
-import frontend.ir.constants.ConstArray;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.constants.Zeroinitializer;
-import frontend.ir.type.ArrayType;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.constants.ConstArray;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.constants.Zeroinitializer;
+import frontend.llvm_ir.type.ArrayType;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.node.Exp;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -33,7 +33,6 @@ public class ArrayInitVal extends InitVal {
         myWriter.writeNonTerminal("InitVal");
     }
 
-    @Override
     public void visit() {
         if (Visitor.isGlobal()) {//全局数组初始化
             if (exps.isEmpty()) {

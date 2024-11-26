@@ -1,12 +1,12 @@
 package frontend.node.unaryExp;
 
 import frontend.Visitor;
-import frontend.ir.Value;
-import frontend.ir.instructions.MixedInstructions.call;
+import frontend.llvm_ir.Value;
+import frontend.llvm_ir.instructions.MixedInstructions.call;
 import frontend.node.FuncRParams;
 import frontend.token.token;
 import frontend.tool.myWriter;
-import frontend.ir.Function;
+import frontend.llvm_ir.Function;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,6 @@ public class FuncCallUE extends UnaryExp{
         myWriter.writeNonTerminal("UnaryExp");
     }
 
-    @Override
     public void visit() {
         System.out.println("现在调用的函数是："+ident.token());
 

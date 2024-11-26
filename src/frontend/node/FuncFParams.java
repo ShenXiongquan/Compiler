@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.ir.Parameter;
+import frontend.llvm_ir.Parameter;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -28,8 +28,4 @@ public class FuncFParams extends node{
         }
     }
 
-    @Override
-    public void visit() {
-
-    }
 }//函数形参表

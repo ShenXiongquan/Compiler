@@ -1,6 +1,5 @@
 package frontend.node.primaryExp;
 
-import frontend.Visitor;
 import frontend.node.Exp;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -20,7 +19,6 @@ public class ExpPE extends PrimaryExp {
         myWriter.writeNonTerminal("PrimaryExp");
     }
 
-    @Override
     public void visit() {
         exp.visit();
     }

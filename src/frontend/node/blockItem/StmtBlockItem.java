@@ -10,7 +10,6 @@ public class StmtBlockItem extends BlockItem {
         stmt.print();
     }
 
-    @Override
     public void visit() {
         stmt.visit();
     }

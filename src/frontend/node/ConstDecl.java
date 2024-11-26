@@ -1,10 +1,7 @@
 package frontend.node;
 
 
-import frontend.Visitor;
-import frontend.ir.type.IntegerType;
 import frontend.token.token;
-import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
 import java.util.ArrayList;
@@ -30,7 +27,6 @@ public class ConstDecl extends node{
         if(semicn!=null)semicn.print();
         myWriter.writeNonTerminal("ConstDecl");
     }
-    @Override
     public void visit() {
         bType.visit();
         constDefs.forEach(ConstDef::visit);

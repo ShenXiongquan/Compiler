@@ -1,8 +1,8 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.Parameter;
-import frontend.ir.type.PointerType;
+import frontend.llvm_ir.Parameter;
+import frontend.llvm_ir.type.PointerType;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -34,8 +34,4 @@ public class FuncFParam extends node {
         parameters.add(parameter);
     }
 
-    @Override
-    public void visit() {
-
-    }
 }//函数形参FuncFParam → BType Ident ['[' ']']

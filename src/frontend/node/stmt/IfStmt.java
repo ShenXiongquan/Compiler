@@ -1,8 +1,9 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
-import frontend.ir.BasicBlock;
-import frontend.ir.instructions.ControlFlowInstructions.br;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.node.Cond;
 
 import frontend.token.token;
@@ -31,25 +32,24 @@ public class IfStmt extends Stmt {
         }
         myWriter.writeNonTerminal("Stmt");
     }
-    @Override
     public void visit() {
-        BasicBlock trueBlock=new BasicBlock();
-        BasicBlock endBlock=new BasicBlock();
-        BasicBlock falseBlock=(falseStmt!=null)?new BasicBlock():endBlock;
+        BasicBlock trueBlock=new BasicBlock("Block_true"+ Function.ifNum++);
+        BasicBlock endBlock=new BasicBlock("Block_next"+Function.ifNum);
+        BasicBlock falseBlock=(falseStmt!=null)?new BasicBlock("Block_false"+Function.ifNum):endBlock;
         Visitor.trueBlock.add(trueBlock);
         Visitor.falseBlock.add(falseBlock);
        //if()
         cond.visit();
 
         Visitor.curBlock=trueBlock;
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
         trueStmt.visit();
         br br=new br(endBlock);
         Visitor.curBlock.addInstruction(br);
 
         if(falseStmt!=null){//else{}
             Visitor.curBlock=falseBlock;
-            Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+            Visitor.curFunc.addBasicBlock(Visitor.curBlock);
             falseStmt.visit();
             br=new br(endBlock);
             Visitor.curBlock.addInstruction(br);
@@ -57,6 +57,6 @@ public class IfStmt extends Stmt {
 
 
         Visitor.curBlock=endBlock;
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
     }
 }

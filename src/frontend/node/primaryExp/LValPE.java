@@ -1,9 +1,6 @@
 package frontend.node.primaryExp;
 
 
-import frontend.Visitor;
-import frontend.ir.instructions.MemInstructions.load;
-import frontend.ir.type.PointerType;
 import frontend.node.LVal;
 import frontend.tool.myWriter;
 
@@ -16,7 +13,6 @@ public class LValPE extends PrimaryExp {
         myWriter.writeNonTerminal("PrimaryExp");
     }
 
-    @Override
     public void visit() {
         lVal.visit();
     }

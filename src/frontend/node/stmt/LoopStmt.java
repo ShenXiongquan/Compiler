@@ -1,9 +1,9 @@
 package frontend.node.stmt;
 
 import frontend.Visitor;
-import frontend.ir.BasicBlock;
-import frontend.ir.instructions.ControlFlowInstructions.ControlFlowInstr;
-import frontend.ir.instructions.ControlFlowInstructions.br;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.node.Cond;
 import frontend.node.ForStmt;
 import frontend.token.token;
@@ -37,16 +37,15 @@ public class LoopStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
 
-    @Override
     public void visit() {
         if (initForStmt != null) initForStmt.visit();
 
         // cond 块负责条件判断和跳转,如果是 true 则进入 bodyBlock,如果是 false 就进入 nextBlock,结束 for 语句
         // body 块是循环的主体
-        BasicBlock condBlock = (forCondition == null ? null : new BasicBlock());
-        BasicBlock bodyBlock = new BasicBlock();
-        BasicBlock updateBlock = new BasicBlock();
-        BasicBlock endBlock = new BasicBlock();
+        BasicBlock bodyBlock = new BasicBlock("Block_body"+ Function.forNum++);
+        BasicBlock condBlock = (forCondition == null ? null : new BasicBlock("Block_cond"+ Function.forNum));
+        BasicBlock updateBlock = new BasicBlock("Block_update"+Function.forNum);
+        BasicBlock endBlock = new BasicBlock("Block_end"+Function.forNum);
 
         if (updateForStmt != null) Visitor.continueToBlocks.add(updateBlock);
         else if (forCondition != null) Visitor.continueToBlocks.add(condBlock);
@@ -60,7 +59,7 @@ public class LoopStmt extends Stmt {
             Visitor.curBlock.addInstruction(br);
             Visitor.curBlock = condBlock;
             
-            Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+            Visitor.curFunc.addBasicBlock(Visitor.curBlock);
             Visitor.trueBlock.add(bodyBlock);
             Visitor.falseBlock.add(endBlock);
             forCondition.visit();
@@ -71,13 +70,13 @@ public class LoopStmt extends Stmt {
 
         Visitor.curBlock = bodyBlock;
         
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
         forBody.visit();
         br br=new br(updateBlock);
         Visitor.curBlock.addInstruction(br);
         Visitor.curBlock = updateBlock;
         
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
 
         if (updateForStmt != null) {
             updateForStmt.visit();
@@ -91,6 +90,6 @@ public class LoopStmt extends Stmt {
 
         Visitor.curBlock = endBlock;
         
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
     }
 }

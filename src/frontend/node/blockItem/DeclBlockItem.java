@@ -10,7 +10,6 @@ public class DeclBlockItem extends BlockItem{
         decl.print();
     }
 
-    @Override
     public void visit() {
         decl.visit();
     }

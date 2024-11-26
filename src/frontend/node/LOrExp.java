@@ -1,11 +1,7 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.BasicBlock;
-import frontend.ir.Value;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.instructions.BinaryOperations.icmp;
-import frontend.ir.instructions.ControlFlowInstructions.br;
+import frontend.llvm_ir.BasicBlock;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -24,7 +20,6 @@ public class LOrExp extends node{
         lAndExp.print();
         myWriter.writeNonTerminal("LOrExp");
     }
-    @Override
     public void visit() {
         //  leftBlock||rightBlock
         if(lOrExp!=null){//进行递归

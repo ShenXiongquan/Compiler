@@ -1,14 +1,14 @@
 package frontend.node;
 
 import frontend.Visitor;
-import frontend.ir.Parameter;
-import frontend.ir.BasicBlock;
-import frontend.ir.Function;
-import frontend.ir.instructions.ControlFlowInstructions.ret;
-import frontend.ir.instructions.Instruction;
-import frontend.ir.instructions.MemInstructions.alloca;
-import frontend.ir.instructions.MemInstructions.store;
-import frontend.ir.type.VoidType;
+import frontend.llvm_ir.Parameter;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.instructions.ControlFlowInstructions.ret;
+import frontend.llvm_ir.instructions.Instruction;
+import frontend.llvm_ir.instructions.MemInstructions.alloca;
+import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.type.VoidType;
 import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
@@ -35,7 +35,6 @@ public class FuncDef extends node{
         block.print();
         myWriter.writeNonTerminal("FuncDef");
     }
-    @Override
     public void visit() {
         System.out.println("现在创建的函数是："+ident.token());
         funcType.visit();
@@ -49,9 +48,10 @@ public class FuncDef extends node{
         Function function=new Function(ident.token(),Visitor.returnType,parameters,true);
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
-        Visitor.curTable.pre.addSymbol(new Symbol(ident.token(), function));
-        Visitor.curBlock= new BasicBlock();
-        Visitor.curFunc.addBasicBlocks(Visitor.curBlock);
+        Visitor.globalTable.addSymbol(new Symbol(ident.token(), function));
+
+        Visitor.curBlock= new BasicBlock("entry");
+        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
 
         for(Parameter parameter :parameters){
             System.out.println("函数参数类型: "+parameter.getType().ir());
@@ -65,10 +65,13 @@ public class FuncDef extends node{
 
         block.visit();
         Visitor.curTable=Visitor.curTable.popScope();
+
         Instruction last=Visitor.curBlock.getLastInstruction();
         if(function.getType().getReturnType() instanceof VoidType&&!Visitor.curBlock.isJumpInstruction(last)){
            ret ret=new ret();
            Visitor.curBlock.addInstruction(ret);
+        } else if(Visitor.curBlock.isEmpty()){
+            Visitor.curFunc.removeBasicBlock(Visitor.curBlock);
         }
     }
 }//函数声明FuncDef → FuncType Ident '(' [FuncFParams] ')' Block

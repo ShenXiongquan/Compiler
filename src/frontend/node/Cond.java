@@ -11,7 +11,6 @@ public class Cond extends node{
         lOrExp.print();
         myWriter.writeNonTerminal("Cond");
     }
-    @Override
     public void visit() {
         Visitor.AndBlocks=new ArrayList<>();
         lOrExp.label();

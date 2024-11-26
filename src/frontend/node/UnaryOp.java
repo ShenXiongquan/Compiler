@@ -10,8 +10,4 @@ public class UnaryOp extends node {
         op.print();
         myWriter.writeNonTerminal("UnaryOp");
     }
-    @Override
-    public void visit() {
-
-    }
 }//单目运算符

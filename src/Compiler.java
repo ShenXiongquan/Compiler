@@ -1,7 +1,6 @@
 import frontend.Lexer;
 import frontend.Parser;
 import frontend.Visitor;
-import frontend.ir.Model;
 import frontend.node.CompUnit;
 import frontend.tool.errorManager;
 import frontend.tool.myWriter;

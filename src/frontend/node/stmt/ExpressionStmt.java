@@ -17,7 +17,6 @@ public class ExpressionStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
 
-    @Override
     public void visit() {
         if(optionalExp!=null)optionalExp.visit();
     }

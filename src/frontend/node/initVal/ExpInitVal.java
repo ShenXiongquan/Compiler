@@ -2,8 +2,8 @@ package frontend.node.initVal;
 
 
 import frontend.Visitor;
-import frontend.ir.constants.ConstInt;
-import frontend.ir.type.IntegerType;
+import frontend.llvm_ir.constants.ConstInt;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.node.Exp;
 import frontend.tool.myWriter;
 
@@ -16,7 +16,6 @@ public class ExpInitVal extends InitVal{
         myWriter.writeNonTerminal("InitVal");
     }
 
-    @Override
     public void visit() {
         exp.visit();
         if(Visitor.isGlobal()){//全局变量初始化

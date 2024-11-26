@@ -9,7 +9,6 @@ public class VarDecl extends Decl{
         varDecl.print();
     }
 
-    @Override
     public void visit() {
         varDecl.visit();
     }
