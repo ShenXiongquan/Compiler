@@ -20,11 +20,6 @@ public class Lexer {
     private final List<token> tokens = new ArrayList<>();
 
     public List<token> getTokens() {
-        return tokens;
-    }
-
-    public Lexer(PushbackReader reader) {
-        this.reader = reader;
         token token;
         while (true) {
             try {
@@ -34,6 +29,11 @@ public class Lexer {
             }
             tokens.add(token);
         }
+        return tokens;
+    }
+
+    public Lexer(PushbackReader reader) {
+        this.reader = reader;
     }
 
     public token nextToken() throws IOException {

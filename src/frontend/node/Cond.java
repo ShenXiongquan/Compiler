@@ -1,6 +1,7 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Visitor;
 import frontend.tool.myWriter;
 
 import java.util.ArrayList;
@@ -11,12 +12,10 @@ public class Cond extends node{
         lOrExp.print();
         myWriter.writeNonTerminal("Cond");
     }
-    public void visit() {
-        Visitor.AndBlocks=new ArrayList<>();
-        lOrExp.label();
-        Visitor.trueBlock.pop();
-        Visitor.LorBlocks.add(Visitor.falseBlock.pop());
 
-        lOrExp.visit();
+    public void visit(BasicBlock trueBlock,BasicBlock falsBlock) {
+        Visitor.lAndExps=new ArrayList<>();
+        lOrExp.handle();
+        lOrExp.visit(trueBlock,falsBlock);
     }
 }//条件表达式

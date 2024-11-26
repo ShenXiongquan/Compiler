@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Parameter;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
@@ -39,7 +39,7 @@ public class FuncDef extends node{
         System.out.println("现在创建的函数是："+ident.token());
         funcType.visit();
 
-        Visitor.curTable=Visitor.curTable.pushScope();
+        Visitor.pushScope();
         ArrayList<Parameter>parameters =new ArrayList<>();
 
         Function.VarNum=0;
@@ -48,7 +48,9 @@ public class FuncDef extends node{
         Function function=new Function(ident.token(),Visitor.returnType,parameters,true);
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
-        Visitor.globalTable.addSymbol(new Symbol(ident.token(), function));
+
+        Visitor.globalTable.addSymbol(ident.token(),function);
+
 
         Visitor.curBlock= new BasicBlock("entry");
         Visitor.curFunc.addBasicBlock(Visitor.curBlock);
@@ -57,14 +59,15 @@ public class FuncDef extends node{
             System.out.println("函数参数类型: "+parameter.getType().ir());
             alloca alloca = new alloca(parameter.getType());
             Visitor.curBlock.addInstruction(alloca);
-            Visitor.curTable.addSymbol(new Symbol(parameter.getArgName(), alloca));
+            Visitor.curTable.addSymbol(parameter.getArgName(),alloca);
 
             store store = new store(parameter, alloca);
             Visitor.curBlock.addInstruction(store);
         }
 
         block.visit();
-        Visitor.curTable=Visitor.curTable.popScope();
+        Visitor.popScope();
+
 
         Instruction last=Visitor.curBlock.getLastInstruction();
         if(function.getType().getReturnType() instanceof VoidType&&!Visitor.curBlock.isJumpInstruction(last)){

@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Parameter;
 import frontend.llvm_ir.type.*;
@@ -24,7 +24,6 @@ public class CompUnit extends node {
     }
 
     public void visit() {
-        System.out.println("全局符号表:" + Visitor.curTable.id);
         //加入已有的声明函数
         Visitor.model.addGlobalValue(new Function("getint", IntegerType.i32, new ArrayList<>(), false));
         Visitor.model.addGlobalValue(new Function("getchar", IntegerType.i32, new ArrayList<>(), false));

@@ -1,6 +1,6 @@
 package frontend.llvm_ir.instructions;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.User;
 import frontend.llvm_ir.Value;
@@ -26,4 +26,5 @@ public abstract class Instruction extends User {
         super(name, returnType,operands);
         this.parentBlock= Visitor.curBlock;
     }
+
 }

@@ -16,6 +16,9 @@ target triple = "x86_64-pc-linux-gnu"
 define dso_local void @de() {
 entry:
   ret void
+
+Block_return0:                                    ; No predecessors!
+  ret void
 }
 
 define dso_local i32 @keke(i32 %0, i32 %1) {

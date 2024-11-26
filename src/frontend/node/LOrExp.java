@@ -1,16 +1,18 @@
 package frontend.node;
 
-import frontend.Visitor;
 import frontend.llvm_ir.BasicBlock;
+import frontend.llvm_ir.Function;
+import frontend.llvm_ir.Visitor;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class LOrExp extends node{
     public LAndExp lAndExp;
     public token or;
     public LOrExp lOrExp;
+
 
     public void print(){
         if(lOrExp!=null){
@@ -20,34 +22,29 @@ public class LOrExp extends node{
         lAndExp.print();
         myWriter.writeNonTerminal("LOrExp");
     }
-    public void visit() {
-        //  leftBlock||rightBlock
-        if(lOrExp!=null){//进行递归
-            lOrExp.visit();
-            Visitor.AndIndex++;
-            lAndExp.visit();
-            Visitor.LorBlocks.pop();
-        }else{//递归到最底层了,该块是最左侧块
-            Visitor.AndIndex=0;
-            lAndExp.visit();
-            Visitor.LorBlocks.pop();
+
+    public void handle() {
+        if(lOrExp!=null){
+            lOrExp.handle();
+            Visitor.lAndExps.add(lAndExp);
+        }else{
+            Visitor.lAndExps.add(lAndExp);
         }
     }
-    //先打上标签
-    public void label() {
-        //  leftBlock||rightBlock
-        if(lOrExp!=null){//进行递归
-            lOrExp.label();
-            ArrayDeque<BasicBlock> AndBlockDeque=new ArrayDeque<>();
-            Visitor.AndBlocks.add(AndBlockDeque);
-            lAndExp.label();
-            AndBlockDeque.add(Visitor.trueBlock.peek());
-            Visitor.LorBlocks.add((BasicBlock) Visitor.upValue);
-        }else{//最左侧,第一个lAndExp
-            ArrayDeque<BasicBlock> AndBlockDeque=new ArrayDeque<>();
-            Visitor.AndBlocks.add(AndBlockDeque);
-            lAndExp.label();
-            AndBlockDeque.add(Visitor.trueBlock.peek());
+
+    public void visit(BasicBlock trueBlock,BasicBlock falseBlock){
+        int i=0;
+        int size=Visitor.lAndExps.size();
+        for(LAndExp lAndExp:Visitor.lAndExps){
+            BasicBlock nextBlock=(size==(++i)?falseBlock:new BasicBlock("Block_or"+ Function.orNum++));
+            Visitor.eqExps=new ArrayList<>();
+            lAndExp.handle();
+            lAndExp.visit(trueBlock,nextBlock);
+            if(i!=size) {
+               Visitor.curBlock=nextBlock;
+               Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+            }
         }
     }
+
 }//逻辑或表达式

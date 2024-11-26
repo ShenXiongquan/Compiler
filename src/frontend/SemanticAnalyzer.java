@@ -32,10 +32,15 @@ import frontend.tool.myWriter;
 import java.util.Map;
 
 public class SemanticAnalyzer {
+    private CompUnit compUnit;
     private  final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
     private SymbolTable curTable = globalTable;
     private  int isLoop = 0;
     private  boolean hasReturnValue = false;
+
+    public SemanticAnalyzer(CompUnit compUnit){
+        this.compUnit=compUnit;
+    }
 
     private boolean isConstant(LVal lVal) {
 
@@ -87,7 +92,7 @@ public class SemanticAnalyzer {
         }
     }//获取实参类型
 
-    public void visit(CompUnit compUnit) {
+    public void visit() {
 
         for (Decl decl : compUnit.decls) {
             visitDecl(decl);
@@ -319,8 +324,8 @@ public class SemanticAnalyzer {
             if (loopStmt.initForStmt != null) {
                 visitForStmt(loopStmt.initForStmt);
             }
-            if (loopStmt.forCondition != null) {
-                visitCond(loopStmt.forCondition);
+            if (loopStmt.cond != null) {
+                visitCond(loopStmt.cond);
             }
             if (loopStmt.updateForStmt != null) {
                 visitForStmt(loopStmt.updateForStmt);

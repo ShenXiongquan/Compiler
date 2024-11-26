@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.type.IntegerType;
@@ -29,17 +29,17 @@ public class MainFuncDef extends node {
     }
     public void visit() {
 
-        Visitor.curTable=Visitor.curTable.pushScope();
+        Visitor.pushScope();
         Function.VarNum=0;
         Function function=new Function(main.token(), IntegerType.i32,new ArrayList<>(),true);
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
-        Visitor.globalTable.addSymbol(new Symbol(main.token(), function));
+        Visitor.globalTable.addSymbol(main.token(), function);
         Visitor.curBlock= new BasicBlock("entry");
-
         Visitor.curFunc.addBasicBlock(Visitor.curBlock);
         block.visit();
-        Visitor.curTable=Visitor.curTable.popScope();
+        Visitor.popScope();
+
         if(Visitor.curBlock.isEmpty())Visitor.curFunc.removeBasicBlock(Visitor.curBlock);
     }
 }//主函数声明MainFuncDef → 'int' 'main' '(' ')' Block

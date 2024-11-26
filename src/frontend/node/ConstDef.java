@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.GlobalVariable;
 import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.instructions.MemInstructions.alloca;
@@ -46,7 +46,7 @@ public class ConstDef extends node {
                 Visitor.model.addGlobalValue(globalVariable);
             }
             System.out.println("全局变量："+variableName);
-            Visitor.curTable.addSymbol(new Symbol(variableName, Visitor.upValue));
+            Visitor.curTable.addSymbol(variableName, Visitor.upValue);
         } else { // 数组变量
             constExp.visit(); // 处理数组维度
             Visitor.ArraySize=Visitor.upConstValue;
@@ -56,11 +56,11 @@ public class ConstDef extends node {
                 constInitVal.visit(); // 处理数组的初始值
                 GlobalVariable globalVariable = new GlobalVariable(variableName, (Constant) Visitor.upValue, true);
                 Visitor.model.addGlobalValue(globalVariable);
-                Visitor.curTable.addSymbol(new Symbol(variableName, globalVariable));
+                Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部数组
                 alloca alloca = new alloca(arrayType); // 分配空间
                 Visitor.curBlock.addInstruction(alloca);
-                Visitor.curTable.addSymbol(new Symbol(variableName, alloca));
+                Visitor.curTable.addSymbol(variableName, alloca);
                 constInitVal.visit(); // 处理数组的初始值
                 store store = new store(Visitor.upValue, alloca); // 存储数组初始值
                 Visitor.curBlock.addInstruction(store);

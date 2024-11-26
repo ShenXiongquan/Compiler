@@ -1,6 +1,6 @@
 package frontend.node.initVal;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.ConstStr;
 import frontend.llvm_ir.type.ArrayType;

@@ -1,7 +1,7 @@
 package frontend.symbol;
 
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
 
 import java.util.ArrayList;
@@ -21,20 +21,5 @@ public class Symbol {
     public int paramNum;//函数参数个数
     public final List<Symbol> paramList=new ArrayList<>();//函数参数列表
 
-    public Symbol(){
-
-    }
-
-    public Symbol(String token, Value value, boolean isConst){
-        this.tableId= Visitor.curTable.id;
-        this.token=value.getName();
-        this.value=value;
-        this.isConst=isConst;
-    }
-
-    public Symbol(String token,Value value){
-        this.token=token;
-        this.value=value;
-    }
 }
 

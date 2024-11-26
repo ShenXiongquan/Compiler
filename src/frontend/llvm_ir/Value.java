@@ -18,7 +18,6 @@ public abstract class Value {
      * 临时变量命名,临时变量只在函数的形参和instruction中产生
      */
 
-
     protected String llvm_name;//value的llvm表示
     /**
      * 一切value皆有自己的类型

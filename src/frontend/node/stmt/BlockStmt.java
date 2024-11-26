@@ -1,6 +1,6 @@
 package frontend.node.stmt;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.node.Block;
 import frontend.tool.myWriter;
 
@@ -15,8 +15,8 @@ public class BlockStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
     public void visit() {
-        Visitor.curTable=Visitor.curTable.pushScope();
+        Visitor.pushScope();
         block.visit();
-        Visitor.curTable=Visitor.curTable.popScope();
+        Visitor.popScope();
     }
 }

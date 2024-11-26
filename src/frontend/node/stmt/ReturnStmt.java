@@ -1,6 +1,6 @@
 package frontend.node.stmt;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.instructions.ControlFlowInstructions.ret;

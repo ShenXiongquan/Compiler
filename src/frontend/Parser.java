@@ -405,7 +405,7 @@ public class Parser {
             }
             stmt.semicn1 = match();
             if (token.type() != tokenType.SEMICN) {
-                stmt.forCondition = parseCond();
+                stmt.cond = parseCond();
             }
             stmt.semicn2 = match();
             if (token.type() != tokenType.RPARENT) {

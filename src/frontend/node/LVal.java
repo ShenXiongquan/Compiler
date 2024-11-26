@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
@@ -35,8 +35,7 @@ public class LVal extends node {
      */
     public void visit() {
         //lval需要查符号表
-        Symbol symbol = Visitor.curTable.getSymbol(ident.token());
-        Value lVal = symbol.value;
+        Value lVal = Visitor.curTable.getSymbolValue(ident.token());
 
         if (lVal.getType() instanceof IntegerType) {//传常量
             Visitor.upConstValue = ((ConstInt) lVal).getValue();

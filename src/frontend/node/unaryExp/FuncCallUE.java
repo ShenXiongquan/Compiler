@@ -1,6 +1,6 @@
 package frontend.node.unaryExp;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.instructions.MixedInstructions.call;
 import frontend.node.FuncRParams;
@@ -29,12 +29,12 @@ public class FuncCallUE extends UnaryExp{
     public void visit() {
         System.out.println("现在调用的函数是："+ident.token());
 
-        Function function= (Function) Visitor.curTable.getSymbol(ident.token()).value;
+        Function function= (Function) Visitor.curTable.getSymbolValue(ident.token());
 
         ArrayList<Value> args=new ArrayList<>();
         if(funcRParams!=null)funcRParams.visit(function.getParameters(),args);
 
-        System.out.println("函数实参个数:"+args);
+        System.out.println("函数实参个数:"+args.size());
         call call=new call(function,args.toArray(Value[]::new));
         Visitor.curBlock.addInstruction(call);
         Visitor.upValue=call;

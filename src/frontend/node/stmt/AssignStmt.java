@@ -1,6 +1,6 @@
 package frontend.node.stmt;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.instructions.MemInstructions.store;
 import frontend.llvm_ir.type.IntegerType;

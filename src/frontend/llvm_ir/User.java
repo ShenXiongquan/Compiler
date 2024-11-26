@@ -12,10 +12,7 @@ import java.util.List;
 public abstract class User extends Value {
 
     //操作数可以是常量、本地变量、全局变量、指令、函数参数
-    private List<Value> operands=new ArrayList<>();
-    public User(String name, Type valueType) {
-        super(name, valueType);
-    }
+    private final List<Value> operands=new ArrayList<>();
 
     public User(String name, Type valueType,ArrayList<Value> operands){
         super(name, valueType);
@@ -27,9 +24,6 @@ public abstract class User extends Value {
         }
     }
 
-    public int getOperandsNum() {
-        return operands.size();
-    }
     /**
      * 获取操作数
      * @param index 操作数位置
@@ -39,39 +33,6 @@ public abstract class User extends Value {
             throw new IndexOutOfBoundsException("Invalid operand index: " + index);
         }
         return operands.get(index);
-    }
-
-    /**
-     * 设定指定位置的操作数
-     * @param index 操作数索引
-     * @param value 操作数
-     */
-    public void setOperand(int index, Value value) {
-        if (index < 0 || index >= operands.size()) {
-            throw new IndexOutOfBoundsException("Invalid operand index: " + index);
-        }
-        operands.set(index, value);
-    }
-
-    /**
-     * 添加新的操作数
-     * @param value
-     */
-    public void addOperand(Value value) {
-        operands.add(value);
-    }
-
-    /**
-     * 替换一个操作数
-     * @param oldValue
-     * @param newValue
-     */
-    public void replaceOperand(Value oldValue, Value newValue) {
-        for (int i = 0; i < operands.size(); i++) {
-            if (operands.get(i).equals(oldValue)) {
-                operands.set(i, newValue);
-            }
-        }
     }
 
     /**

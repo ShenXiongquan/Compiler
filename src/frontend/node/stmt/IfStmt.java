@@ -1,6 +1,6 @@
 package frontend.node.stmt;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
@@ -36,10 +36,10 @@ public class IfStmt extends Stmt {
         BasicBlock trueBlock=new BasicBlock("Block_true"+ Function.ifNum++);
         BasicBlock endBlock=new BasicBlock("Block_next"+Function.ifNum);
         BasicBlock falseBlock=(falseStmt!=null)?new BasicBlock("Block_false"+Function.ifNum):endBlock;
-        Visitor.trueBlock.add(trueBlock);
-        Visitor.falseBlock.add(falseBlock);
+
+
        //if()
-        cond.visit();
+        cond.visit(trueBlock,falseBlock);
 
         Visitor.curBlock=trueBlock;
         Visitor.curFunc.addBasicBlock(Visitor.curBlock);

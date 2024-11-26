@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.VoidType;
 import frontend.token.token;

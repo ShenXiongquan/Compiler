@@ -1,6 +1,6 @@
 package frontend.node.constInitVal;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstArray;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.Zeroinitializer;
@@ -36,8 +36,6 @@ public class ArrayConstInitVal extends ConstInitVal {
     }
 
     public void visit() {
-
-
             if(Visitor.isGlobal()&&constExps.isEmpty()){//全局空数组
                Visitor.upValue=new Zeroinitializer(new ArrayType(Visitor.ValueType,Visitor.ArraySize));
             }else {//全局非空数组和局部常量数组

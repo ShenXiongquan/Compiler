@@ -1,6 +1,5 @@
 package frontend.llvm_ir;
 
-import frontend.Visitor;
 import frontend.llvm_ir.instructions.ControlFlowInstructions.ControlFlowInstr;
 import frontend.llvm_ir.type.LabelType;
 

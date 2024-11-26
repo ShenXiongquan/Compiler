@@ -1,7 +1,7 @@
 package frontend.node;
 
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.GlobalVariable;
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.constants.ConstInt;
@@ -56,11 +56,11 @@ public class VarDef extends node {
                 }
                 GlobalVariable globalVariable = new GlobalVariable(variableName, initialized ? (Constant) Visitor.upValue : new ConstInt((IntegerType) Visitor.ValueType, 0), false);
                 Visitor.model.addGlobalValue(globalVariable);
-                Visitor.curTable.addSymbol(new Symbol(variableName, globalVariable));
+                Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部普通变量
                 alloca alloca = new alloca(Visitor.ValueType); // 分配空间
                 Visitor.curBlock.addInstruction(alloca);
-                Visitor.curTable.addSymbol(new Symbol(variableName, alloca));
+                Visitor.curTable.addSymbol(variableName, alloca);
                 if (initialized) {
                     initVal.visit();
                     store store = new store(Visitor.upValue, alloca); // 存储初始值
@@ -80,11 +80,11 @@ public class VarDef extends node {
                 }
                 GlobalVariable globalVariable = new GlobalVariable(variableName, initialized ? (Constant) Visitor.upValue : new Zeroinitializer(arrayType), false);
                 Visitor.model.addGlobalValue(globalVariable);
-                Visitor.curTable.addSymbol(new Symbol(variableName, globalVariable));
+                Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部数组
                 alloca alloca = new alloca(arrayType); // 分配空间
                 Visitor.curBlock.addInstruction(alloca);
-                Visitor.curTable.addSymbol(new Symbol(variableName, alloca));
+                Visitor.curTable.addSymbol(variableName, alloca);
                 if (initialized) {
                     Visitor.upArrayValue = new ArrayList<>();
                     initVal.visit();

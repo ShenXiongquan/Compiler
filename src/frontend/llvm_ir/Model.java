@@ -7,10 +7,10 @@ import java.util.LinkedList;
  * llvm中的编译单元，树的唯一根节点，一个model由多个GlobalValue组成。
  */
 public class Model {
+    private int strNum=5;
     /**
      * model中的GlobalValue
      */
-    private static int strNum=5;
     private final LinkedList<GlobalValue> globalValues=new LinkedList<>();
 
     public void addGlobalValue(GlobalValue globalValue){

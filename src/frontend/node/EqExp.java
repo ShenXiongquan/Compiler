@@ -1,6 +1,6 @@
 package frontend.node;
 
-import frontend.Visitor;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
