@@ -26,41 +26,34 @@ public class RelExp extends node {
     public void visit() {
         if(relExp!=null){
             relExp.visit();
-            Value a=zext(Visitor.upValue);int leftConst = Visitor.upConstValue; // 保存左侧常量值
+            Value lhs=zext(Visitor.upValue);int lConst = Visitor.upConstValue;
             addExp.visit();
-            Value b=zext(Visitor.upValue);int rightConst = Visitor.upConstValue;
-            if (a instanceof ConstInt && b instanceof ConstInt) {
-                // 常量折叠优化
-                System.out.println("左值:"+a.getName()+" "+leftConst+"右值:"+b.getName()+" "+rightConst);
-
-                if (relOp.type() == tokenType.LSS) {
-                    Visitor.upConstValue = (leftConst < rightConst) ? 1 : 0;
-                } else if (relOp.type() == tokenType.LEQ) {
-                    Visitor.upConstValue = (leftConst <= rightConst) ? 1 : 0;
-                } else if (relOp.type() == tokenType.GRE) {
-                    Visitor.upConstValue = (leftConst > rightConst) ? 1 : 0;
-                } else { // GEQ
-                    Visitor.upConstValue = (leftConst >= rightConst) ? 1 : 0;
+            Value rhs=zext(Visitor.upValue);int rConst = Visitor.upConstValue;
+            if (lhs instanceof ConstInt && rhs instanceof ConstInt) {
+                System.out.println("左值:" + lhs.getName() + " " + lConst + "右值:" + rhs.getName() + " " + rConst);
+                // 处理常量比较
+                switch (relOp.type()) {
+                    case LSS -> Visitor.upConstValue = (lConst < rConst) ? 1 : 0;
+                    case LEQ -> Visitor.upConstValue = (lConst <= rConst) ? 1 : 0;
+                    case GRE -> Visitor.upConstValue = (lConst > rConst) ? 1 : 0;
+                    case GEQ -> Visitor.upConstValue = (lConst >= rConst) ? 1 : 0;
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + relOp.type());
                 }
-                System.out.println("比较结果值："+Visitor.upConstValue);
+                System.out.println("比较结果值：" + Visitor.upConstValue);
                 Visitor.upValue = new ConstInt(IntegerType.i1, Visitor.upConstValue); // 设置布尔类型的常量值
-            }else if(relOp.type()==tokenType.LSS){
-                icmp ICMP=new icmp(icmp.LT,a,b);
-                Visitor.curBlock.addInstruction(ICMP);
-                Visitor.upValue=ICMP;
-            } else if (relOp.type()==tokenType.LEQ) {
-                icmp ICMP=new icmp(icmp.LE,a,b);
-                Visitor.curBlock.addInstruction(ICMP);
-                Visitor.upValue=ICMP;
-            } else if (relOp.type()==tokenType.GRE) {
-                icmp ICMP=new icmp(icmp.GT,a,b);
-                Visitor.curBlock.addInstruction(ICMP);
-                Visitor.upValue=ICMP;
-            } else if (relOp.type()==tokenType.GEQ) {
-                icmp ICMP=new icmp(icmp.GE,a,b);
-                Visitor.curBlock.addInstruction(ICMP);
-                Visitor.upValue=ICMP;
+            } else {
+                // 处理非常量的比较
+                String icmpType;
+                switch (relOp.type()) {
+                    case LSS -> icmpType = icmp.LT;
+                    case LEQ -> icmpType = icmp.LE;
+                    case GRE -> icmpType = icmp.GT;
+                    case GEQ -> icmpType = icmp.GE;
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + relOp.type());
+                }
+                Visitor.upValue = icmp(icmpType, lhs, rhs);
             }
+
         }else{
             addExp.visit();
         }

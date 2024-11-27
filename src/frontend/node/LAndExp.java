@@ -42,19 +42,16 @@ public class LAndExp extends node {
         for(EqExp eqExp:Visitor.eqExps){
             BasicBlock nextBlock=(size==(++i)?trueBlock:new BasicBlock("Block_and"+Function.andNum++));
             eqExp.visit();
-            br br;
-            if (Visitor.upValue instanceof ConstInt constInt) {
-                br = constInt.isZero() ? new br(falseBlock) : new br(nextBlock);
-            } else {
-                if (Visitor.upValue.getType().isInt1()) {//如果是int1类型
-                    br = new br(Visitor.upValue, nextBlock, falseBlock);
-                } else {
-                    icmp ICMP = new icmp(icmp.NE, zext(Visitor.upValue), ConstInt.zero);
-                    Visitor.curBlock.addInstruction(ICMP);
-                    br = new br(ICMP,nextBlock ,falseBlock);
-                }
+
+            if (Visitor.upValue instanceof ConstInt constInt) {// 常量直接判断是否为零
+                br(constInt.isZero() ? falseBlock : nextBlock);
+            } else {// 处理非常量
+                icmp condition = Visitor.upValue.getType().isInt1()
+                        ? (icmp) Visitor.upValue // 直接使用 int1 类型值作为条件
+                        : icmp(icmp.NE, zext(Visitor.upValue), ConstInt.zero); // 非 int1 类型需要扩展和比较
+                br(condition, nextBlock, falseBlock);
             }
-            Visitor.curBlock.addInstruction(br); // 添加 br 指令
+
             if(i!=size){
                 Visitor.curBlock =nextBlock;
                 Visitor.curFunc.addBasicBlock(Visitor.curBlock);

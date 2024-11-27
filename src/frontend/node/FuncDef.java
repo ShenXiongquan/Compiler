@@ -57,10 +57,8 @@ public class FuncDef extends node{
 
         for(Parameter parameter :parameters){
             System.out.println("函数参数类型: "+parameter.getType().ir());
-            alloca alloca = new alloca(parameter.getType());
-            Visitor.curBlock.addInstruction(alloca);
+            alloca alloca = alloca(parameter.getType());
             Visitor.curTable.addSymbol(parameter.getArgName(),alloca);
-
             store store = new store(parameter, alloca);
             Visitor.curBlock.addInstruction(store);
         }

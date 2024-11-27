@@ -68,68 +68,68 @@ public abstract class node {
         return value;
     }
     // 封装二元操作指令
-    protected Value add(Value lhs, Value rhs) {
+    protected add add(Value lhs, Value rhs) {
         add addInstruction = new add(lhs, rhs);
         Visitor.curBlock.addInstruction(addInstruction);
         return addInstruction;
     }
 
-    protected Value and(Value lhs, Value rhs) {
+    protected and and(Value lhs, Value rhs) {
         and andInstruction = new and(lhs, rhs);
         Visitor.curBlock.addInstruction(andInstruction);
         return andInstruction;
     }
 
-    protected Value mul(Value lhs, Value rhs) {
+    protected mul mul(Value lhs, Value rhs) {
         mul mulInstruction = new mul(lhs, rhs);
         Visitor.curBlock.addInstruction(mulInstruction);
         return mulInstruction;
     }
 
-    protected Value or(Value lhs, Value rhs) {
+    protected or or(Value lhs, Value rhs) {
         or orInstruction = new or(lhs, rhs);
         Visitor.curBlock.addInstruction(orInstruction);
         return orInstruction;
     }
 
-    protected Value sdiv(Value lhs, Value rhs) {
+    protected sdiv sdiv(Value lhs, Value rhs) {
         sdiv sdivInstruction = new sdiv(lhs, rhs);
         Visitor.curBlock.addInstruction(sdivInstruction);
         return sdivInstruction;
     }
 
-    protected Value srem(Value lhs, Value rhs) {
+    protected srem srem(Value lhs, Value rhs) {
         srem sremInstruction = new srem(lhs, rhs);
         Visitor.curBlock.addInstruction(sremInstruction);
         return sremInstruction;
     }
 
-    protected Value sub(Value lhs, Value rhs) {
+    protected sub sub(Value lhs, Value rhs) {
         sub subInstruction = new sub(lhs, rhs);
         Visitor.curBlock.addInstruction(subInstruction);
         return subInstruction;
     }
 
     // 2. 封装 icmp 指令
-    protected Value icmp(String condition, Value lhs, Value rhs) {
+    protected icmp icmp(String condition, Value lhs, Value rhs) {
         icmp icmpInstruction = new icmp(condition, lhs, rhs);
         Visitor.curBlock.addInstruction(icmpInstruction);
         return icmpInstruction;
     }
 
     // 封装内存操作指令
-    protected Value alloca(Type type) {
+    protected alloca alloca(Type type) {
         alloca allocaInstruction = new alloca(type);
         Visitor.curBlock.addInstruction(allocaInstruction);
         return allocaInstruction;
     }
 
-    protected Value getelementptr(Value base, Value offset) {
+    protected getelementptr getelementptr(Value base, Value offset) {
         getelementptr gepInstruction = new getelementptr(base, offset);
         Visitor.curBlock.addInstruction(gepInstruction);
         return gepInstruction;
     }
-    protected Value getelementptr(Value base, Value offset1,Value offset2) {
+    protected getelementptr getelementptr(Value base, Value offset1,Value offset2) {
         getelementptr gepInstruction = new getelementptr(base, offset1,offset2);
         Visitor.curBlock.addInstruction(gepInstruction);
         return gepInstruction;
@@ -140,13 +140,13 @@ public abstract class node {
         Visitor.curBlock.addInstruction(storeInstruction);
     }
 
-    protected Value load(Value pointer) {
+    protected load load(Value pointer) {
         load loadInstruction = new load(pointer);
         Visitor.curBlock.addInstruction(loadInstruction);
         return loadInstruction;
     }
 
-    protected Value call(Function function, Value... args) {
+    protected call call(Function function, Value... args) {
         call callInstruction = new call(function,args);
         Visitor.curBlock.addInstruction(callInstruction);
         return callInstruction;

@@ -58,8 +58,7 @@ public class ConstDef extends node {
                 Visitor.model.addGlobalValue(globalVariable);
                 Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部数组
-                alloca alloca = new alloca(arrayType); // 分配空间
-                Visitor.curBlock.addInstruction(alloca);
+                alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
                 constInitVal.visit(); // 处理数组的初始值
                 store store = new store(Visitor.upValue, alloca); // 存储数组初始值

@@ -47,7 +47,6 @@ public class VarDef extends node {
         boolean isArray = (constExp != null); // 是否为数组
         boolean initialized = (initVal != null);
         if (!isArray) { // 普通变量
-
             if (isGlobal) { // 全局普通变量
                 if (initialized) {
                     Visitor.calAble = true;
@@ -58,8 +57,7 @@ public class VarDef extends node {
                 Visitor.model.addGlobalValue(globalVariable);
                 Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部普通变量
-                alloca alloca = new alloca(Visitor.ValueType); // 分配空间
-                Visitor.curBlock.addInstruction(alloca);
+                alloca alloca = alloca(Visitor.ValueType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
                 if (initialized) {
                     initVal.visit();
@@ -82,8 +80,7 @@ public class VarDef extends node {
                 Visitor.model.addGlobalValue(globalVariable);
                 Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部数组
-                alloca alloca = new alloca(arrayType); // 分配空间
-                Visitor.curBlock.addInstruction(alloca);
+                alloca alloca =alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
                 if (initialized) {
                     Visitor.upArrayValue = new ArrayList<>();

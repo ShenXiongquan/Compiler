@@ -26,7 +26,6 @@ public class VarDecl extends node {
     }
     public void visit() {
         bType.visit();
-
         varDefs.forEach(VarDef::visit);
     }
 }//变量声明

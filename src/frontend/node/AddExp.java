@@ -28,36 +28,38 @@ public class AddExp extends node {
         if (Visitor.calAble) {
             if (addExp != null) {
                 addExp.visit();
-                int a = Visitor.upConstValue;
+                int l = Visitor.upConstValue;
                 mulExp.visit();
-                int b = Visitor.upConstValue;
-                if (op.type() == tokenType.PLUS) Visitor.upConstValue = a + b;
-                else Visitor.upConstValue = a - b;
-                System.out.println("add result:" + Visitor.upConstValue);
+                int r = Visitor.upConstValue;
+                Visitor.upConstValue = switch (op.type()) {
+                    case PLUS -> l + r;
+                    case MINU -> l - r;
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
+                };
             } else {
                 mulExp.visit();
             }
         } else {
             if (addExp != null) {
                 addExp.visit();
-                Value a = zext(Visitor.upValue);int l = Visitor.upConstValue;
+                Value lhs = zext(Visitor.upValue);
+                int l = Visitor.upConstValue;
                 mulExp.visit();
-                Value b = zext(Visitor.upValue);int r = Visitor.upConstValue;
-                if (a instanceof ConstInt && b instanceof ConstInt) {
-
-                    if (op.type() == tokenType.PLUS) Visitor.upConstValue = l + r;
-                    else Visitor.upConstValue = l - r;
+                Value rhs = zext(Visitor.upValue);
+                int r = Visitor.upConstValue;
+                if (lhs instanceof ConstInt && rhs instanceof ConstInt) {// 处理常量操作
+                    Visitor.upConstValue = switch (op.type()) {
+                        case PLUS -> l + r;
+                        case MINU -> l - r;
+                        default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
+                    };
                     Visitor.upValue = new ConstInt(IntegerType.i32, Visitor.upConstValue);
-                    System.out.println("结果为:"+Visitor.upConstValue);
-                }else if (op.type() == tokenType.PLUS) {
-
-                    add add = new add(a, b);
-                    Visitor.curBlock.addInstruction(add);
-                    Visitor.upValue = add;
-                } else {
-                    sub sub = new sub(a, b);
-                    Visitor.curBlock.addInstruction(sub);
-                    Visitor.upValue = sub;
+                } else {// 处理非常量操作
+                    Visitor.upValue = switch (op.type()) {
+                        case PLUS -> add(lhs, rhs);
+                        case MINU -> sub(lhs, rhs);
+                        default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
+                    };
                 }
             } else {
                 mulExp.visit();

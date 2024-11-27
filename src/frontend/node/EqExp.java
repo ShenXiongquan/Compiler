@@ -26,28 +26,24 @@ public class EqExp extends node{
     public void visit() {
         if(eqExp!=null){
             eqExp.visit();
-            Value a= zext(Visitor.upValue);int leftConst = Visitor.upConstValue;
+            Value lhs= zext(Visitor.upValue);int lConst = Visitor.upConstValue;
             relExp.visit();
-            Value b= zext(Visitor.upValue);int rightConst = Visitor.upConstValue;
-            if (a instanceof ConstInt && b instanceof ConstInt) {
-                // 常量折叠优化
-                if (eqOp.type() == tokenType.EQL) {
-                    Visitor.upConstValue = (leftConst == rightConst) ? 1 : 0;
-                } else {
-                    Visitor.upConstValue = (leftConst != rightConst) ? 1 : 0;
-                }
-
+            Value rhs= zext(Visitor.upValue);int rConst = Visitor.upConstValue;
+            if (lhs instanceof ConstInt && rhs instanceof ConstInt) {// 处理常量比较
+                Visitor.upConstValue = switch (eqOp.type()) {
+                    case EQL -> (lConst == rConst) ? 1 : 0;
+                    case NEQ -> (lConst != rConst) ? 1 : 0;
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + eqOp.type());
+                };
                 Visitor.upValue = new ConstInt(IntegerType.i1, Visitor.upConstValue);
-            } else if(eqOp.type()== tokenType.EQL){
-                icmp ICMP=new icmp(icmp.EQ,a,b);
-                Visitor.curBlock.addInstruction(ICMP);
-                Visitor.upValue=ICMP;
-            } else if (eqOp.type()==tokenType.NEQ) {
-                icmp ICMP=new icmp(icmp.NE,a,b);
-                Visitor.curBlock.addInstruction(ICMP);
-                Visitor.upValue=ICMP;
+            } else {// 处理非常量比较
+                String icmpType = switch (eqOp.type()) {
+                    case EQL -> icmp.EQ;
+                    case NEQ -> icmp.NE;
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + eqOp.type());
+                };
+                Visitor.upValue = icmp(icmpType, lhs, rhs);
             }
-
         }else{
             relExp.visit();
         }
