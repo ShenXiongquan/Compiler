@@ -15,7 +15,7 @@ public abstract class Instruction extends User {
     /**
      * 指令所在的基本块
      */
-    BasicBlock parentBlock;
+    final BasicBlock parentBlock;
 
     /**
      * @param name       指令的返回值名称

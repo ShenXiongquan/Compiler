@@ -5,18 +5,13 @@ import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
-import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.token.token;
 import frontend.tool.myWriter;
-
-import java.util.ArrayList;
 
 public class LAndExp extends node {
     public EqExp eqExp;
     public token and;
     public LAndExp lAndExp;
-
-
 
     public void print() {
         if (lAndExp != null) {
@@ -53,8 +48,7 @@ public class LAndExp extends node {
             }
 
             if(i!=size){
-                Visitor.curBlock =nextBlock;
-                Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+                enterNewBlock(nextBlock);
             }
         }
     }

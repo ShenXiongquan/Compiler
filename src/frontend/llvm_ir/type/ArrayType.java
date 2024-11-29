@@ -9,9 +9,9 @@ package frontend.llvm_ir.type;
  * @c = dso_local global [8 x i8] c"foobar\00\00", align 1
  */
 public class ArrayType extends Type{
-    private IntegerType elementType; // 数组的元素类型
-    private int size;
-    private int ArraySize;
+    private final IntegerType elementType; // 数组的元素类型
+    private final int size;
+    private final int ArraySize;
 
     // 构造方法
     public ArrayType(Type elementType, int ArraySize) {

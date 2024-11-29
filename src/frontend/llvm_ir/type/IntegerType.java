@@ -16,7 +16,7 @@ public class IntegerType extends Type {
 
     public static final IntegerType i1 =new IntegerType(1);
 
-    private int bitWidth;  // 用于表示整数的位宽，例如 32 表示 32 位整数
+    private final int bitWidth;  // 用于表示整数的位宽，例如 32 表示 32 位整数
 
     // 构造方法
     public IntegerType(int bitWidth) {

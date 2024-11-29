@@ -1,25 +1,53 @@
 package frontend.symbol;
 
 
-import frontend.llvm_ir.Visitor;
-import frontend.llvm_ir.Value;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class Symbol {
-    public int tableId; 	// 当前符号所在的符号表编号。
+    private final int tableId; 	// 当前符号所在的符号表编号。
 
-    public String token; 	// 当前符号所对应的字符串。
+    private final String token; 	// 当前符号所对应的字符串。
 
-    public Value value;
-    public SymbolType symbolType; //当前symbol的类型
-    //是否是常量
-    public boolean isConst;
+    private boolean isConst;
+    private boolean isArray;
+    private final SymbolType symbolType; //当前symbol的类型
+    private  ArrayList<Symbol> paramList;//函数参数列表
 
-    //函数符号相关信息
-    public int paramNum;//函数参数个数
-    public final List<Symbol> paramList=new ArrayList<>();//函数参数列表
+    public Symbol(int tableId,String token,boolean isConst,boolean isArray,SymbolType type){
+        this.tableId=tableId;
+        this.token=token;
+        this.isConst=isConst;
+        this.isArray=isArray;
+        this.symbolType=type;
+    }
+    public Symbol(int tableId, String token, SymbolType type, ArrayList<Symbol> paramList){
+        this.tableId=tableId;
+        this.token=token;
+        this.symbolType=type;
+        this.paramList=paramList;
+    }
+
+    public boolean isConst() {
+        return isConst;
+    }
+
+    public int getTableId() {
+        return tableId;
+    }
+    public boolean isArray() {
+        return isArray;
+    }
+    public String getToken() {
+        return token;
+    }
+
+    public ArrayList<Symbol> getParamList() {
+        return paramList;
+    }
+
+    public SymbolType getSymbolType() {
+        return symbolType;
+    }
 
 }
 

@@ -1,0 +1,19 @@
+package frontend.node.unaryExp;
+
+
+import frontend.node.primaryExp.PrimaryExp;
+import frontend.tool.myWriter;
+
+public class PunaryExp extends UnaryExp{
+    public PrimaryExp primaryExp;
+
+    @Override
+    public void print() {
+        primaryExp.print();
+        myWriter.writeNonTerminal("UnaryExp");
+    }
+
+    public void visit() {
+        primaryExp.visit();
+    }
+}

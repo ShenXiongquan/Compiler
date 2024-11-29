@@ -3,8 +3,6 @@ package frontend;
 import frontend.node.blockItem.*;
 import frontend.node.constInitVal.*;
 import frontend.node.decl.*;
-import frontend.node.decl.ConstDecl;
-import frontend.node.decl.VarDecl;
 import frontend.node.initVal.*;
 import frontend.node.primaryExp.*;
 import frontend.node.stmt.*;
@@ -70,11 +68,11 @@ public class Parser {
     private Decl parseDecl() {
 
         if (token.type() == tokenType.CONSTTK) {
-            ConstDecl decl = new ConstDecl();
+            CDecl decl = new CDecl();
             decl.constDecl = parseConstDecl();//常量声明
             return decl;
         } else {
-            VarDecl decl = new VarDecl();
+            VDecl decl = new VDecl();
             decl.varDecl = parseVarDecl();//变量声明
             return decl;
         }
@@ -82,7 +80,7 @@ public class Parser {
 
     private frontend.node.ConstDecl parseConstDecl() {
         frontend.node.ConstDecl constDecl = new frontend.node.ConstDecl();
-        constDecl._const = match();
+        constDecl.con = match();
         constDecl.bType = parseBType();
         constDecl.constDefs.add(parseConstDef());
 
@@ -197,12 +195,12 @@ public class Parser {
     private UnaryExp parseUnaryExp() {
 
         if (token.type() == tokenType.PLUS || token.type() == tokenType.MINU || token.type() == tokenType.NOT) {
-            UnaryOpUE unaryExp = new UnaryOpUE();
+            OunaryExp unaryExp = new OunaryExp();
             unaryExp.unaryOp = parseUnaryOp();
             unaryExp.unaryExp = parseUnaryExp();
             return unaryExp;
         } else if (token.type() == tokenType.IDENFR && offset2Token(1).type() == tokenType.LPARENT) {
-            FuncCallUE unaryExp = new FuncCallUE();
+            FunaryExp unaryExp = new FunaryExp();
             unaryExp.ident = match();
             unaryExp.lparent = match();
 
@@ -214,7 +212,7 @@ public class Parser {
             } else unaryExp.rparent = match();
             return unaryExp;
         } else {
-            PrimaryExpUE unaryExp = new PrimaryExpUE();
+            PunaryExp unaryExp = new PunaryExp();
             unaryExp.primaryExp = parsePrimaryExp();
             return unaryExp;
         }
@@ -247,7 +245,7 @@ public class Parser {
     private PrimaryExp parsePrimaryExp() {
 
         if (token.type() == tokenType.LPARENT) {
-            ExpPE primaryExp = new ExpPE();
+            EprimaryExp primaryExp = new EprimaryExp();
             primaryExp.lparent = match();
             primaryExp.exp = parseExp();
             if (token.type() != tokenType.RPARENT) {
@@ -255,15 +253,15 @@ public class Parser {
             } else primaryExp.rparent = match();
             return primaryExp;
         } else if (token.type() == tokenType.IDENFR) {
-            LValPE primaryExp = new LValPE();
+            LprimaryExp primaryExp = new LprimaryExp();
             primaryExp.lVal = parseLVal();
             return primaryExp;
         } else if (token.type() == tokenType.INTCON) {
-            NumberPE primaryExp = new NumberPE();
+            NprimaryExp primaryExp = new NprimaryExp();
             primaryExp.number = parseNumber();
             return primaryExp;
         } else {
-            CharacterPE primaryExp = new CharacterPE();
+            CprimaryExp primaryExp = new CprimaryExp();
             primaryExp.character = parseCharacter();
             return primaryExp;
         }
@@ -369,11 +367,11 @@ public class Parser {
     private BlockItem parseBlockItem() {
 
         if (token.type() == tokenType.CONSTTK || token.type() == tokenType.INTTK || token.type() == tokenType.CHARTK) {
-            DeclBlockItem blockItem = new DeclBlockItem();
+            DBlockItem blockItem = new DBlockItem();
             blockItem.decl = parseDecl();
             return blockItem;
         } else {
-            StmtBlockItem blockItem = new StmtBlockItem();
+            SBlockItem blockItem = new SBlockItem();
             blockItem.stmt = parseStmt();
             return blockItem;
         }
@@ -605,10 +603,10 @@ public class Parser {
 
     private FuncFParams parseFuncFParams() {
         FuncFParams funcFParams = new FuncFParams();
-        funcFParams.arguments.add(parseFuncFParam());
+        funcFParams.funcFParamList.add(parseFuncFParam());
         while (token.type() == tokenType.COMMA) {
             funcFParams.comma.add(match()) ;
-            funcFParams.arguments.add(parseFuncFParam());
+            funcFParams.funcFParamList.add(parseFuncFParam());
         }
         return funcFParams;
     }

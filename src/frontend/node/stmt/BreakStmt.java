@@ -3,7 +3,6 @@ package frontend.node.stmt;
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
-import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -19,9 +18,7 @@ public class BreakStmt extends Stmt {
     }
 
     public void visit() {
-       br br=new br(Visitor.breakToBlocks.peek());
-       Visitor.curBlock.addInstruction(br);
-       Visitor.curBlock=new BasicBlock("Block_break"+ Function.breakNum++);
-       Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+        br(Visitor.breakToBlocks.peek());
+        enterNewBlock(new BasicBlock("Block_break" + Function.breakNum++));
     }
 }

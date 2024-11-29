@@ -13,7 +13,7 @@ import java.util.List;
 
 public class FuncRParams extends node{
     public final List<Exp> exps=new ArrayList<>();
-    public List<token> comma=new ArrayList<>();
+    public final List<token> comma=new ArrayList<>();
 
     public void print(){
         exps.get(0).print();

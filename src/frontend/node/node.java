@@ -28,9 +28,7 @@ public abstract class node {
         if (value instanceof ConstInt constInt) {
             value = new ConstInt(IntegerType.i32, constInt.getValue());
         } else if (value.getType() instanceof PointerType) {
-            load load = new load(value);
-            Visitor.curBlock.addInstruction(load);
-            value=load;
+            value = load(value);
             if (!value.getType().isInt32()) {
                 zext zext = new zext(value);
                 Visitor.curBlock.addInstruction(zext);
@@ -50,9 +48,7 @@ public abstract class node {
             value = new ConstInt(IntegerType.i8, constInt.getValue());
         } else if (value.getType() instanceof PointerType) {
             // 对指针类型先加载值
-            load load = new load(value);
-            Visitor.curBlock.addInstruction(load);
-            value=load;
+            value = load(value);
             // 再进行 trunc 操作
             if (value.getType().isInt32()) {
                 trunc trunc = new trunc(value);
@@ -68,16 +64,23 @@ public abstract class node {
         return value;
     }
     // 封装二元操作指令
+
+
+//    protected and and(Value lhs, Value rhs) {
+//        and andInstruction = new and(lhs, rhs);
+//        Visitor.curBlock.addInstruction(andInstruction);
+//        return andInstruction;
+//    }
+
+    //    protected or or(Value lhs, Value rhs) {
+//        or orInstruction = new or(lhs, rhs);
+//        Visitor.curBlock.addInstruction(orInstruction);
+//        return orInstruction;
+//    }
     protected add add(Value lhs, Value rhs) {
         add addInstruction = new add(lhs, rhs);
         Visitor.curBlock.addInstruction(addInstruction);
         return addInstruction;
-    }
-
-    protected and and(Value lhs, Value rhs) {
-        and andInstruction = new and(lhs, rhs);
-        Visitor.curBlock.addInstruction(andInstruction);
-        return andInstruction;
     }
 
     protected mul mul(Value lhs, Value rhs) {
@@ -86,11 +89,6 @@ public abstract class node {
         return mulInstruction;
     }
 
-    protected or or(Value lhs, Value rhs) {
-        or orInstruction = new or(lhs, rhs);
-        Visitor.curBlock.addInstruction(orInstruction);
-        return orInstruction;
-    }
 
     protected sdiv sdiv(Value lhs, Value rhs) {
         sdiv sdivInstruction = new sdiv(lhs, rhs);
@@ -129,8 +127,9 @@ public abstract class node {
         Visitor.curBlock.addInstruction(gepInstruction);
         return gepInstruction;
     }
-    protected getelementptr getelementptr(Value base, Value offset1,Value offset2) {
-        getelementptr gepInstruction = new getelementptr(base, offset1,offset2);
+
+    protected getelementptr getelementptr(Value base, Value offset1, Value offset2) {
+        getelementptr gepInstruction = new getelementptr(base, offset1, offset2);
         Visitor.curBlock.addInstruction(gepInstruction);
         return gepInstruction;
     }
@@ -147,7 +146,7 @@ public abstract class node {
     }
 
     protected call call(Function function, Value... args) {
-        call callInstruction = new call(function,args);
+        call callInstruction = new call(function, args);
         Visitor.curBlock.addInstruction(callInstruction);
         return callInstruction;
     }
@@ -169,14 +168,14 @@ public abstract class node {
         ret retInstruction = new ret(returnValue);
         Visitor.curBlock.addInstruction(retInstruction);
     }
-
+    protected void ret() {
+        ret retInstruction = new ret();
+        Visitor.curBlock.addInstruction(retInstruction);
+    }
     // 进入新基本块
     protected void enterNewBlock(BasicBlock block) {
         Visitor.curBlock = block;
         Visitor.curFunc.addBasicBlock(block);
-    }
-    protected void createFunction(){
-
     }
 
 }

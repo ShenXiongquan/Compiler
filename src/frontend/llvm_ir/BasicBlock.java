@@ -24,9 +24,9 @@ public class BasicBlock extends Value {
     /**
      * 基本块的父作用域
      */
-    private Value parent;
-    private List<BasicBlock> predecessors;   // 前驱基本块列表
-    private List<BasicBlock> successors;     // 后继基本块列表
+    private final Value parent;
+    private final List<BasicBlock> predecessors;   // 前驱基本块列表
+    private final List<BasicBlock> successors;     // 后继基本块列表
 
     // 构造函数
     public BasicBlock(String blockName) {

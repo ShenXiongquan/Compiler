@@ -10,7 +10,7 @@ public class VarDecl extends node {
 
     public BType bType;
     public final List<VarDef> varDefs = new ArrayList<>();
-    public List<token> comma=new ArrayList<>();
+    public final List<token> comma=new ArrayList<>();
 
     public token semicn;
 

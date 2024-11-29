@@ -8,14 +8,13 @@ import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 
-public class LOrExp extends node{
+public class LOrExp extends node {
     public LAndExp lAndExp;
     public token or;
     public LOrExp lOrExp;
 
-
-    public void print(){
-        if(lOrExp!=null){
+    public void print() {
+        if (lOrExp != null) {
             lOrExp.print();
             or.print();
         }
@@ -24,25 +23,24 @@ public class LOrExp extends node{
     }
 
     public void handle() {
-        if(lOrExp!=null){
+        if (lOrExp != null) {
             lOrExp.handle();
             Visitor.lAndExps.add(lAndExp);
-        }else{
+        } else {
             Visitor.lAndExps.add(lAndExp);
         }
     }
 
-    public void visit(BasicBlock trueBlock,BasicBlock falseBlock){
-        int i=0;
-        int size=Visitor.lAndExps.size();
-        for(LAndExp lAndExp:Visitor.lAndExps){
-            BasicBlock nextBlock=(size==(++i)?falseBlock:new BasicBlock("Block_or"+ Function.orNum++));
-            Visitor.eqExps=new ArrayList<>();
+    public void visit(BasicBlock trueBlock, BasicBlock falseBlock) {
+        int i = 0;
+        int size = Visitor.lAndExps.size();
+        for (LAndExp lAndExp : Visitor.lAndExps) {
+            BasicBlock nextBlock = (size == (++i) ? falseBlock : new BasicBlock("Block_or" + Function.orNum++));
+            Visitor.eqExps = new ArrayList<>();
             lAndExp.handle();
-            lAndExp.visit(trueBlock,nextBlock);
-            if(i!=size) {
-               Visitor.curBlock=nextBlock;
-               Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+            lAndExp.visit(trueBlock, nextBlock);
+            if (i != size) {
+                enterNewBlock(nextBlock);
             }
         }
     }

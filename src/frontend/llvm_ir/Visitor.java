@@ -4,8 +4,6 @@ import frontend.llvm_ir.*;
 import frontend.llvm_ir.type.Type;
 import frontend.node.EqExp;
 import frontend.node.LAndExp;
-import frontend.node.LOrExp;
-import frontend.symbol.SymbolTable;
 
 import java.util.*;
 

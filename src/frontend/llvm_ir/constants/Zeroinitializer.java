@@ -8,7 +8,7 @@ import frontend.llvm_ir.type.ArrayType;
  */
 
 public class Zeroinitializer extends Constant{
-    private int length;
+    private final int length;
 
     public Zeroinitializer(ArrayType arrayType) {
         super(arrayType);

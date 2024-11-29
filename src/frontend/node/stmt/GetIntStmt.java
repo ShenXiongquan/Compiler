@@ -1,7 +1,6 @@
 package frontend.node.stmt;
 
 import frontend.llvm_ir.Visitor;
-import frontend.llvm_ir.instructions.MemInstructions.store;
 import frontend.llvm_ir.instructions.MixedInstructions.call;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.PointerType;
@@ -30,10 +29,9 @@ public class GetIntStmt extends Stmt {
     }
     public void visit() {
         lVal.visit();
-        call call=new call(Visitor.model.getint());
-        Visitor.curBlock.addInstruction(call);
+        call call=call(Visitor.model.getint());
         IntegerType expectedType= (IntegerType) ((PointerType)Visitor.upValue.getType()).getPointedType();
-        store store=new store(expectedType.isInt8()?trunc(call):call,Visitor.upValue);
-        Visitor.curBlock.addInstruction(store);
+        store(expectedType.isInt8()?trunc(call):call,Visitor.upValue);
+
     }
 }

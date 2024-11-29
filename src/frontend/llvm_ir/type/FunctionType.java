@@ -3,7 +3,7 @@ package frontend.llvm_ir.type;
 
 
 public class FunctionType extends Type{
-    private Type returnType;           // 函数返回类型
+    private final Type returnType;           // 函数返回类型
 
     // 构造方法：用于函数类型
     public FunctionType(Type returnType) {

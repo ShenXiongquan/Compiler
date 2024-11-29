@@ -5,7 +5,7 @@ import frontend.llvm_ir.type.ArrayType;
 import java.util.Map;
 
 public class ConstStr extends Constant {
-    private static Map<String, String> llvmEscapeMap = Map.of(
+    private static final Map<String, String> llvmEscapeMap = Map.of(
             "\\a", "\\07", // Alert (bell)
             "\\b", "\\08", // Backspace
             "\\t", "\\09", // Horizontal Tab

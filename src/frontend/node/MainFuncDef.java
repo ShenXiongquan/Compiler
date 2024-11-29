@@ -4,7 +4,6 @@ import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.type.IntegerType;
-import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -13,9 +12,7 @@ import java.util.ArrayList;
 public class MainFuncDef extends node {
     public token intToken;
     public token main;
-
     public token lparent;
-
     public token rparent;
     public Block block;
 
@@ -35,11 +32,14 @@ public class MainFuncDef extends node {
         Visitor.curFunc=function;
         Visitor.model.addGlobalValue(function);
         Visitor.globalTable.addSymbol(main.token(), function);
-        Visitor.curBlock= new BasicBlock("entry");
-        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+
+        enterNewBlock(new BasicBlock("entry"));
+
         block.visit();
         Visitor.popScope();
 
-        if(Visitor.curBlock.isEmpty())Visitor.curFunc.removeBasicBlock(Visitor.curBlock);
+        if(Visitor.curBlock.isEmpty()){
+            Visitor.curFunc.removeBasicBlock(Visitor.curBlock);
+        }
     }
 }//主函数声明MainFuncDef → 'int' 'main' '(' ')' Block

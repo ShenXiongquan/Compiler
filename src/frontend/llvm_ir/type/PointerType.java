@@ -8,7 +8,7 @@ package frontend.llvm_ir.type;
  */
 public class PointerType extends Type{
 
-    private Type pointedType; // 指针指向的类型
+    private final Type pointedType; // 指针指向的类型
 
     // 构造方法
     public PointerType(Type pointedType) {

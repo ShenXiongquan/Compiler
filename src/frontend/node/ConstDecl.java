@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConstDecl extends node{
-    public token _const;
-    public BType bType ;
+    public token con;
+    public BType bType;
     public final List<ConstDef> constDefs = new ArrayList<>();
 
-    public List<token> comma=new ArrayList<>();
+    public final List<token> comma=new ArrayList<>();
 
     public token semicn;
 
     public void print(){
-        _const.print();
+        con.print();
         bType.print();
         constDefs.get(0).print();
         for (int i=1;i<constDefs.size();i++){

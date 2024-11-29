@@ -4,10 +4,8 @@ import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.GlobalVariable;
 import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.instructions.MemInstructions.alloca;
-import frontend.llvm_ir.instructions.MemInstructions.store;
 import frontend.llvm_ir.type.ArrayType;
 import frontend.node.constInitVal.ConstInitVal;
-import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -16,7 +14,6 @@ public class ConstDef extends node {
     public token lbrack;
     public ConstExp constExp;
     public token rbrack;
-
     public token assign;
     public ConstInitVal constInitVal;
 
@@ -61,8 +58,7 @@ public class ConstDef extends node {
                 alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
                 constInitVal.visit(); // 处理数组的初始值
-                store store = new store(Visitor.upValue, alloca); // 存储数组初始值
-                Visitor.curBlock.addInstruction(store);
+                store(Visitor.upValue, alloca); // 存储数组初始值
             }
         }
     }

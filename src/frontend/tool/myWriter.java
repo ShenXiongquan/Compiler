@@ -51,7 +51,16 @@ public class myWriter {
 
     public static void writeSymbol(Symbol symbol) {
         try {
-            writer.write(symbol.tableId + " " + symbol.token + " " + symbol.symbolType.getTypeName() + "\n");
+            StringBuilder type = new StringBuilder();
+            if (symbol.isConst()) type.append("Const");
+            type.append(symbol.getSymbolType());
+            if (symbol.isArray()) type.append("Array");
+            if (symbol.getParamList() != null) type.append("Func");
+
+            String output = symbol.getTableId() + " " + symbol.getToken() + " " + type;
+            System.out.println(output);
+
+            writer.write(output + "\n");
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

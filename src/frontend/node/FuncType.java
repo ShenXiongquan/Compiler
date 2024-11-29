@@ -9,7 +9,6 @@ import frontend.tool.myWriter;
 
 public class FuncType extends node{
     public token returnType;
-
     public void print() {
         returnType.print();
         myWriter.writeNonTerminal("FuncType");

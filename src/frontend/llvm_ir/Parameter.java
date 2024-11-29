@@ -3,7 +3,7 @@ package frontend.llvm_ir;
 import frontend.llvm_ir.type.Type;
 
 public class Parameter extends Value {
-    private String argName;
+    private final String argName;
 
     public Parameter(String argName, Type valueType) {
         super(LOCAL_PREFIX + (Function.VarNum++), valueType);

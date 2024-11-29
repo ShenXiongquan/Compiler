@@ -4,7 +4,6 @@ package frontend.node.stmt;
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
-import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -19,10 +18,8 @@ public class ContinueStmt extends Stmt {
         myWriter.writeNonTerminal("Stmt");
     }
     public void visit() {
-        br br=new br(Visitor.continueToBlocks.peek());
-        Visitor.curBlock.addInstruction(br);
-        Visitor.curBlock=new BasicBlock("Block_continue"+ Function.continueNum++);
-        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+        br(Visitor.continueToBlocks.peek());
+        enterNewBlock(new BasicBlock("Block_continue"+ Function.continueNum++));
 
     }
 }

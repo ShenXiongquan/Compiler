@@ -6,7 +6,6 @@ import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
-import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
 public class RelExp extends node {

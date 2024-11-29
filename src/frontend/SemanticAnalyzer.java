@@ -2,25 +2,26 @@ package frontend;
 
 import frontend.node.*;
 import frontend.node.blockItem.BlockItem;
-import frontend.node.blockItem.DeclBlockItem;
-import frontend.node.blockItem.StmtBlockItem;
+import frontend.node.blockItem.DBlockItem;
+import frontend.node.blockItem.SBlockItem;
 import frontend.node.constInitVal.ArrayConstInitVal;
 import frontend.node.constInitVal.ConstInitVal;
 import frontend.node.constInitVal.ExpConstInitVal;
-import frontend.node.decl.ConstDecl;
+import frontend.node.decl.CDecl;
 import frontend.node.decl.Decl;
-import frontend.node.decl.VarDecl;
+import frontend.node.decl.VDecl;
 import frontend.node.initVal.ArrayInitVal;
 import frontend.node.initVal.ExpInitVal;
 import frontend.node.initVal.InitVal;
-import frontend.node.primaryExp.ExpPE;
-import frontend.node.primaryExp.LValPE;
+import frontend.node.primaryExp.CprimaryExp;
+import frontend.node.primaryExp.EprimaryExp;
+import frontend.node.primaryExp.LprimaryExp;
 import frontend.node.primaryExp.PrimaryExp;
 import frontend.node.stmt.*;
-import frontend.node.unaryExp.FuncCallUE;
-import frontend.node.unaryExp.PrimaryExpUE;
+import frontend.node.unaryExp.FunaryExp;
+import frontend.node.unaryExp.OunaryExp;
+import frontend.node.unaryExp.PunaryExp;
 import frontend.node.unaryExp.UnaryExp;
-import frontend.node.unaryExp.UnaryOpUE;
 import frontend.symbol.Symbol;
 import frontend.symbol.SymbolTable;
 import frontend.symbol.SymbolType;
@@ -29,71 +30,27 @@ import frontend.token.tokenType;
 import frontend.tool.errorManager;
 import frontend.tool.myWriter;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SemanticAnalyzer {
-    private CompUnit compUnit;
-    private  final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
+    private final CompUnit compUnit;
+    private final SymbolTable globalTable = new SymbolTable();//先创建全局符号表，符号表是树形的，全局符号表是根节点
     private SymbolTable curTable = globalTable;
-    private  int isLoop = 0;
-    private  boolean hasReturnValue = false;
+    private int isLoop = 0;
+    private boolean hasReturnValue = false;
 
-    public SemanticAnalyzer(CompUnit compUnit){
-        this.compUnit=compUnit;
+    public SemanticAnalyzer(CompUnit compUnit) {
+        this.compUnit = compUnit;
     }
 
-    private boolean isConstant(LVal lVal) {
+    private boolean isConstant(Symbol symbol) {
+        if (symbol == null) return false;
+        return symbol.isConst();
 
-        SymbolTable symbolTable = curTable;
-        do {
-            if (symbolTable.directory.containsKey(lVal.ident.token())) {
-                SymbolType symbolType = symbolTable.directory.get(lVal.ident.token()).symbolType;
-                if (symbolType == SymbolType.CONST_INT || symbolType == SymbolType.CONST_CHAR) return true;
-                else if ((symbolType == SymbolType.CONST_INT_ARRAY || symbolType == SymbolType.CONST_CHAR_ARRAY) && lVal.lbrack != null)
-                    return true;
-                else return false;
-            }
-            symbolTable = symbolTable.pre;
-        } while (symbolTable != null);
-
-        return false;
     }//判断是常量
 
-    private boolean isIdentifierUndeclared(token ident) {
-        return curTable.getSymbol(ident.token())==null;
-    }//未声明的符号
-
-    private SymbolType getIdentifierType(token ident) {
-        SymbolTable symbolTable = curTable;
-        do {
-            if (symbolTable.directory.containsKey(ident.token()))
-                return symbolTable.directory.get(ident.token()).symbolType;
-            symbolTable = symbolTable.pre;
-        } while (symbolTable != null);
-        return null;
-    }//获取符号类型
-
-    private SymbolType getParamType(Exp exp) {
-        UnaryExp currentUnaryExp = exp.addExp.mulExp.unaryExp;
-        if (!(currentUnaryExp instanceof PrimaryExpUE primaryExpUE)) {
-            return null;
-        }
-
-        if (!(primaryExpUE.primaryExp instanceof LValPE)) {
-            return null;
-        }
-        LVal lVal = ((LValPE) primaryExpUE.primaryExp).lVal;
-        if (getIdentifierType(lVal.ident) == SymbolType.INT_ARRAY && lVal.lbrack == null) {
-            return SymbolType.INT_ARRAY;
-        } else if (getIdentifierType(lVal.ident) == SymbolType.CHAR_ARRAY && lVal.lbrack == null) {
-            return SymbolType.CHAR_ARRAY;
-        } else {
-            return null;
-        }
-    }//获取实参类型
-
     public void visit() {
-
         for (Decl decl : compUnit.decls) {
             visitDecl(decl);
         }
@@ -104,10 +61,10 @@ public class SemanticAnalyzer {
     }
 
     private void visitDecl(Decl decl) {
-        if (decl instanceof ConstDecl) {
-            visitConstDecl(((ConstDecl) decl).constDecl);
-        } else if (decl instanceof VarDecl) {
-            visitVarDecl((((VarDecl) decl).varDecl));
+        if (decl instanceof CDecl cDecl) {
+            visitConstDecl(cDecl.constDecl);
+        } else if (decl instanceof VDecl vDecl) {
+            visitVarDecl(vDecl.varDecl);
         }
     }
 
@@ -119,25 +76,20 @@ public class SemanticAnalyzer {
     }
 
     private void visitConstDef(ConstDef constDef, BType bType) {
-        Symbol symbol = new Symbol();
-        if (bType.type.type() == tokenType.CHARTK) {
-            if (constDef.lbrack == null) {
-                symbol.symbolType = SymbolType.CONST_CHAR;
-            } else {
-                symbol.symbolType = SymbolType.CONST_CHAR_ARRAY;
-            }
-        } else {
-            if (constDef.lbrack == null) {
-                symbol.symbolType = SymbolType.CONST_INT;
-            } else {
-                symbol.symbolType = SymbolType.CONST_INT_ARRAY;
-            }
-        }
 
-        symbol.tableId = curTable.id;
-        symbol.token = constDef.ident.token();
+        SymbolType symbolType = (bType.type.type() == tokenType.CHARTK) ? SymbolType.Char : SymbolType.Int;
+        boolean isArray = (constDef.lbrack != null);
 
-        if(!curTable.addSymbol(symbol)) errorManager.handleError(constDef.ident.line(), "b");
+        Symbol symbol = new Symbol(
+                curTable.id,
+                constDef.ident.token(),
+                true,
+                isArray,
+                symbolType
+        );
+
+
+        if (!curTable.addSymbol(symbol)) errorManager.handleError(constDef.ident.line(), "b");
 
         if (constDef.lbrack != null) visitConstExp(constDef.constExp);
         visitConstInitVal(constDef.constInitVal);
@@ -160,26 +112,18 @@ public class SemanticAnalyzer {
     }
 
     private void visitVarDef(VarDef varDef, BType bType) {
-        Symbol symbol = new Symbol();
-        if (bType.type.type() == tokenType.CHARTK) {
+        SymbolType symbolType = (bType.type.type() == tokenType.CHARTK) ? SymbolType.Char : SymbolType.Int;
+        boolean isArray = (varDef.lbrack != null);
 
-            if (varDef.lbrack == null) {
-                symbol.symbolType = SymbolType.CHAR_VAR;
-            } else {
-                symbol.symbolType = SymbolType.CHAR_ARRAY;
-            }
-        } else {
+        Symbol symbol = new Symbol(
+                curTable.id,
+                varDef.ident.token(),
+                false, // isConst
+                isArray,
+                symbolType
+        );
 
-            if (varDef.lbrack == null) {
-                symbol.symbolType = SymbolType.INT_VAR;
-            } else {
-                symbol.symbolType = SymbolType.INT_ARRAY;
-            }
-        }
-
-        symbol.tableId = curTable.id;
-        symbol.token = varDef.ident.token();
-        if(!curTable.addSymbol(symbol)) errorManager.handleError(varDef.ident.line(), "b");
+        if (!curTable.addSymbol(symbol)) errorManager.handleError(varDef.ident.line(), "b");
 
         if (varDef.lbrack != null) visitConstExp(varDef.constExp);
         visitInitVal(varDef.initVal);
@@ -196,26 +140,27 @@ public class SemanticAnalyzer {
     }
 
     private void visitFuncDef(FuncDef funcDef) {
-        Symbol symbol = new Symbol();
-        if (funcDef.funcType.returnType.type() == tokenType.CHARTK) {
-            symbol.symbolType = SymbolType.CHAR_FUNC;
+        SymbolType symbolType = switch (funcDef.funcType.returnType.type()) {
+            case CHARTK -> SymbolType.Char;
+            case INTTK -> SymbolType.Int;
+            default -> SymbolType.Void;
+        };
+        ArrayList<Symbol> paramList = new ArrayList<>();
+        Symbol symbol = new Symbol(
+                globalTable.id,
+                funcDef.ident.token(),
+                symbolType,
+                paramList
+        );
 
-        } else if (funcDef.funcType.returnType.type() == tokenType.INTTK) {
-            symbol.symbolType = SymbolType.INT_FUNC;
-        } else {
-            symbol.symbolType = SymbolType.VOID_FUNC;
-        }
-
-        symbol.token = funcDef.ident.token();
-        symbol.tableId = curTable.id;
-        if(!curTable.addSymbol(symbol))errorManager.handleError(funcDef.ident.line(), "b");
-
-
-        curTable=curTable.pushScope();//进入新的作用域，创建新的符号表入栈
+        // 尝试添加符号到当前作用域表
+        if (!curTable.addSymbol(symbol)) errorManager.handleError(funcDef.ident.line(), "b");
+        // 进入新作用域
+        curTable = curTable.pushScope();
+        // 如果函数有参数
         if (funcDef.funcFParams != null) {
             visitFuncFParams(funcDef.funcFParams);
-            symbol.paramNum = funcDef.funcFParams.arguments.size();
-            symbol.paramList.addAll(curTable.directory.values());
+            paramList.addAll(curTable.directory.values());
         }
 
         hasReturnValue = (funcDef.funcType.returnType.type() != tokenType.VOIDTK);
@@ -226,7 +171,7 @@ public class SemanticAnalyzer {
                 errorManager.handleError(funcDef.block.rbrace.line(), "g");
             } else {
                 BlockItem blockItem = funcDef.block.blockItems.get(funcDef.block.blockItems.size() - 1);
-                if (!(blockItem instanceof StmtBlockItem) || !(((StmtBlockItem) blockItem).stmt instanceof ReturnStmt)) {
+                if (!(blockItem instanceof SBlockItem sBlockItem) || !(sBlockItem.stmt instanceof ReturnStmt)) {
                     errorManager.handleError(funcDef.block.rbrace.line(), "g");
                 }
             }
@@ -236,13 +181,13 @@ public class SemanticAnalyzer {
 
     private void visitMainFuncDef(MainFuncDef mainFuncDef) {
         hasReturnValue = true;
-        curTable=curTable.pushScope();//进入新的作用域
+        curTable = curTable.pushScope();//进入新的作用域
         visitBlock(mainFuncDef.block);
         if (mainFuncDef.block.blockItems.isEmpty()) {
             errorManager.handleError(mainFuncDef.block.rbrace.line(), "g");
         } else {
             BlockItem blockItem = mainFuncDef.block.blockItems.get(mainFuncDef.block.blockItems.size() - 1);
-            if (!(blockItem instanceof StmtBlockItem) || !(((StmtBlockItem) blockItem).stmt instanceof ReturnStmt)) {
+            if (!(blockItem instanceof SBlockItem sBlockItem) || !(sBlockItem.stmt instanceof ReturnStmt)) {
                 errorManager.handleError(mainFuncDef.block.rbrace.line(), "g");
             }
         }
@@ -250,32 +195,24 @@ public class SemanticAnalyzer {
 
     private void visitFuncFParams(FuncFParams funcFParams) {
 
-        for (FuncFParam funcFParam : funcFParams.arguments) {
+        for (FuncFParam funcFParam : funcFParams.funcFParamList) {
             visitFuncFParam(funcFParam);
         }
     }
 
     private void visitFuncFParam(FuncFParam funcFParam) {
-        Symbol symbol = new Symbol();
-        if (funcFParam.bType.type.type() == tokenType.INTTK) {
-            if (funcFParam.lbrack != null) {
-                symbol.symbolType = SymbolType.INT_ARRAY;
-            } else {
-                symbol.symbolType = SymbolType.INT_VAR;
-            }
-        } else {
-            if (funcFParam.lbrack != null) {
-                symbol.symbolType = SymbolType.CHAR_ARRAY;
-            } else {
-                symbol.symbolType = SymbolType.CHAR_VAR;
-            }
-        }
+        SymbolType symbolType = (funcFParam.bType.type.type() == tokenType.INTTK) ? SymbolType.Int : SymbolType.Char;
+        boolean isArray = (funcFParam.lbrack != null);
 
-        symbol.token = funcFParam.ident.token();
-        symbol.tableId = curTable.id;
+        Symbol symbol = new Symbol(
+                curTable.id,
+                funcFParam.ident.token(),
+                false,
+                isArray,
+                symbolType
+        );
 
-        if(!curTable.addSymbol(symbol))errorManager.handleError(funcFParam.ident.line(), "b");
-        else curTable.directory.put(symbol.token, symbol);
+        if (!curTable.addSymbol(symbol)) errorManager.handleError(funcFParam.ident.line(), "b");
 
     }//FuncFParam → BType Ident ['[' ']']
 
@@ -283,14 +220,14 @@ public class SemanticAnalyzer {
         for (BlockItem blockItem : block.blockItems) {
             visitBlockItem(blockItem);
         }
-        curTable=curTable.popScope();//退出当前作用域
+        curTable = curTable.popScope();//退出当前作用域
     }
 
     private void visitBlockItem(BlockItem blockItem) {
-        if (blockItem instanceof DeclBlockItem declBlockItem) {
-            visitDecl(declBlockItem.decl);
+        if (blockItem instanceof DBlockItem dBlockItem) {
+            visitDecl(dBlockItem.decl);
         } else {
-            visitStmt(((StmtBlockItem) blockItem).stmt);
+            visitStmt(((SBlockItem) blockItem).stmt);
         }
     }
 
@@ -298,10 +235,11 @@ public class SemanticAnalyzer {
 
         if (stmt instanceof AssignStmt assignStmt) {
             LVal lVal = assignStmt.lVal;
-            if (isConstant(lVal)) {
+            Symbol symbol = visitLVal(lVal);
+            if (isConstant(symbol)) {
                 errorManager.handleError(lVal.ident.line(), "h");
             }
-            visitLVal(lVal);
+
             visitExp(assignStmt.exp);
 
         } else if (stmt instanceof ExpressionStmt expressionStmt) {
@@ -310,7 +248,7 @@ public class SemanticAnalyzer {
             }
 
         } else if (stmt instanceof BlockStmt blockStmt) {
-            curTable=curTable.pushScope(); // 进入新的作用域
+            curTable = curTable.pushScope(); // 进入新的作用域
             visitBlock(blockStmt.block);
 
         } else if (stmt instanceof IfStmt ifStmt) {
@@ -354,17 +292,17 @@ public class SemanticAnalyzer {
 
         } else if (stmt instanceof GetIntStmt getIntStmt) {
             LVal lVal = getIntStmt.lVal;
-            if (isConstant(lVal)) {
+            Symbol symbol = visitLVal(lVal);
+            if (isConstant(symbol)) {
                 errorManager.handleError(lVal.ident.line(), "h");
             }
-            visitLVal(lVal);
 
         } else if (stmt instanceof GetCharStmt getCharStmt) {
             LVal lVal = getCharStmt.lVal;
-            if (isConstant(lVal)) {
+            Symbol symbol = visitLVal(lVal);
+            if (isConstant(symbol)) {
                 errorManager.handleError(lVal.ident.line(), "h");
             }
-            visitLVal(lVal);
 
         } else if (stmt instanceof PrintfStmt printfStmt) {
             int count = 0;
@@ -382,80 +320,108 @@ public class SemanticAnalyzer {
                 visitExp(exp);
             }
         }
-    }//难处理，可能存在bug
+    }
 
     private void visitForStmt(ForStmt forStmt) {
-        if (isConstant(forStmt.lVal)) errorManager.handleError(forStmt.lVal.ident.line(), "h");
-        visitLVal(forStmt.lVal);
+        LVal lVal = forStmt.lVal;
+        Symbol symbol = visitLVal(lVal);
+        if (isConstant(symbol)) {
+            errorManager.handleError(lVal.ident.line(), "h");
+        }
         visitExp(forStmt.exp);
     }
 
-    private void visitExp(Exp exp) {
-        visitAddExp(exp.addExp);
+    private Symbol visitExp(Exp exp) {
+        return visitAddExp(exp.addExp);
     }
 
     private void visitCond(Cond cond) {
         visitLOrExp(cond.lOrExp);
     }
 
-    private void visitLVal(LVal lVal) {
-
-        if (isIdentifierUndeclared(lVal.ident)) {
+    private Symbol visitLVal(LVal lVal) {
+        Symbol symbol = curTable.getSymbol(lVal.ident.token());
+        if (symbol == null) {
             errorManager.handleError(lVal.ident.line(), "c");
         }
-        if (lVal.exp != null) visitExp(lVal.exp);
-    }
-
-    private void visitPrimaryExp(PrimaryExp primaryExp) {
-        if (primaryExp instanceof ExpPE expPE) {
-            visitExp(expPE.exp);
-        } else if (primaryExp instanceof LValPE lValPE) {
-            visitLVal(lValPE.lVal);
+        if(lVal.exp != null) {
+            visitExp(lVal.exp);
         }
+        if(lVal.lbrack!=null){
+            if (symbol != null) {
+                return new Symbol(symbol.getTableId(),symbol.getToken(),false,false,symbol.getSymbolType());
+            }
+        }
+        return symbol;
     }
 
-    private void visitUnaryExp(UnaryExp unaryExp) {
-        if (unaryExp instanceof PrimaryExpUE primaryExpUE) {
-            visitPrimaryExp(primaryExpUE.primaryExp);
-        } else if (unaryExp instanceof FuncCallUE funcCallUE) {
-            token ident = funcCallUE.ident;
-            if (isIdentifierUndeclared(ident)) {
+    private Symbol visitPrimaryExp(PrimaryExp primaryExp) {
+        if (primaryExp instanceof EprimaryExp eprimaryExp) {
+            return visitExp(eprimaryExp.exp);
+        } else if (primaryExp instanceof LprimaryExp lprimaryExp) {
+            return visitLVal(lprimaryExp.lVal);
+        } else if (primaryExp instanceof CprimaryExp cprimaryExp) {
+            return new Symbol(-1, null, false, false, SymbolType.Char);
+        } else {
+            return new Symbol(-1, null, false, false, SymbolType.Int);
+        }
+
+    }
+
+    private Symbol visitUnaryExp(UnaryExp unaryExp) {
+        if (unaryExp instanceof PunaryExp punaryExp) {
+            return visitPrimaryExp(punaryExp.primaryExp);
+        } else if (unaryExp instanceof FunaryExp funaryExp) {
+            token ident = funaryExp.ident;
+            Symbol func = curTable.getSymbol(ident.token());
+            if (func == null) {//函数未声明
                 errorManager.handleError(ident.line(), "c");
-            } else if (globalTable.directory.get(ident.token()).paramNum != (funcCallUE.funcRParams != null ? funcCallUE.funcRParams.exps.size() : 0)) {
-                errorManager.handleError(ident.line(), "d");
-            } else {
-                Symbol func = globalTable.directory.get(ident.token());
-                for (int i = 0; i < func.paramNum; i++) {
-                    SymbolType paramtype = getParamType(((FuncCallUE) unaryExp).funcRParams.exps.get(i));
-                    if (paramtype == null && func.paramList.get(i).symbolType.getTypeName().endsWith("Array")) {
-                        errorManager.handleError(ident.line(), "e");//数组参数传变量
-                        break;
-                    } else if (paramtype != null && func.paramList.get(i).symbolType != paramtype) {
-                        errorManager.handleError(ident.line(), "e");//数组类型不匹配或者变量参数传数组
-                        break;
+            }
+
+            ArrayList<Symbol> args = new ArrayList<>();
+            if (funaryExp.funcRParams != null) {
+                visitFuncRParams(funaryExp.funcRParams, args);
+            }
+
+            if (func != null) {
+                ArrayList<Symbol> params = func.getParamList();
+                int paramNum = params.size(), argNum = args.size();
+                if (paramNum != argNum) {
+                    errorManager.handleError(ident.line(), "d"); // 参数个数不匹配
+                } else {
+                    for (int i = 0; i < paramNum; i++) {
+                        Symbol param = params.get(i), arg = args.get(i);
+                        if (param.isArray() != arg.isArray() ||
+                                (param.isArray() && arg.isArray() && param.getSymbolType() != arg.getSymbolType())) {
+                            errorManager.handleError(ident.line(), "e"); // 参数类型或数组维度不匹配
+                            break;
+                        }
                     }
                 }
             }
-            if (funcCallUE.funcRParams != null) visitFuncRParams(funcCallUE.funcRParams);
+            return func;
         } else {
-            visitUnaryExp(((UnaryOpUE) unaryExp).unaryExp);
+            return visitUnaryExp(((OunaryExp) unaryExp).unaryExp);
         }
-    }//难处理，可能存在bug
 
-    private void visitFuncRParams(FuncRParams funcRParams) {
+    }
+
+    private void visitFuncRParams(FuncRParams funcRParams, ArrayList<Symbol> args) {
         for (Exp exp : funcRParams.exps) {
-            visitExp(exp);
+            args.add(visitExp(exp));
         }
     }
 
-    private void visitMulExp(MulExp mulExp) {
+    private Symbol visitMulExp(MulExp mulExp) {
         if (mulExp.mulExp != null) visitMulExp(mulExp.mulExp);
-        visitUnaryExp(mulExp.unaryExp);
+        Symbol symbol = visitUnaryExp(mulExp.unaryExp);
+        return mulExp.op != null ? new Symbol(-1, null, false, false, SymbolType.Int) : symbol;
     }
 
-    private void visitAddExp(AddExp addExp) {
+    private Symbol visitAddExp(AddExp addExp) {
         if (addExp.addExp != null) visitAddExp(addExp.addExp);
-        visitMulExp(addExp.mulExp);
+        Symbol symbol = visitMulExp(addExp.mulExp);
+        return addExp.op != null ? new Symbol(-1, null, false, false, SymbolType.Int) : symbol;
     }
 
     private void visitRelExp(RelExp relExp) {
@@ -486,12 +452,15 @@ public class SemanticAnalyzer {
         if (symbolTable != null) {
             for (Map.Entry<String, Symbol> entry : symbolTable.directory.entrySet()) {
                 Symbol symbol = entry.getValue();
-                System.out.println(symbol.tableId + " " + symbol.token + " " + symbol.symbolType.getTypeName());
-                myWriter.writeSymbol(entry.getValue());
+                myWriter.writeSymbol(symbol);
             }
             for (SymbolTable next : symbolTable.next) {
                 write(next);
             }
         }
+    }
+
+    public void write() {
+        write(globalTable);
     }
 }

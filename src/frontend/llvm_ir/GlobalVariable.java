@@ -11,9 +11,9 @@ import frontend.llvm_ir.type.PointerType;
 public class GlobalVariable extends GlobalValue{
     private static int num=0;
     private boolean isConstant;     // 是否是常量
-    private Constant initial;
+    private final Constant initial;
 
-    private boolean isPrintStr;
+    private final boolean isPrintStr;
 
     /**
      * @param name       全局变量名

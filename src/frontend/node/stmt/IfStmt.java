@@ -1,9 +1,7 @@
 package frontend.node.stmt;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
-import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.node.Cond;
 
 import frontend.token.token;
@@ -40,23 +38,18 @@ public class IfStmt extends Stmt {
 
        //if()
         cond.visit(trueBlock,falseBlock);
-
-        Visitor.curBlock=trueBlock;
-        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+        enterNewBlock(trueBlock);
         trueStmt.visit();
-        br br=new br(endBlock);
-        Visitor.curBlock.addInstruction(br);
+        br(endBlock);
+
 
         if(falseStmt!=null){//else{}
-            Visitor.curBlock=falseBlock;
-            Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+            enterNewBlock(falseBlock);
+
             falseStmt.visit();
-            br=new br(endBlock);
-            Visitor.curBlock.addInstruction(br);
+            br(endBlock);
         }
 
-
-        Visitor.curBlock=endBlock;
-        Visitor.curFunc.addBasicBlock(Visitor.curBlock);
+        enterNewBlock(endBlock);
     }
 }

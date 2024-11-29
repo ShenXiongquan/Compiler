@@ -23,6 +23,7 @@ public class Compiler {
             CompUnit compUnit= parser.parseCompUnit();//语法分析
             SemanticAnalyzer semanticAnalyzer=new SemanticAnalyzer(compUnit);
             semanticAnalyzer.visit();//语义分析
+//          semanticAnalyzer.write();
             if(!errorManager.HasError())compUnit.visit();
             System.out.print(Visitor.model.ir());
             myWriter.writeIr(Visitor.model.ir());

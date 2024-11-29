@@ -9,11 +9,9 @@ import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.constants.Zeroinitializer;
 import frontend.llvm_ir.instructions.MemInstructions.alloca;
 import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
-import frontend.llvm_ir.instructions.MemInstructions.store;
 import frontend.llvm_ir.type.ArrayType;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.initVal.InitVal;
-import frontend.symbol.Symbol;
 import frontend.token.token;
 import frontend.tool.myWriter;
 
@@ -61,13 +59,13 @@ public class VarDef extends node {
                 Visitor.curTable.addSymbol(variableName, alloca);
                 if (initialized) {
                     initVal.visit();
-                    store store = new store(Visitor.upValue, alloca); // 存储初始值
-                    Visitor.curBlock.addInstruction(store);
+                    store(Visitor.upValue, alloca); // 存储初始值
+
                 }
             }
         } else { // 数组变量
             constExp.visit(); // 处理数组维度
-            Visitor.ArraySize=Visitor.upConstValue;
+            Visitor.ArraySize = Visitor.upConstValue;
             ArrayType arrayType = new ArrayType(Visitor.ValueType, Visitor.ArraySize); // 构建数组类型
 
             if (isGlobal) { // 全局数组
@@ -80,17 +78,15 @@ public class VarDef extends node {
                 Visitor.model.addGlobalValue(globalVariable);
                 Visitor.curTable.addSymbol(variableName, globalVariable);
             } else { // 局部数组
-                alloca alloca =alloca(arrayType); // 分配空间
+                alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
                 if (initialized) {
                     Visitor.upArrayValue = new ArrayList<>();
                     initVal.visit();
                     int i = 0;
                     for (Value element : Visitor.upArrayValue) {
-                        getelementptr getelementptr = new getelementptr(alloca, ConstInt.zero, new ConstInt(IntegerType.i32, i++));
-                        Visitor.curBlock.addInstruction(getelementptr);
-                        store store = new store(element, getelementptr);
-                        Visitor.curBlock.addInstruction(store);
+                        getelementptr getelementptr = getelementptr(alloca, ConstInt.zero, new ConstInt(IntegerType.i32, i++));
+                        store(element, getelementptr);
                     }
                 }
 

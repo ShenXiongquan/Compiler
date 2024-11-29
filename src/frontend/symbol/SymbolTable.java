@@ -41,11 +41,10 @@ public class SymbolTable {
 
 // 添加新符号到符号表中
     public boolean addSymbol(Symbol symbol) {
-        if (existInScope(symbol.token)) {
+        if (existInScope(symbol.getToken())) {
             return false;
         }
-
-        directory.put(symbol.token, symbol);
+        directory.put(symbol.getToken(), symbol);
         return true;
     }
 
@@ -57,7 +56,7 @@ public class SymbolTable {
     /**
      * 查找符号是否定义
      * @param token 符号token
-     * @return
+     * @return  symbol
      */
     public Symbol getSymbol(String token) {
         Symbol symbol = directory.get(token);

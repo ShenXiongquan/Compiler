@@ -1,0 +1,19 @@
+package frontend.node.primaryExp;
+
+
+import frontend.node.LVal;
+import frontend.tool.myWriter;
+
+public class LprimaryExp extends PrimaryExp {
+    public LVal lVal;
+
+    @Override
+    public void print() {
+        lVal.print();
+        myWriter.writeNonTerminal("PrimaryExp");
+    }
+
+    public void visit() {
+        lVal.visit();
+    }
+}

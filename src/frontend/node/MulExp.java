@@ -3,11 +3,9 @@ package frontend.node;
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.constants.ConstInt;
-import frontend.llvm_ir.instructions.BinaryOperations.*;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.unaryExp.UnaryExp;
 import frontend.token.token;
-import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
 public class MulExp extends node {

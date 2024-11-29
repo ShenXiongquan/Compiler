@@ -1,8 +1,6 @@
 package frontend.llvm_ir;
 
 
-import frontend.symbol.Symbol;
-
 import java.util.HashMap;
 
 

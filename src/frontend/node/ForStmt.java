@@ -2,7 +2,6 @@ package frontend.node;
 
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
-import frontend.llvm_ir.instructions.MemInstructions.store;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.PointerType;
 import frontend.token.token;
@@ -29,7 +28,7 @@ public class ForStmt extends node{
         if (expectedType.isInt32()) src = zext(src);
         else src = trunc(src);
 
-        store store = new store(src, dst);
-        Visitor.curBlock.addInstruction(store);
+        store(src, dst);
+
     }
 }//for循环语句

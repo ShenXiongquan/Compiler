@@ -4,12 +4,12 @@ import frontend.llvm_ir.type.IntegerType;
 
 public class ConstInt extends Constant{
 
-    public static ConstInt zero=new ConstInt(IntegerType.i32,0);
+    public static final ConstInt zero=new ConstInt(IntegerType.i32,0);
 
-    public static ConstInt zeroI8=new ConstInt(IntegerType.i8,0);
+    public static final ConstInt zeroI8=new ConstInt(IntegerType.i8,0);
 
-    public static ConstInt zeroI64=new ConstInt(IntegerType.i64,0);
-    private int value;
+    public static final ConstInt zeroI64=new ConstInt(IntegerType.i64,0);
+    private final int value;
 
     public ConstInt(IntegerType type, int value){
         super(type);

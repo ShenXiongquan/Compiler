@@ -9,7 +9,7 @@ public class ConstArray extends Constant{
     /**
      * 常量数组的初始化
      */
-    private List<ConstInt> ArrayElements=new ArrayList<>();
+    private final List<ConstInt> ArrayElements=new ArrayList<>();
 
     public ConstArray(ArrayType arrayType,ArrayList<ConstInt> ArrayElements) {
         super(arrayType);
