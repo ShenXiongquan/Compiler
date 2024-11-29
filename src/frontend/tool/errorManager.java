@@ -32,6 +32,7 @@ public class errorManager {
 
     public static void write() {
         for (Map.Entry<Integer, String> entry : errorMap.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue());
             try {
                 errorWriter.write(entry.getKey() + " " + entry.getValue() + "\n");
                 errorWriter.flush();

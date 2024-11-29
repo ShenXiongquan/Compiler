@@ -4,12 +4,12 @@ package frontend.symbol;
 import java.util.ArrayList;
 
 public class Symbol {
-    private final int tableId; 	// 当前符号所在的符号表编号。
+    private  int tableId; 	// 当前符号所在的符号表编号。
 
-    private final String token; 	// 当前符号所对应的字符串。
+    private  String token; 	// 当前符号所对应的字符串。
 
-    private boolean isConst;
-    private boolean isArray;
+    private boolean isConst=false;
+    private boolean isArray=false;
     private final SymbolType symbolType; //当前symbol的类型
     private  ArrayList<Symbol> paramList;//函数参数列表
 
@@ -25,6 +25,11 @@ public class Symbol {
         this.token=token;
         this.symbolType=type;
         this.paramList=paramList;
+    }
+
+    public Symbol(boolean isArray,SymbolType type){
+        this.isArray=isArray;
+        this.symbolType=type;
     }
 
     public boolean isConst() {

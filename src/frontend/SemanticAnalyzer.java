@@ -88,7 +88,6 @@ public class SemanticAnalyzer {
                 symbolType
         );
 
-
         if (!curTable.addSymbol(symbol)) errorManager.handleError(constDef.ident.line(), "b");
 
         if (constDef.lbrack != null) visitConstExp(constDef.constExp);
@@ -309,7 +308,7 @@ public class SemanticAnalyzer {
             String s = printfStmt.stringConst.token();
             int len = s.length();
             for (int i = 0; i < len; i++) {
-                if (s.charAt(i) == '%' && (s.charAt(i + 1) == 'd' || s.charAt(i + 1) == 'c')) {
+                if (s.charAt(i) == '%' && i+1<len&&(s.charAt(i + 1) == 'd' || s.charAt(i + 1) == 'c')) {
                     count++;
                 }
             }
@@ -344,13 +343,11 @@ public class SemanticAnalyzer {
         if (symbol == null) {
             errorManager.handleError(lVal.ident.line(), "c");
         }
-        if(lVal.exp != null) {
+        if (lVal.exp != null) {
             visitExp(lVal.exp);
         }
-        if(lVal.lbrack!=null){
-            if (symbol != null) {
-                return new Symbol(symbol.getTableId(),symbol.getToken(),false,false,symbol.getSymbolType());
-            }
+        if (lVal.lbrack != null && symbol != null) {
+            return new Symbol(symbol.getTableId(), symbol.getToken(), symbol.isConst(), false, symbol.getSymbolType());
         }
         return symbol;
     }
@@ -361,9 +358,9 @@ public class SemanticAnalyzer {
         } else if (primaryExp instanceof LprimaryExp lprimaryExp) {
             return visitLVal(lprimaryExp.lVal);
         } else if (primaryExp instanceof CprimaryExp cprimaryExp) {
-            return new Symbol(-1, null, false, false, SymbolType.Char);
+            return new Symbol( false, SymbolType.Char);
         } else {
-            return new Symbol(-1, null, false, false, SymbolType.Int);
+            return new Symbol(false, SymbolType.Int);
         }
 
     }
@@ -415,13 +412,13 @@ public class SemanticAnalyzer {
     private Symbol visitMulExp(MulExp mulExp) {
         if (mulExp.mulExp != null) visitMulExp(mulExp.mulExp);
         Symbol symbol = visitUnaryExp(mulExp.unaryExp);
-        return mulExp.op != null ? new Symbol(-1, null, false, false, SymbolType.Int) : symbol;
+        return mulExp.op != null ? new Symbol(false, SymbolType.Int) : symbol;
     }
 
     private Symbol visitAddExp(AddExp addExp) {
         if (addExp.addExp != null) visitAddExp(addExp.addExp);
         Symbol symbol = visitMulExp(addExp.mulExp);
-        return addExp.op != null ? new Symbol(-1, null, false, false, SymbolType.Int) : symbol;
+        return addExp.op != null ? new Symbol( false, SymbolType.Int) : symbol;
     }
 
     private void visitRelExp(RelExp relExp) {
@@ -448,7 +445,7 @@ public class SemanticAnalyzer {
         visitAddExp(constExp.addExp);
     }
 
-    public void write(SymbolTable symbolTable) {
+    private void write(SymbolTable symbolTable) {
         if (symbolTable != null) {
             for (Map.Entry<String, Symbol> entry : symbolTable.directory.entrySet()) {
                 Symbol symbol = entry.getValue();

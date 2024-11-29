@@ -16,17 +16,20 @@ public class Compiler {
     private static final String inputFilePath = "testfile.txt";
 
     public static void main(String[] args) {
-        try (PushbackReader reader = new PushbackReader(new FileReader(inputFilePath))){
+        try (PushbackReader reader = new PushbackReader(new FileReader(inputFilePath))) {
             Lexer lexer = new Lexer(reader);
-            List<token> tokens=lexer.getTokens();//词法分析
+            List<token> tokens = lexer.getTokens();//词法分析
+
             Parser parser = new Parser(tokens);
-            CompUnit compUnit= parser.parseCompUnit();//语法分析
-            SemanticAnalyzer semanticAnalyzer=new SemanticAnalyzer(compUnit);
+            CompUnit compUnit = parser.parseCompUnit();//语法分析
+
+            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(compUnit);
             semanticAnalyzer.visit();//语义分析
-//          semanticAnalyzer.write();
-            if(!errorManager.HasError())compUnit.visit();
-            System.out.print(Visitor.model.ir());
-            myWriter.writeIr(Visitor.model.ir());
+//            semanticAnalyzer.write();
+
+            Visitor visitor = new Visitor(compUnit);
+            visitor.visit();
+            myWriter.writeIr(Visitor.model.ir());//中间代码生成
             errorManager.write();
             myWriter.close();
             errorManager.close();

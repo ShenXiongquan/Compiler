@@ -1,9 +1,11 @@
 package frontend.llvm_ir;
 
-import frontend.llvm_ir.*;
+
 import frontend.llvm_ir.type.Type;
+import frontend.node.CompUnit;
 import frontend.node.EqExp;
 import frontend.node.LAndExp;
+import frontend.tool.errorManager;
 
 import java.util.*;
 
@@ -16,16 +18,26 @@ import java.util.*;
 public class Visitor {
 
     public static final Model model = new Model();
-    public static final irSymbolTable globalTable=new irSymbolTable();
-    public static irSymbolTable curTable=globalTable;
+    public static final irSymbolTable globalTable = new irSymbolTable();
+    public static irSymbolTable curTable = globalTable;
 
-    public static void pushScope(){
-        irSymbolTable newTable=new irSymbolTable();
-        newTable.setPre(curTable);
-        curTable=newTable;
+    private final CompUnit compUnit;
+    public Visitor(CompUnit compUnit) {
+        this.compUnit = compUnit;
     }
-    public static void popScope(){
-        curTable=curTable.getPre();
+    public void visit() {
+        if (!errorManager.HasError())
+            compUnit.visit();
+    }
+
+    public static void pushScope() {
+        irSymbolTable newTable = new irSymbolTable();
+        newTable.setPre(curTable);
+        curTable = newTable;
+    }
+
+    public static void popScope() {
+        curTable = curTable.getPre();
     }
 
     /**
@@ -74,14 +86,6 @@ public class Visitor {
 
     public static ArrayList<LAndExp> lAndExps;
     /**
-     * 综合属性：正确分支的基本块栈。
-     */
-    public static BasicBlock trueBlock ;
-    /**
-     * 综合属性：错误分支的基本块栈。
-     */
-    public static BasicBlock falseBlock ;
-    /**
      * 综合属性：`continue` 语句跳转的目标基本块栈。
      */
     public static final Stack<BasicBlock> continueToBlocks = new Stack<>();
@@ -94,12 +98,15 @@ public class Visitor {
      * 每个字符串映射到一个全局变量。
      */
     public static final HashMap<String, GlobalVariable> stringPool = new HashMap<>();
+
     /**
      * 判断当前是否位于全局作用域。
+     *
      * @return 如果当前符号表是全局符号表，则返回 true。
      */
     public static boolean isGlobal() {
         return curTable == globalTable;
     }
+
 }
 

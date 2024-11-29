@@ -1,5 +1,6 @@
 package frontend.tool;
 
+import frontend.llvm_ir.Visitor;
 import frontend.symbol.Symbol;
 import frontend.token.token;
 
@@ -11,10 +12,10 @@ public class myWriter {
     private static final String outputFilePath1 = "lexer.txt";
     private static final String outputFilePath2 = "parser.txt";
     private static final String outputFilePath3 = "symbol.txt";
-    private static final String outputFilePath4 ="llvm_ir.txt";
+    private static final String outputFilePath4 = "llvm_ir.txt";
 
-    private static final String outputFilePath5 ="mips.txt";
-    private static  FileWriter writer;
+    private static final String outputFilePath5 = "mips.txt";
+    private static FileWriter writer;
 
     static {
         try {
@@ -23,15 +24,17 @@ public class myWriter {
             throw new RuntimeException(e);
         }
     }
-    public myWriter(String path){
+
+    public myWriter(String path) {
         try {
-            writer=new FileWriter(path);
+            writer = new FileWriter(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static void writeTerminal(token token) {
+        System.out.println(token.type() + " " + token.token());
         try {
             writer.write(token.type() + " " + token.token() + "\n");
             writer.flush();
@@ -41,6 +44,7 @@ public class myWriter {
     }
 
     public static void writeNonTerminal(String NonTerminal) {
+        System.out.println("<" + NonTerminal + ">");
         try {
             writer.write("<" + NonTerminal + ">\n");
             writer.flush();
@@ -50,16 +54,15 @@ public class myWriter {
     }
 
     public static void writeSymbol(Symbol symbol) {
+        StringBuilder type = new StringBuilder();
+        if (symbol.isConst()) type.append("Const");
+        type.append(symbol.getSymbolType());
+        if (symbol.isArray()) type.append("Array");
+        if (symbol.getParamList() != null) type.append("Func");
+        String output = symbol.getTableId() + " " + symbol.getToken() + " " + type;
+        System.out.println(output);
+
         try {
-            StringBuilder type = new StringBuilder();
-            if (symbol.isConst()) type.append("Const");
-            type.append(symbol.getSymbolType());
-            if (symbol.isArray()) type.append("Array");
-            if (symbol.getParamList() != null) type.append("Func");
-
-            String output = symbol.getTableId() + " " + symbol.getToken() + " " + type;
-            System.out.println(output);
-
             writer.write(output + "\n");
             writer.flush();
         } catch (IOException e) {
@@ -67,7 +70,8 @@ public class myWriter {
         }
     }
 
-    public static void writeIr(String ir){
+    public static void writeIr(String ir) {
+        System.out.print(Visitor.model.ir());
         try {
             writer.write(ir);
             writer.flush();
