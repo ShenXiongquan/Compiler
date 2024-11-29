@@ -6,7 +6,6 @@ import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.PointerType;
 import frontend.node.LVal;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class GetIntStmt extends Stmt {
     public LVal lVal;
@@ -18,20 +17,24 @@ public class GetIntStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void print() {
-        lVal.print();
-        assign.print();
-        getint.print();
-        lparent.print();
-        if (rparent != null) rparent.print();
-        if (semicn != null) semicn.print();
-        myWriter.writeNonTerminal("Stmt");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(lVal.print());
+        sb.append(assign.print());
+        sb.append(getint.print());
+        sb.append(lparent.print());
+        if (rparent != null) sb.append(rparent.print());
+        if (semicn != null) sb.append(semicn.print());
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
+
+
     public void visit() {
         lVal.visit();
-        call call=call(Visitor.model.getint());
-        IntegerType expectedType= (IntegerType) ((PointerType)Visitor.upValue.getType()).getPointedType();
-        store(expectedType.isInt8()?trunc(call):call,Visitor.upValue);
+        call call = call(Visitor.model.getint());
+        IntegerType expectedType = (IntegerType) ((PointerType) Visitor.upValue.getType()).getPointedType();
+        store(expectedType.isInt8() ? trunc(call) : call, Visitor.upValue);
 
     }
 }

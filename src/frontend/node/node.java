@@ -3,8 +3,8 @@ package frontend.node;
 
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.*;
 import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
@@ -22,6 +22,7 @@ import frontend.llvm_ir.type.Type;
 
 
 public abstract class node {
+    public abstract String print();
 
     //对于zext和trunc，封装的较为复杂
     protected Value zext(Value value) {
@@ -168,10 +169,12 @@ public abstract class node {
         ret retInstruction = new ret(returnValue);
         Visitor.curBlock.addInstruction(retInstruction);
     }
+
     protected void ret() {
         ret retInstruction = new ret();
         Visitor.curBlock.addInstruction(retInstruction);
     }
+
     // 进入新基本块
     protected void enterNewBlock(BasicBlock block) {
         Visitor.curBlock = block;

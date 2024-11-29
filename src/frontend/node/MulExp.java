@@ -1,12 +1,11 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.unaryExp.UnaryExp;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class MulExp extends node {
 
@@ -14,13 +13,15 @@ public class MulExp extends node {
     public token op;
     public UnaryExp unaryExp;
 
-    public void print() {
+    public String print() {
+        StringBuilder sb = new StringBuilder();
         if (mulExp != null) {
-            mulExp.print();
-            op.print();
+            sb.append(mulExp.print());
+            sb.append(op.print());
         }
-        unaryExp.print();
-        myWriter.writeNonTerminal("MulExp");
+        sb.append(unaryExp.print());
+        sb.append("<MulExp>\n");
+        return sb.toString();
     }
 
     public void visit() {

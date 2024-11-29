@@ -1,21 +1,23 @@
 package frontend.node.stmt;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
+import frontend.llvm_ir.Visitor;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class BreakStmt extends Stmt {
     public token breakToken;
     public token semicn;
 
     @Override
-    public void print() {
-        breakToken.print();
-        if (semicn != null) semicn.print();
-        myWriter.writeNonTerminal("Stmt");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(breakToken.print());
+        if (semicn != null) sb.append(semicn.print());
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
+
 
     public void visit() {
         br(Visitor.breakToBlocks.peek());

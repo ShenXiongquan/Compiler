@@ -1,9 +1,7 @@
 package frontend.node.stmt;
 
 import frontend.node.Exp;
-
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class ExpressionStmt extends Stmt {
     public Exp optionalExp;
@@ -11,13 +9,16 @@ public class ExpressionStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void print() {
-        if (optionalExp != null) optionalExp.print();
-        if (semicn != null) semicn.print();
-        myWriter.writeNonTerminal("Stmt");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        if (optionalExp != null) sb.append(optionalExp.print());
+        if (semicn != null) sb.append(semicn.print());
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
 
+
     public void visit() {
-        if(optionalExp!=null)optionalExp.visit();
+        if (optionalExp != null) optionalExp.visit();
     }
 }

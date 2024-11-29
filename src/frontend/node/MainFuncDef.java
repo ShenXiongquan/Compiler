@@ -1,11 +1,10 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 
@@ -16,29 +15,33 @@ public class MainFuncDef extends node {
     public token rparent;
     public Block block;
 
-    public void print() {
-        intToken.print();
-        main.print();
-        lparent.print();
-        if (rparent != null) rparent.print();
-        block.print();
-        myWriter.writeNonTerminal("MainFuncDef");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(intToken.print());
+        sb.append(main.print());
+        sb.append(lparent.print());
+        if (rparent != null) sb.append(rparent.print());
+        sb.append(block.print());
+        sb.append("<MainFuncDef>\n");
+        return sb.toString();
     }
+
+
     public void visit() {
 
         Visitor.pushScope();
-        Function.VarNum=0;
-        Function function=new Function(main.token(), IntegerType.i32,new ArrayList<>(),true);
-        Visitor.curFunc=function;
+        Function.VarNum = 0;
+        Function function = new Function(main.name(), IntegerType.i32, new ArrayList<>(), true);
+        Visitor.curFunc = function;
         Visitor.model.addGlobalValue(function);
-        Visitor.globalTable.addSymbol(main.token(), function);
+        Visitor.globalTable.addSymbol(main.name(), function);
 
         enterNewBlock(new BasicBlock("entry"));
 
         block.visit();
         Visitor.popScope();
 
-        if(Visitor.curBlock.isEmpty()){
+        if (Visitor.curBlock.isEmpty()) {
             Visitor.curFunc.removeBasicBlock(Visitor.curBlock);
         }
     }

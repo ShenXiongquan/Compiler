@@ -4,7 +4,6 @@ import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 
@@ -13,14 +12,17 @@ public class LOrExp extends node {
     public token or;
     public LOrExp lOrExp;
 
-    public void print() {
+    public String print() {
+        StringBuilder sb = new StringBuilder();
         if (lOrExp != null) {
-            lOrExp.print();
-            or.print();
+            sb.append(lOrExp.print());
+            sb.append(or.print());
         }
-        lAndExp.print();
-        myWriter.writeNonTerminal("LOrExp");
+        sb.append(lAndExp.print());
+        sb.append("<LOrExp>\n");
+        return sb.toString();
     }
+
 
     public void handle() {
         if (lOrExp != null) {

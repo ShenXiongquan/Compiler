@@ -2,7 +2,6 @@ package frontend.node.primaryExp;
 
 import frontend.node.Exp;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class EprimaryExp extends PrimaryExp {
     public token lparent;
@@ -12,11 +11,13 @@ public class EprimaryExp extends PrimaryExp {
     public token rparent;
 
     @Override
-    public void print() {
-        lparent.print();
-        exp.print();
-        if (rparent != null) rparent.print();
-        myWriter.writeNonTerminal("PrimaryExp");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(lparent.print());
+        sb.append(exp.print());
+        if (rparent != null) sb.append(rparent.print());
+        sb.append("<PrimaryExp>\n");
+        return sb.toString();
     }
 
     public void visit() {

@@ -2,28 +2,29 @@ package frontend.node;
 
 import frontend.llvm_ir.Parameter;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuncFParams extends node{
-    public final List<FuncFParam> funcFParamList =new ArrayList<>();
-    public final List<token> comma=new ArrayList<>();
+public class FuncFParams extends node {
+    public final List<FuncFParam> funcFParamList = new ArrayList<>();
+    public final List<token> comma = new ArrayList<>();
 
-    public void print(){
-        funcFParamList.get(0).print();
-        for(int i = 1; i< funcFParamList.size(); i++){
-            comma.get(i-1).print();
-            funcFParamList.get(i).print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(funcFParamList.get(0).print());
+        for (int i = 1; i < funcFParamList.size(); i++) {
+            sb.append(comma.get(i - 1).print());
+            sb.append(funcFParamList.get(i).print());
         }
-        myWriter.writeNonTerminal("FuncFParams");
+        sb.append("<FuncFParams>\n");
+        return sb.toString();
     }
 
 
     public void visit(ArrayList<Parameter> parameters) {
 
-        for(FuncFParam funcFParam: this.funcFParamList){
+        for (FuncFParam funcFParam : this.funcFParamList) {
             funcFParam.visit(parameters);
         }
     }

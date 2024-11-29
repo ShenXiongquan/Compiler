@@ -1,12 +1,11 @@
 package frontend.node.stmt;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
+import frontend.llvm_ir.Visitor;
 import frontend.node.Cond;
 import frontend.node.ForStmt;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class LoopStmt extends Stmt {
     public token forToken;
@@ -23,17 +22,19 @@ public class LoopStmt extends Stmt {
     public Stmt forBody;
 
     @Override
-    public void print() {
-        forToken.print();
-        lparent.print();
-        if (initForStmt != null) initForStmt.print();
-        semicn1.print();
-        if (cond != null) cond.print();
-        semicn2.print();
-        if (updateForStmt != null) updateForStmt.print();
-        rparent.print();
-        forBody.print();
-        myWriter.writeNonTerminal("Stmt");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(forToken.print());
+        sb.append(lparent.print());
+        if (initForStmt != null) sb.append(initForStmt.print());
+        sb.append(semicn1.print());
+        if (cond != null) sb.append(cond.print());
+        sb.append(semicn2.print());
+        if (updateForStmt != null) sb.append(updateForStmt.print());
+        sb.append(rparent.print());
+        sb.append(forBody.print());
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
 
     public void visit() {

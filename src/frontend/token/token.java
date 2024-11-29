@@ -1,12 +1,10 @@
 package frontend.token;
 
 
-import frontend.tool.myWriter;
+public record token(String name, tokenType type, int line) {
 
-public record token(String token, tokenType type, int line) {
-
-    public void print() {
-        myWriter.writeTerminal(this);
+    public String print() {
+        return type + " " + name + "\n";
     }
 
 }

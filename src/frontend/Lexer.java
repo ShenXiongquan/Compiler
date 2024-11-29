@@ -4,7 +4,10 @@ import frontend.token.token;
 import frontend.token.tokenType;
 import frontend.tool.myWriter;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,8 +34,14 @@ public class Lexer {
         return tokens;
     }
 
-    public Lexer(PushbackReader reader) {
-        this.reader = reader;
+    private static final String inputFilePath = "testfile.txt";
+
+    public Lexer() {
+        try {
+            this.reader = new PushbackReader(new FileReader(inputFilePath));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public token nextToken() throws IOException {
@@ -203,7 +212,7 @@ public class Lexer {
     }
 
     public void write() {
-        for (frontend.token.token token : tokens) {
+        for (token token : tokens) {
             myWriter.writeTerminal(token);
         }
 

@@ -1,37 +1,51 @@
 package frontend;
 
-import frontend.node.blockItem.*;
-import frontend.node.constInitVal.*;
-import frontend.node.decl.*;
-import frontend.node.initVal.*;
+import frontend.node.Character;
+import frontend.node.Number;
+import frontend.node.*;
+import frontend.node.blockItem.BlockItem;
+import frontend.node.blockItem.DBlockItem;
+import frontend.node.blockItem.SBlockItem;
+import frontend.node.constInitVal.ArrayConstInitVal;
+import frontend.node.constInitVal.ConstInitVal;
+import frontend.node.constInitVal.ExpConstInitVal;
+import frontend.node.constInitVal.StringConstInitVal;
+import frontend.node.decl.CDecl;
+import frontend.node.decl.Decl;
+import frontend.node.decl.VDecl;
+import frontend.node.initVal.ArrayInitVal;
+import frontend.node.initVal.ExpInitVal;
+import frontend.node.initVal.InitVal;
+import frontend.node.initVal.StringInitVal;
 import frontend.node.primaryExp.*;
 import frontend.node.stmt.*;
-import frontend.node.unaryExp.*;
+import frontend.node.unaryExp.FunaryExp;
+import frontend.node.unaryExp.OunaryExp;
+import frontend.node.unaryExp.PunaryExp;
+import frontend.node.unaryExp.UnaryExp;
 import frontend.token.token;
 import frontend.token.tokenType;
 import frontend.tool.errorManager;
-import frontend.node.*;
-import frontend.node.Character;
-import frontend.node.Number;
 
 import java.util.List;
 
 
 public class Parser {
- 
+
     private final List<token> tokens;
     private int index = 0;//索引和当前的token保持一致
     private token token;
+
     public Parser(List<token> tokens) {
-        this.tokens= tokens;
-        this.token =tokens.get(index);
+        this.tokens = tokens;
+        this.token = tokens.get(index);
     }
 
     //匹配所给的终结符
     private token match() {
         token Token = this.token;
-        if (index < tokens.size()-1) {
-            this.token = tokens.get(++index); 
+        if (index < tokens.size() - 1) {
+            this.token = tokens.get(++index);
         }
         return Token;
     }
@@ -39,7 +53,7 @@ public class Parser {
     private token offset2Token(int offset) {
         return tokens.get(index + offset);
     }
-    
+
     private int tempIndex;//回溯保存索引值
 
     private void saveContent() {
@@ -208,7 +222,7 @@ public class Parser {
                 unaryExp.funcRParams = parseFuncRParams();//待修改
 
             if (token.type() != tokenType.RPARENT) {
-                 errorManager.handleError(offset2Token(-1).line(), "j");
+                errorManager.handleError(offset2Token(-1).line(), "j");
             } else unaryExp.rparent = match();
             return unaryExp;
         } else {
@@ -553,7 +567,7 @@ public class Parser {
             lOrExp = new LOrExp();
             lOrExp.lOrExp = lOrExpPre;
             lOrExp.or = match();
-            if (lOrExp.or.token().equals("|")) errorManager.handleError(lOrExp.or.line(), "a");
+            if (lOrExp.or.name().equals("|")) errorManager.handleError(lOrExp.or.line(), "a");
             lOrExp.lAndExp = parseLAndExp();
         }
         return lOrExp;
@@ -567,7 +581,7 @@ public class Parser {
             lAndExp = new LAndExp();
             lAndExp.lAndExp = lAndExpPre;
             lAndExp.and = match();
-            if (lAndExp.and.token().equals("&")) errorManager.handleError(lAndExp.and.line(), "a");
+            if (lAndExp.and.name().equals("&")) errorManager.handleError(lAndExp.and.line(), "a");
             lAndExp.eqExp = parseEqExp();
         }
         return lAndExp;
@@ -605,7 +619,7 @@ public class Parser {
         FuncFParams funcFParams = new FuncFParams();
         funcFParams.funcFParamList.add(parseFuncFParam());
         while (token.type() == tokenType.COMMA) {
-            funcFParams.comma.add(match()) ;
+            funcFParams.comma.add(match());
             funcFParams.funcFParamList.add(parseFuncFParam());
         }
         return funcFParams;

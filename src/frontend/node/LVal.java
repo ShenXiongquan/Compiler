@@ -1,7 +1,7 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.MemInstructions.load;
 import frontend.llvm_ir.type.ArrayType;
@@ -9,7 +9,6 @@ import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.PointerType;
 import frontend.llvm_ir.type.Type;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class LVal extends node {
     public token ident;
@@ -18,22 +17,27 @@ public class LVal extends node {
     public Exp exp;
     public token rbrack;
 
-    public void print() {
-        ident.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ident.print());
         if (lbrack != null) {
-            lbrack.print();
-            exp.print();
-            if (rbrack != null) rbrack.print();
+            sb.append(lbrack.print());
+            sb.append(exp.print());
+            if (rbrack != null) {
+                sb.append(rbrack.print());
+            }
         }
-        myWriter.writeNonTerminal("LVal");
+        sb.append("<LVal>\n");
+        return sb.toString();
     }
+
 
     /**
      * LVal传常量或者地址，加不加载由上层来决定
      */
     public void visit() {
         //lval需要查符号表
-        Value lVal = Visitor.curTable.getSymbolValue(ident.token());
+        Value lVal = Visitor.curTable.getSymbolValue(ident.name());
 
         if (lVal.getType() instanceof IntegerType) {//传常量
             Visitor.upConstValue = ((ConstInt) lVal).getValue();

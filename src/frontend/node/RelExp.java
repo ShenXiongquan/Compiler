@@ -1,12 +1,11 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class RelExp extends node {
 
@@ -14,20 +13,25 @@ public class RelExp extends node {
     public RelExp relExp;
     public token relOp;//'<' | '>' | '<=' | '>='
 
-    public void print(){
-        if(relExp!=null){
-            relExp.print();
-            relOp.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        if (relExp != null) {
+            sb.append(relExp.print());
+            sb.append(relOp.print());
         }
-        addExp.print();
-        myWriter.writeNonTerminal("RelExp");
+        sb.append(addExp.print());
+        sb.append("<RelExp>\n");
+        return sb.toString();
     }
+
     public void visit() {
-        if(relExp!=null){
+        if (relExp != null) {
             relExp.visit();
-            Value lhs=zext(Visitor.upValue);int lConst = Visitor.upConstValue;
+            Value lhs = zext(Visitor.upValue);
+            int lConst = Visitor.upConstValue;
             addExp.visit();
-            Value rhs=zext(Visitor.upValue);int rConst = Visitor.upConstValue;
+            Value rhs = zext(Visitor.upValue);
+            int rConst = Visitor.upConstValue;
             if (lhs instanceof ConstInt && rhs instanceof ConstInt) {
                 System.out.println("左值:" + lhs.getName() + " " + lConst + "右值:" + rhs.getName() + " " + rConst);
                 // 处理常量比较
@@ -53,7 +57,7 @@ public class RelExp extends node {
                 Visitor.upValue = icmp(icmpType, lhs, rhs);
             }
 
-        }else{
+        } else {
             addExp.visit();
         }
     }

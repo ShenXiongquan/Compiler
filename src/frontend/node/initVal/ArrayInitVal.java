@@ -8,7 +8,6 @@ import frontend.llvm_ir.type.ArrayType;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.Exp;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +19,19 @@ public class ArrayInitVal extends InitVal {
     public token rbrace;
 
     @Override
-    public void print() {
-        lbrace.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(lbrace.print());
         if (!exps.isEmpty()) {
-            exps.get(0).print();
+            sb.append(exps.get(0).print());
             for (int i = 1; i < exps.size(); i++) {
-                comma.print();
-                exps.get(i).print();
+                sb.append(comma.print());
+                sb.append(exps.get(i).print());
             }
         }
-        rbrace.print();
-        myWriter.writeNonTerminal("InitVal");
+        sb.append(rbrace.print());
+        sb.append("<InitVal>\n");
+        return sb.toString();
     }
 
     public void visit() {

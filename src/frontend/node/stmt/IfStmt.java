@@ -3,9 +3,7 @@ package frontend.node.stmt;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
 import frontend.node.Cond;
-
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class IfStmt extends Stmt {
     public token ifToken;
@@ -18,32 +16,35 @@ public class IfStmt extends Stmt {
     public Stmt falseStmt;  // 这可能为null，如果没有else分支的话
 
     @Override
-    public void print() {
-        ifToken.print();
-        lparent.print();
-        cond.print();
-        if (rparent != null) rparent.print();
-        trueStmt.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ifToken.print());
+        sb.append(lparent.print());
+        sb.append(cond.print());
+        if (rparent != null) sb.append(rparent.print());
+        sb.append(trueStmt.print());
         if (elseToken != null) {
-            elseToken.print();
-            falseStmt.print();
+            sb.append(elseToken.print());
+            sb.append(falseStmt.print());
         }
-        myWriter.writeNonTerminal("Stmt");
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
+
     public void visit() {
-        BasicBlock trueBlock=new BasicBlock("Block_true"+ Function.ifNum++);
-        BasicBlock endBlock=new BasicBlock("Block_next"+Function.ifNum);
-        BasicBlock falseBlock=(falseStmt!=null)?new BasicBlock("Block_false"+Function.ifNum):endBlock;
+        BasicBlock trueBlock = new BasicBlock("Block_true" + Function.ifNum++);
+        BasicBlock endBlock = new BasicBlock("Block_next" + Function.ifNum);
+        BasicBlock falseBlock = (falseStmt != null) ? new BasicBlock("Block_false" + Function.ifNum) : endBlock;
 
 
-       //if()
-        cond.visit(trueBlock,falseBlock);
+        //if()
+        cond.visit(trueBlock, falseBlock);
         enterNewBlock(trueBlock);
         trueStmt.visit();
         br(endBlock);
 
 
-        if(falseStmt!=null){//else{}
+        if (falseStmt != null) {//else{}
             enterNewBlock(falseBlock);
 
             falseStmt.visit();

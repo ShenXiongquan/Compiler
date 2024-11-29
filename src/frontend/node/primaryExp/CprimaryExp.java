@@ -1,15 +1,16 @@
 package frontend.node.primaryExp;
 
 import frontend.node.Character;
-import frontend.tool.myWriter;
 
 public class CprimaryExp extends PrimaryExp {
     public Character character;
 
     @Override
-    public void print() {
-        character.print();
-        myWriter.writeNonTerminal("PrimaryExp");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(character.print());
+        sb.append("<PrimaryExp>\n");
+        return sb.toString();
     }
 
     public void visit() {

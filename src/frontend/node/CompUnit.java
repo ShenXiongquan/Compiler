@@ -1,11 +1,12 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Parameter;
-import frontend.llvm_ir.type.*;
+import frontend.llvm_ir.Visitor;
+import frontend.llvm_ir.type.IntegerType;
+import frontend.llvm_ir.type.PointerType;
+import frontend.llvm_ir.type.VoidType;
 import frontend.node.decl.Decl;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +16,22 @@ public class CompUnit extends node {
     public final List<FuncDef> funcDefs = new ArrayList<>();
     public MainFuncDef MainFunctionDef;
 
-    public void print() {
-        for (Decl decl : decls) decl.print();
-        for (FuncDef funcDef : funcDefs) funcDef.print();
-        MainFunctionDef.print();
-        myWriter.writeNonTerminal("CompUnit");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+
+        for (Decl decl : decls) {
+            sb.append(decl.print());
+        }
+        for (FuncDef funcDef : funcDefs) {
+            sb.append(funcDef.print());
+        }
+        sb.append(MainFunctionDef.print());
+        sb.append("<CompUnit>\n");
         System.out.println("CompUnit Tree is built");
+
+        return sb.toString();
     }
+
 
     public void visit() {
         //加入已有的声明函数

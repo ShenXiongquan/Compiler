@@ -1,10 +1,9 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Parameter;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.type.PointerType;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 
@@ -14,14 +13,18 @@ public class FuncFParam extends node {
     public token lbrack;
     public token rbrack;
 
-    public void print() {
-        bType.print();
-        ident.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(bType.print());
+        sb.append(ident.print());
         if (lbrack != null) {
-            lbrack.print();
-            if (rbrack != null) rbrack.print();
+            sb.append(lbrack.print());
+            if (rbrack != null) {
+                sb.append(rbrack.print());
+            }
         }
-        myWriter.writeNonTerminal("FuncFParam");
+        sb.append("<FuncFParam>\n");
+        return sb.toString();
     }
 
 
@@ -30,7 +33,7 @@ public class FuncFParam extends node {
         if (lbrack != null) {
             Visitor.ValueType = new PointerType(Visitor.ValueType);
         }
-        Parameter parameter = new Parameter(ident.token(),Visitor.ValueType);
+        Parameter parameter = new Parameter(ident.name(), Visitor.ValueType);
         parameters.add(parameter);
     }
 

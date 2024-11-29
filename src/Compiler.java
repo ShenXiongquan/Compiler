@@ -1,3 +1,4 @@
+import backend.Generator;
 import frontend.Lexer;
 import frontend.Parser;
 import frontend.SemanticAnalyzer;
@@ -7,34 +8,30 @@ import frontend.token.token;
 import frontend.tool.errorManager;
 import frontend.tool.myWriter;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PushbackReader;
 import java.util.List;
 
 public class Compiler {
-    private static final String inputFilePath = "testfile.txt";
 
     public static void main(String[] args) {
-        try (PushbackReader reader = new PushbackReader(new FileReader(inputFilePath))) {
-            Lexer lexer = new Lexer(reader);
-            List<token> tokens = lexer.getTokens();//词法分析
+        Lexer lexer = new Lexer();
+        List<token> tokens = lexer.getTokens();//词法分析
 
-            Parser parser = new Parser(tokens);
-            CompUnit compUnit = parser.parseCompUnit();//语法分析
+        Parser parser = new Parser(tokens);
+        CompUnit compUnit = parser.parseCompUnit();//语法分析
 
-            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(compUnit);
-            semanticAnalyzer.visit();//语义分析
-//            semanticAnalyzer.write();
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(compUnit);
+        semanticAnalyzer.visit();//语义分析
 
-            Visitor visitor = new Visitor(compUnit);
-            visitor.visit();
-            myWriter.writeIr(Visitor.model.ir());//中间代码生成
-            errorManager.write();
-            myWriter.close();
-            errorManager.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        errorManager.write();
+        errorManager.close();
+
+        Visitor visitor = new Visitor(compUnit);
+        visitor.visit();//中间代码生成
+//          myWriter.writeIr(Visitor.model.ir());
+
+        Generator generator = new Generator(Visitor.model);
+        generator.mips();//目标代码生成
+
+        myWriter.close();
     }
 }

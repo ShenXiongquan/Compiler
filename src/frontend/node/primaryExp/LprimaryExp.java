@@ -2,15 +2,14 @@ package frontend.node.primaryExp;
 
 
 import frontend.node.LVal;
-import frontend.tool.myWriter;
 
 public class LprimaryExp extends PrimaryExp {
     public LVal lVal;
 
     @Override
-    public void print() {
-        lVal.print();
-        myWriter.writeNonTerminal("PrimaryExp");
+    public String print() {
+        return lVal.print() +
+                "<PrimaryExp>\n";
     }
 
     public void visit() {

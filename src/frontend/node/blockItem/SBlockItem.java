@@ -4,9 +4,10 @@ import frontend.node.stmt.Stmt;
 
 public class SBlockItem extends BlockItem {
     public Stmt stmt;
+
     @Override
-    public void print() {
-        stmt.print();
+    public String print() {
+        return stmt.print();
     }
 
     public void visit() {

@@ -7,7 +7,9 @@ import frontend.node.EqExp;
 import frontend.node.LAndExp;
 import frontend.tool.errorManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
 
 /**
  * 代码还需要进行重构，考虑文法继承属性作为函数参数传递，综合属性作为函数返回值。
@@ -22,12 +24,13 @@ public class Visitor {
     public static irSymbolTable curTable = globalTable;
 
     private final CompUnit compUnit;
+
     public Visitor(CompUnit compUnit) {
         this.compUnit = compUnit;
     }
+
     public void visit() {
-        if (!errorManager.HasError())
-            compUnit.visit();
+        if (!errorManager.HasError()) compUnit.visit();
     }
 
     public static void pushScope() {
@@ -97,7 +100,7 @@ public class Visitor {
      * 综合属性：`printf` 声明的全局字符串池。
      * 每个字符串映射到一个全局变量。
      */
-    public static final HashMap<String, GlobalVariable> stringPool = new HashMap<>();
+    public static final HashMap<String, GlobalVar> stringPool = new HashMap<>();
 
     /**
      * 判断当前是否位于全局作用域。

@@ -4,19 +4,18 @@ import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class Character extends node {
     public token charConst;
 
-    public void print() {
-        charConst.print();
-        myWriter.writeNonTerminal("Character");
+    public String print() {
+        return charConst.print() +
+                "<Character>\n";
     }
 
     public void visit() {
         int c;
-        String s = charConst.token().substring(1, charConst.token().length() - 1);
+        String s = charConst.name().substring(1, charConst.name().length() - 1);
 
         c = switch (s) {
             case "\\a" -> 7;// 响铃

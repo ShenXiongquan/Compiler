@@ -1,9 +1,9 @@
 package frontend.node;
 
 
-import frontend.llvm_ir.Visitor;
-import frontend.llvm_ir.GlobalVariable;
+import frontend.llvm_ir.GlobalVar;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.constants.Zeroinitializer;
@@ -13,7 +13,6 @@ import frontend.llvm_ir.type.ArrayType;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.initVal.InitVal;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 
@@ -25,22 +24,27 @@ public class VarDef extends node {
     public token assign;
     public InitVal initVal;
 
-    public void print() {
-        ident.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ident.print());
         if (lbrack != null) {
-            lbrack.print();
-            constExp.print();
-            if (rbrack != null) rbrack.print();
+            sb.append(lbrack.print());
+            sb.append(constExp.print());
+            if (rbrack != null) {
+                sb.append(rbrack.print());
+            }
         }
         if (assign != null) {
-            assign.print();
-            initVal.print();
+            sb.append(assign.print());
+            sb.append(initVal.print());
         }
-        myWriter.writeNonTerminal("VarDef");
+        sb.append("<VarDef>\n");
+        return sb.toString();
     }
 
+
     public void visit() {
-        String variableName = ident.token(); // 变量名
+        String variableName = ident.name(); // 变量名
         boolean isGlobal = Visitor.isGlobal(); // 是否为全局变量
         boolean isArray = (constExp != null); // 是否为数组
         boolean initialized = (initVal != null);
@@ -51,9 +55,9 @@ public class VarDef extends node {
                     initVal.visit();
                     Visitor.calAble = false;
                 }
-                GlobalVariable globalVariable = new GlobalVariable(variableName, initialized ? (Constant) Visitor.upValue : new ConstInt((IntegerType) Visitor.ValueType, 0), false);
-                Visitor.model.addGlobalValue(globalVariable);
-                Visitor.curTable.addSymbol(variableName, globalVariable);
+                GlobalVar globalVar = new GlobalVar(variableName, initialized ? (Constant) Visitor.upValue : new ConstInt((IntegerType) Visitor.ValueType, 0), false);
+                Visitor.model.addGlobalValue(globalVar);
+                Visitor.curTable.addSymbol(variableName, globalVar);
             } else { // 局部普通变量
                 alloca alloca = alloca(Visitor.ValueType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
@@ -74,9 +78,9 @@ public class VarDef extends node {
                     initVal.visit();
                     Visitor.calAble = false;
                 }
-                GlobalVariable globalVariable = new GlobalVariable(variableName, initialized ? (Constant) Visitor.upValue : new Zeroinitializer(arrayType), false);
-                Visitor.model.addGlobalValue(globalVariable);
-                Visitor.curTable.addSymbol(variableName, globalVariable);
+                GlobalVar globalVar = new GlobalVar(variableName, initialized ? (Constant) Visitor.upValue : new Zeroinitializer(arrayType), false);
+                Visitor.model.addGlobalValue(globalVar);
+                Visitor.curTable.addSymbol(variableName, globalVar);
             } else { // 局部数组
                 alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);

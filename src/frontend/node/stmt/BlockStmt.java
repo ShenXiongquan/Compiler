@@ -2,18 +2,16 @@ package frontend.node.stmt;
 
 import frontend.llvm_ir.Visitor;
 import frontend.node.Block;
-import frontend.tool.myWriter;
 
 public class BlockStmt extends Stmt {
     public Block block;
 
     @Override
-    public void print() {
-
-        block.print();
-
-        myWriter.writeNonTerminal("Stmt");
+    public String print() {
+        return block.print() +
+                "<Stmt>\n";
     }
+
     public void visit() {
         Visitor.pushScope();
         block.visit();

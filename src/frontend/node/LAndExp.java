@@ -1,28 +1,30 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class LAndExp extends node {
     public EqExp eqExp;
     public token and;
     public LAndExp lAndExp;
 
-    public void print() {
+    public String print() {
+        StringBuilder sb = new StringBuilder();
         if (lAndExp != null) {
-            lAndExp.print();
-            and.print();
+            sb.append(lAndExp.print());
+            sb.append(and.print());
         }
-        eqExp.print();
-        myWriter.writeNonTerminal("LAndExp");
+        sb.append(eqExp.print());
+        sb.append("<LAndExp>\n");
+        return sb.toString();
     }
 
-    public void handle(){
+
+    public void handle() {
         if (lAndExp != null) {
             lAndExp.handle();
             Visitor.eqExps.add(eqExp);
@@ -31,11 +33,11 @@ public class LAndExp extends node {
         }
     }
 
-    public void visit(BasicBlock trueBlock,BasicBlock falseBlock){
-        int size=Visitor.eqExps.size();
-        int i=0;
-        for(EqExp eqExp:Visitor.eqExps){
-            BasicBlock nextBlock=(size==(++i)?trueBlock:new BasicBlock("Block_and"+Function.andNum++));
+    public void visit(BasicBlock trueBlock, BasicBlock falseBlock) {
+        int size = Visitor.eqExps.size();
+        int i = 0;
+        for (EqExp eqExp : Visitor.eqExps) {
+            BasicBlock nextBlock = (size == (++i) ? trueBlock : new BasicBlock("Block_and" + Function.andNum++));
             eqExp.visit();
 
             if (Visitor.upValue instanceof ConstInt constInt) {// 常量直接判断是否为零
@@ -47,7 +49,7 @@ public class LAndExp extends node {
                 br(condition, nextBlock, falseBlock);
             }
 
-            if(i!=size){
+            if (i != size) {
                 enterNewBlock(nextBlock);
             }
         }

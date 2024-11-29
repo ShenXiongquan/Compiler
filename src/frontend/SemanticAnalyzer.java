@@ -82,7 +82,7 @@ public class SemanticAnalyzer {
 
         Symbol symbol = new Symbol(
                 curTable.id,
-                constDef.ident.token(),
+                constDef.ident.name(),
                 true,
                 isArray,
                 symbolType
@@ -116,7 +116,7 @@ public class SemanticAnalyzer {
 
         Symbol symbol = new Symbol(
                 curTable.id,
-                varDef.ident.token(),
+                varDef.ident.name(),
                 false, // isConst
                 isArray,
                 symbolType
@@ -147,7 +147,7 @@ public class SemanticAnalyzer {
         ArrayList<Symbol> paramList = new ArrayList<>();
         Symbol symbol = new Symbol(
                 globalTable.id,
-                funcDef.ident.token(),
+                funcDef.ident.name(),
                 symbolType,
                 paramList
         );
@@ -205,7 +205,7 @@ public class SemanticAnalyzer {
 
         Symbol symbol = new Symbol(
                 curTable.id,
-                funcFParam.ident.token(),
+                funcFParam.ident.name(),
                 false,
                 isArray,
                 symbolType
@@ -305,10 +305,10 @@ public class SemanticAnalyzer {
 
         } else if (stmt instanceof PrintfStmt printfStmt) {
             int count = 0;
-            String s = printfStmt.stringConst.token();
+            String s = printfStmt.stringConst.name();
             int len = s.length();
             for (int i = 0; i < len; i++) {
-                if (s.charAt(i) == '%' && i+1<len&&(s.charAt(i + 1) == 'd' || s.charAt(i + 1) == 'c')) {
+                if (s.charAt(i) == '%' && i + 1 < len && (s.charAt(i + 1) == 'd' || s.charAt(i + 1) == 'c')) {
                     count++;
                 }
             }
@@ -339,7 +339,7 @@ public class SemanticAnalyzer {
     }
 
     private Symbol visitLVal(LVal lVal) {
-        Symbol symbol = curTable.getSymbol(lVal.ident.token());
+        Symbol symbol = curTable.getSymbol(lVal.ident.name());
         if (symbol == null) {
             errorManager.handleError(lVal.ident.line(), "c");
         }
@@ -358,7 +358,7 @@ public class SemanticAnalyzer {
         } else if (primaryExp instanceof LprimaryExp lprimaryExp) {
             return visitLVal(lprimaryExp.lVal);
         } else if (primaryExp instanceof CprimaryExp cprimaryExp) {
-            return new Symbol( false, SymbolType.Char);
+            return new Symbol(false, SymbolType.Char);
         } else {
             return new Symbol(false, SymbolType.Int);
         }
@@ -370,7 +370,7 @@ public class SemanticAnalyzer {
             return visitPrimaryExp(punaryExp.primaryExp);
         } else if (unaryExp instanceof FunaryExp funaryExp) {
             token ident = funaryExp.ident;
-            Symbol func = curTable.getSymbol(ident.token());
+            Symbol func = curTable.getSymbol(ident.name());
             if (func == null) {//函数未声明
                 errorManager.handleError(ident.line(), "c");
             }
@@ -418,7 +418,7 @@ public class SemanticAnalyzer {
     private Symbol visitAddExp(AddExp addExp) {
         if (addExp.addExp != null) visitAddExp(addExp.addExp);
         Symbol symbol = visitMulExp(addExp.mulExp);
-        return addExp.op != null ? new Symbol( false, SymbolType.Int) : symbol;
+        return addExp.op != null ? new Symbol(false, SymbolType.Int) : symbol;
     }
 
     private void visitRelExp(RelExp relExp) {

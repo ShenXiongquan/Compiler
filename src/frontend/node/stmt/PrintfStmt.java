@@ -1,8 +1,8 @@
 package frontend.node.stmt;
 
-import frontend.llvm_ir.Visitor;
-import frontend.llvm_ir.GlobalVariable;
+import frontend.llvm_ir.GlobalVar;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.ConstStr;
 import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
@@ -10,9 +10,9 @@ import frontend.llvm_ir.type.ArrayType;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.Exp;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PrintfStmt extends Stmt {
     public token printf;
@@ -26,22 +26,27 @@ public class PrintfStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void print() {
-        printf.print();
-        lparent.print();
-        stringConst.print();
-        if (!exps.isEmpty()) for (Exp exp : exps) {
-            comma.print();
-            exp.print();
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(printf.print());
+        sb.append(lparent.print());
+        sb.append(stringConst.print());
+        if (!exps.isEmpty()) {
+            for (Exp exp : exps) {
+                sb.append(comma.print());
+                sb.append(exp.print());
+            }
         }
-        if (rparent != null) rparent.print();
-        if (semicn != null) semicn.print();
-        myWriter.writeNonTerminal("Stmt");
+        if (rparent != null) sb.append(rparent.print());
+        if (semicn != null) sb.append(semicn.print());
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
+
 
     public void visit() {
         // 获取原始字符串并解析为分段
-        String rawString = stringConst.token().substring(1, stringConst.token().length() - 1);
+        String rawString = stringConst.name().substring(1, stringConst.name().length() - 1);
         List<String> parts = parseString(rawString);
 
         // 遍历分段，根据类型生成相应的指令
@@ -58,7 +63,7 @@ public class PrintfStmt extends Stmt {
 
             } else {
                 // 处理普通字符串部分
-                GlobalVariable globalStr = getGlobalString(segment);
+                GlobalVar globalStr = getGlobalString(segment);
                 getelementptr gep = getelementptr(globalStr, ConstInt.zeroI64, ConstInt.zeroI64);
                 call(Visitor.model.putstr(), gep);
 
@@ -94,12 +99,12 @@ public class PrintfStmt extends Stmt {
     /**
      * 获取或创建全局字符串变量。
      */
-    private GlobalVariable getGlobalString(String constStr) {
+    private GlobalVar getGlobalString(String constStr) {
         if (!Visitor.stringPool.containsKey(constStr)) {
             // 计算字符串长度并创建全局变量
             int adjustedLength = constStr.replaceAll("\\\\", "").length() + 1;
             System.out.println("adjustedLength:" + adjustedLength);
-            GlobalVariable globalStr = new GlobalVariable(new ConstStr(new ArrayType(IntegerType.i8, adjustedLength), constStr));
+            GlobalVar globalStr = new GlobalVar(new ConstStr(new ArrayType(IntegerType.i8, adjustedLength), constStr));
             Visitor.model.addGlobalStr(globalStr);
             Visitor.stringPool.put(constStr, globalStr);
         }

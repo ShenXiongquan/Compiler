@@ -1,25 +1,27 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class AddExp extends node {
     public AddExp addExp;
     public MulExp mulExp;
     public token op;
 
-    public void print() {
+    public String print() {
+        StringBuilder sb = new StringBuilder();
         if (addExp != null) {
-            addExp.print();
-            op.print();
+            sb.append(addExp.print());
+            sb.append(op.print());
         }
-        mulExp.print();
-        myWriter.writeNonTerminal("AddExp");
+        sb.append(mulExp.print());
+        sb.append("<AddExp>\n");
+        return sb.toString();
     }
+
 
     public void visit() {
         if (Visitor.calAble) {

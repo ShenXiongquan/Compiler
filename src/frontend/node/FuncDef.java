@@ -1,14 +1,13 @@
 package frontend.node;
 
-import frontend.llvm_ir.Visitor;
-import frontend.llvm_ir.Parameter;
 import frontend.llvm_ir.BasicBlock;
 import frontend.llvm_ir.Function;
+import frontend.llvm_ir.Parameter;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.instructions.Instruction;
 import frontend.llvm_ir.instructions.MemInstructions.alloca;
 import frontend.llvm_ir.type.VoidType;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 import java.util.ArrayList;
 
@@ -23,18 +22,21 @@ public class FuncDef extends node {
 
     public Block block;
 
-    public void print() {
-        funcType.print();
-        ident.print();
-        lparent.print();
-        if (funcFParams != null) funcFParams.print();
-        if (rparent != null) rparent.print();
-        block.print();
-        myWriter.writeNonTerminal("FuncDef");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(funcType.print());
+        sb.append(ident.print());
+        sb.append(lparent.print());
+        if (funcFParams != null) sb.append(funcFParams.print());
+        if (rparent != null) sb.append(rparent.print());
+        sb.append(block.print());
+        sb.append("<FuncDef>\n");
+        return sb.toString();
     }
 
+
     public void visit() {
-        System.out.println("现在创建的函数是：" + ident.token());
+        System.out.println("现在创建的函数是：" + ident.name());
         funcType.visit();
 
         Visitor.pushScope();
@@ -46,10 +48,10 @@ public class FuncDef extends node {
             funcFParams.visit(parameters);
         }
 
-        Function function = new Function(ident.token(), Visitor.returnType, parameters, true);
+        Function function = new Function(ident.name(), Visitor.returnType, parameters, true);
         Visitor.curFunc = function;
         Visitor.model.addGlobalValue(function);
-        Visitor.globalTable.addSymbol(ident.token(), function);
+        Visitor.globalTable.addSymbol(ident.name(), function);
 
         enterNewBlock(new BasicBlock("entry"));
 

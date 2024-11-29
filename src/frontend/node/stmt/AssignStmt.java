@@ -1,13 +1,12 @@
 package frontend.node.stmt;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.PointerType;
 import frontend.node.Exp;
 import frontend.node.LVal;
 import frontend.token.token;
-import frontend.tool.myWriter;
 
 public class AssignStmt extends Stmt {
     public LVal lVal;
@@ -16,12 +15,14 @@ public class AssignStmt extends Stmt {
     public token semicn;
 
     @Override
-    public void print() {
-        lVal.print();
-        assign.print();
-        exp.print();
-        if (semicn != null) semicn.print();
-        myWriter.writeNonTerminal("Stmt");
+    public String print() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(lVal.print());
+        sb.append(assign.print());
+        sb.append(exp.print());
+        if (semicn != null) sb.append(semicn.print());
+        sb.append("<Stmt>\n");
+        return sb.toString();
     }
 
     public void visit() {

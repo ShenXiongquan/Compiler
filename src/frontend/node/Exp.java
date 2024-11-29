@@ -1,13 +1,13 @@
 package frontend.node;
 
-import frontend.tool.myWriter;
-
-public class Exp extends node{
+public class Exp extends node {
     public AddExp addExp;
-    public void print(){
-        addExp.print();
-        myWriter.writeNonTerminal("Exp");
+
+    public String print() {
+        return addExp.print() +
+                "<Exp>\n";
     }
+
     public void visit() {
         addExp.visit();
     }

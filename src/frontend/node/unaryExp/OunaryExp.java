@@ -1,23 +1,23 @@
 package frontend.node.unaryExp;
 
-import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.UnaryOp;
-import frontend.tool.myWriter;
 
 public class OunaryExp extends UnaryExp {
     public UnaryOp unaryOp;
     public UnaryExp unaryExp;
 
     @Override
-    public void print() {
-        unaryOp.print();
-        unaryExp.print();
-        myWriter.writeNonTerminal("UnaryExp");
+    public String print() {
+        return unaryOp.print() +
+                unaryExp.print() +
+                "<UnaryExp>\n";
     }
+
 
     public void visit() {
         unaryExp.visit();
