@@ -1,11 +1,13 @@
 package backend.operand;
 
-public class VirtualRegister {
+import frontend.llvm_ir.type.IntegerType;
+
+public class VirtualRegister extends Operand {
     private String name;       // 虚拟寄存器名称（如 %1）
-    private String type;       // 数据类型（如 i32, i64）
+    private IntegerType type;       // 数据类型（如 i32, i）
     private boolean allocated; // 是否已经被映射到实际寄存器或栈空间
 
-    public VirtualRegister(String name, String type) {
+    public VirtualRegister(String name, IntegerType type) {
         this.name = name;
         this.type = type;
         this.allocated = false;
@@ -16,8 +18,7 @@ public class VirtualRegister {
         return name;
     }
 
-    // 获取数据类型
-    public String getType() {
+    public IntegerType getType() {
         return type;
     }
 
@@ -31,5 +32,9 @@ public class VirtualRegister {
         this.allocated = allocated;
     }
 
+    @Override
+    public String mips() {
+        return null;
+    }
 }
 

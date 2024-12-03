@@ -1,5 +1,9 @@
 package backend.operand;
 
-public class Immediate {
-    
+public class Immediate extends Operand {
+
+    @Override
+    public String mips() {
+        return null;
+    }
 }

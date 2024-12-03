@@ -2,23 +2,23 @@ package frontend.llvm_ir.constants;
 
 import frontend.llvm_ir.type.IntegerType;
 
-public class ConstInt extends Constant{
+public class ConstInt extends Constant {
 
-    public static final ConstInt zero=new ConstInt(IntegerType.i32,0);
+    public static final ConstInt zero = new ConstInt(IntegerType.i32, 0);
 
-    public static final ConstInt zeroI8=new ConstInt(IntegerType.i8,0);
+    public static final ConstInt zeroI8 = new ConstInt(IntegerType.i8, 0);
 
-    public static final ConstInt zeroI64=new ConstInt(IntegerType.i64,0);
+    public static final ConstInt zeroI64 = new ConstInt(IntegerType.i64, 0);
     private final int value;
 
-    public ConstInt(IntegerType type, int value){
+    public ConstInt(IntegerType type, int value) {
         super(type);
-        if(type.getBitWidth()==8) value&=0xFF;
+        if (type.getByteSize() == 1) value &= 0xFF;
         this.value = value;
     }
 
-    public boolean isZero(){
-        return this.value==0;
+    public boolean isZero() {
+        return this.value == 0;
     }
 
     public int getValue() {
@@ -30,5 +30,7 @@ public class ConstInt extends Constant{
         return String.valueOf(value);
     }
 
-
+    public String mips() {
+        return getType().getByteSize() == 4 ? ".word " : ".byte " + value;
+    }
 }

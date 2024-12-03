@@ -14,9 +14,8 @@ import java.util.List;
 
 public class ArrayConstInitVal extends ConstInitVal {
 
-    public token lbrace;
     public final List<ConstExp> constExps = new ArrayList<>();
-
+    public token lbrace;
     public token comma;
     public token rbrace;
 
@@ -37,19 +36,46 @@ public class ArrayConstInitVal extends ConstInitVal {
     }
 
     public void visit() {
-        if (Visitor.isGlobal() && constExps.isEmpty()) {//全局空数组
-            Visitor.upValue = new Zeroinitializer(new ArrayType(Visitor.ValueType, Visitor.ArraySize));
-        } else {//全局非空数组和局部常量数组
-            ArrayList<ConstInt> array = new ArrayList<>();
+
+        if (Visitor.isGlobal()) {//全局数组初始化
+            if (constExps.isEmpty()) {
+                Visitor.upValue = new Zeroinitializer(new ArrayType(Visitor.ValueType, Visitor.ArraySize));
+            } else {
+                ArrayList<ConstInt> array = new ArrayList<>();
+                for (int i = 0; i < Visitor.ArraySize; i++) {
+                    if (i < constExps.size()) {
+                        constExps.get(i).visit();
+                        array.add(new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue));
+                    } else {
+                        array.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
+                    }
+                }
+                Visitor.upValue = new ConstArray(new ArrayType(Visitor.ValueType, Visitor.ArraySize), array);
+            }
+        } else {//局部数组初始化
             for (int i = 0; i < Visitor.ArraySize; i++) {
                 if (i < constExps.size()) {
                     constExps.get(i).visit();
-                    array.add(new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue));
+                    Visitor.upArrayValue.add(new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue));
                 } else {
-                    array.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
+                    Visitor.upArrayValue.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
                 }
             }
-            Visitor.upValue = new ConstArray(new ArrayType(Visitor.ValueType, Visitor.ArraySize), array);
         }
     }
 }
+
+//     if (Visitor.isGlobal() && constExps.isEmpty()) {//全局空数组
+//             Visitor.upValue = new Zeroinitializer(new ArrayType(Visitor.ValueType, Visitor.ArraySize));
+//      } else {//全局非空数组和局部常量数组
+//        ArrayList<ConstInt> array = new ArrayList<>();
+//        for (int i = 0; i < Visitor.ArraySize; i++) {
+//        if (i < constExps.size()) {
+//        constExps.get(i).visit();
+//        array.add(new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue));
+//        } else {
+//          array.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
+//        }
+//        }
+//        Visitor.upValue = new ConstArray(new ArrayType(Visitor.ValueType, Visitor.ArraySize), array);
+//     }

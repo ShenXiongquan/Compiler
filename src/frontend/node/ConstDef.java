@@ -1,10 +1,14 @@
 package frontend.node;
 
 import frontend.llvm_ir.GlobalVar;
+import frontend.llvm_ir.Value;
 import frontend.llvm_ir.Visitor;
+import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.instructions.MemInstructions.alloca;
+import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
 import frontend.llvm_ir.type.ArrayType;
+import frontend.llvm_ir.type.IntegerType;
 import frontend.node.constInitVal.ConstInitVal;
 import frontend.token.token;
 
@@ -62,7 +66,11 @@ public class ConstDef extends node {
                 alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
                 constInitVal.visit(); // 处理数组的初始值
-                store(Visitor.upValue, alloca); // 存储数组初始值
+                int i = 0;
+                for (Value element : Visitor.upArrayValue) {
+                    getelementptr getelementptr = getelementptr(alloca, ConstInt.zero, new ConstInt(IntegerType.i32, i++));
+                    store(element, getelementptr);
+                }
             }
         }
     }

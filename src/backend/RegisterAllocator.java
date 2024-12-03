@@ -14,19 +14,24 @@ import java.util.HashMap;
 //$sp, $fp：栈帧寄存器，$sp 保存栈顶（低地址），$fp 保存栈底（高地址）。
 //$ra：返回地址，jal 指令会自动将下一条指令的地址保存在 $ra 中，从而函数调用可以正确地返回。
 
+/**
+ * 对于规范的寄存器分配，则需要考虑全局寄存器和局部寄存器的分配，分别对应 MIPS 中的 s 和 t 寄存器。全局寄存器对应那些生命周期跨越基本块的变量，而局部寄存器则对应基本块内的变量。
+ * 对于全局寄存器分配，我们需要考虑不同变量的生命周期范围，尽可能的避免寄存器冲突。
+ * 为了解决这一问题，主要由图着色和线性两种分配方式。而对于局部寄存器分配，由于基本块内部不存在分支，结构较为简单，因此使用寄存器池就可以实现高效的寄存器分配。
+ */
 public class RegisterAllocator {
     private final HashMap<Integer, PhysicalRegister> registerPool = new HashMap<>();
 
     public RegisterAllocator() {
-        addRegister(0, new PhysicalRegister("zero")); // 常量零寄存器
-        addRegister(2, new PhysicalRegister("v0"));   // 返回值寄存器
-        addRegister(29, new PhysicalRegister("sp"));  // 栈顶指针寄存器
-        addRegister(31, new PhysicalRegister("ra"));  // 返回地址寄存器
+        addRegister(0, PhysicalRegister.$zero); // 常量零寄存器
+        addRegister(2, PhysicalRegister.$v0);   // 返回值寄存器
+        addRegister(29, PhysicalRegister.$sp);  // 栈顶指针寄存器
+        addRegister(31, PhysicalRegister.$ra);  // 返回地址寄存器
         // 参数寄存器 a0-a3 (编号 4-7)
         for (int i = 0; i < 4; i++) addRegister(4 + i, new PhysicalRegister("a" + i));
         // 临时寄存器 t0-t7 (编号 8-15)
         for (int i = 0; i < 8; i++) addRegister(8 + i, new PhysicalRegister("t" + i));
-        // 保存寄存器 s0-s7 (编号 16-23)
+        // (保存)全局寄存器 s0-s7 (编号 16-23)
         for (int i = 0; i < 8; i++) addRegister(16 + i, new PhysicalRegister("s" + i));
     }
 

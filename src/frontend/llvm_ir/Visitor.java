@@ -12,17 +12,13 @@ import java.util.HashMap;
 import java.util.Stack;
 
 /**
- * 代码还需要进行重构，考虑文法继承属性作为函数参数传递，综合属性作为函数返回值。
- * 同时符号表的设计还值得商榷
  * 下面考虑目前文法的一些重要综合属性和继承属性
  */
-
 public class Visitor {
 
     public static final Model model = new Model();
     public static final irSymbolTable globalTable = new irSymbolTable();
     public static irSymbolTable curTable = globalTable;
-
     private final CompUnit compUnit;
 
     public Visitor(CompUnit compUnit) {

@@ -7,12 +7,12 @@ import frontend.llvm_ir.type.ArrayType;
  * 数组类型初始化为0
  */
 
-public class Zeroinitializer extends Constant{
+public class Zeroinitializer extends Constant {
     private final int length;
 
     public Zeroinitializer(ArrayType arrayType) {
         super(arrayType);
-        this.length= arrayType.getByteSize();
+        this.length = arrayType.getArraySize();
     }
 
 
@@ -21,5 +21,7 @@ public class Zeroinitializer extends Constant{
         return "zeroinitializer";
     }
 
-
+    public String mips() {
+        return "0:" + length;
+    }
 }

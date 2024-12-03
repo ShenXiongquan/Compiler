@@ -5,9 +5,8 @@ import frontend.llvm_ir.type.PointerType;
 
 /**
  * 全局变量，全局数组，全局字符串，全局常量，树的第二层
- *
- * @.str = private unnamed_addr constant [4 x i8] c" - \00", align 1
- * @.str.1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
+ * // @.str = private unnamed_addr constant [4 x i8] c" - \00", align 1
+ * // @.str.1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
  */
 public class GlobalVar extends GlobalValue {
     private static int num = 0;
@@ -32,6 +31,10 @@ public class GlobalVar extends GlobalValue {
         super(".str." + (num++), new PointerType(initial.getType()));
         this.initial = initial;
         this.isPrintStr = true;
+    }
+
+    public Constant getInitial() {
+        return initial;
     }
 
     @Override

@@ -52,21 +52,16 @@ public class PrintfStmt extends Stmt {
         // 遍历分段，根据类型生成相应的指令
         for (int i = 0, j = 0; i < parts.size(); i++) {
             String segment = parts.get(i);
-
-            if ("%d".equals(segment) || "%c".equals(segment)) {
-                // 处理占位符 (%d 和 %c)
+            if ("%d".equals(segment) || "%c".equals(segment)) {// 处理占位符 (%d 和 %c)
                 exps.get(j++).visit();
                 Value output = zext(Visitor.upValue);
                 call("%d".equals(segment) ? Visitor.model.putint() : Visitor.model.putchar(),
                         output
                 );
-
-            } else {
-                // 处理普通字符串部分
+            } else {// 处理普通字符串部分
                 GlobalVar globalStr = getGlobalString(segment);
                 getelementptr gep = getelementptr(globalStr, ConstInt.zeroI64, ConstInt.zeroI64);
                 call(Visitor.model.putstr(), gep);
-
             }
         }
     }
@@ -77,7 +72,6 @@ public class PrintfStmt extends Stmt {
     private List<String> parseString(String rawString) {
         List<String> parts = new ArrayList<>();
         int lastIndex = 0;
-
         for (int i = 0; i < rawString.length(); i++) {
             if (rawString.charAt(i) == '%' && i + 1 < rawString.length()) {
                 if (lastIndex < i) {
@@ -88,11 +82,9 @@ public class PrintfStmt extends Stmt {
                 lastIndex = i + 1;
             }
         }
-
         if (lastIndex < rawString.length()) {
             parts.add(rawString.substring(lastIndex)); // 添加剩余普通字符串部分
         }
-
         return parts;
     }
 
@@ -101,9 +93,7 @@ public class PrintfStmt extends Stmt {
      */
     private GlobalVar getGlobalString(String constStr) {
         if (!Visitor.stringPool.containsKey(constStr)) {
-            // 计算字符串长度并创建全局变量
             int adjustedLength = constStr.replaceAll("\\\\", "").length() + 1;
-            System.out.println("adjustedLength:" + adjustedLength);
             GlobalVar globalStr = new GlobalVar(new ConstStr(new ArrayType(IntegerType.i8, adjustedLength), constStr));
             Visitor.model.addGlobalStr(globalStr);
             Visitor.stringPool.put(constStr, globalStr);

@@ -16,7 +16,7 @@ public class Character extends node {
     public void visit() {
         int c;
         String s = charConst.name().substring(1, charConst.name().length() - 1);
-
+ 
         c = switch (s) {
             case "\\a" -> 7;// 响铃
             case "\\b" -> 8;// 退格

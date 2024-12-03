@@ -7,10 +7,8 @@ public class CprimaryExp extends PrimaryExp {
 
     @Override
     public String print() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(character.print());
-        sb.append("<PrimaryExp>\n");
-        return sb.toString();
+        return character.print() +
+                "<PrimaryExp>\n";
     }
 
     public void visit() {

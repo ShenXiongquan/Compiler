@@ -1,9 +1,9 @@
 package frontend.llvm_ir.type;
 
-public class VoidType extends Type{
+public class VoidType extends Type {
     @Override
     public int getByteSize() {
-        throw new AssertionError("VoidType has no size!");
+        return -1;
     }
 
     @Override

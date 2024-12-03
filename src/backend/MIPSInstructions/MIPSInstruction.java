@@ -1,8 +1,16 @@
 package backend.MIPSInstructions;
 
-public class MIPSInstruction {
+import backend.operand.Operand;
 
-    public String mips() {
-        return null;
-    }
+public abstract class MIPSInstruction {
+
+    protected Operand operand1;
+
+    protected Operand operand2;
+
+    protected Operand operand3;
+
+
+    public abstract String mips();
+
 }

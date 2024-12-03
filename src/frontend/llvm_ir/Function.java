@@ -1,6 +1,5 @@
 package frontend.llvm_ir;
 
-import frontend.llvm_ir.type.FunctionType;
 import frontend.llvm_ir.type.Type;
 
 import java.util.ArrayList;
@@ -15,9 +14,16 @@ import java.util.LinkedList;
  * declare void @putch(i32)
  * declare void @putstr(i8*)
  */
-public class Function extends GlobalValue{
+public class Function extends GlobalValue {
 
-    public static int VarNum=0;public static int ifNum=1;public static int forNum=1;public static int breakNum=1;public static int continueNum=1;public static int returnNum=1;public static int andNum=1;public static int orNum=1;
+    public static int VarNum = 0;
+    public static int ifNum = 1;
+    public static int forNum = 1;
+    public static int breakNum = 1;
+    public static int continueNum = 1;
+    public static int returnNum = 1;
+    public static int andNum = 1;
+    public static int orNum = 1;
     private final LinkedList<BasicBlock> basicBlocks = new LinkedList<>(); // 函数中的基本块列表
     private final boolean isDefine; // 是否是内建函数
     private final ArrayList<Parameter> parameters; // 函数的形参列表
@@ -25,17 +31,22 @@ public class Function extends GlobalValue{
     private final HashSet<Function> callers = new HashSet<>(); // 调用该函数的其他函数
 
     /**
-     *
-     * @param name 函数名
+     * @param name       函数名
      * @param returnType 返回类型
      * @param parameters 参数列表
-     * @param isDefine 是否为自己定义的
+     * @param isDefine   是否为自己定义的
      */
     public Function(String name, Type returnType, ArrayList<Parameter> parameters, boolean isDefine) {
-        super(name, new FunctionType(returnType));
+        super(name, returnType);
         this.parameters = parameters;
         this.isDefine = isDefine;
-        ifNum=0;forNum=0;continueNum=0;breakNum=0;returnNum=0;andNum=0;orNum=0;
+        ifNum = 0;
+        forNum = 0;
+        continueNum = 0;
+        breakNum = 0;
+        returnNum = 0;
+        andNum = 0;
+        orNum = 0;
     }
 
     public void setSideEffect(boolean sideEffect) {
@@ -50,20 +61,19 @@ public class Function extends GlobalValue{
         return callers;
     }
 
-    @Override
-    public FunctionType getType() {
-        return (FunctionType) super.getType();
+    public LinkedList<BasicBlock> getBasicBlocks() {
+        return basicBlocks;
     }
 
     public ArrayList<Parameter> getParameters() {
         return parameters;
     }
 
-    public void addBasicBlock(BasicBlock block){
+    public void addBasicBlock(BasicBlock block) {
         basicBlocks.add(block);
     }
 
-    public void removeBasicBlock(BasicBlock block){
+    public void removeBasicBlock(BasicBlock block) {
         basicBlocks.remove(block);
     }
 
@@ -71,27 +81,19 @@ public class Function extends GlobalValue{
     //declare i32 @getint()
     @Override
     public String ir() {
-        StringBuilder sb = new StringBuilder(isDefine ? "define dso_local ":"declare " );
-        sb.append(getType().getReturnType().ir()).append(" ").append(getName()).append("(");
-        //函数形参
+        StringBuilder sb = new StringBuilder(isDefine ? "define dso_local " : "declare ");
+        //函数声明
+        sb.append(getType().ir()).append(" ").append(getName()).append("(");
         if (!parameters.isEmpty()) {
-            if(isDefine){
-                sb.append(parameters.get(0).ir());
-                for (int i = 1; i < parameters.size(); i++) {
-                    sb.append(", ");
-                    sb.append(parameters.get(i).ir());
-                }
-            }else {
-                sb.append(parameters.get(0).getType().ir());
-                for (int i = 1; i < parameters.size(); i++) {
-                    sb.append(", ");
-                    sb.append(parameters.get(i).getType().ir());
-                }
+            sb.append(isDefine ? parameters.get(0).ir() : parameters.get(0).getType().ir());
+            for (int i = 1; i < parameters.size(); i++) {
+                sb.append(", ");
+                sb.append(isDefine ? parameters.get(i).ir() : parameters.get(i).getType().ir());
             }
         }
         sb.append(")");
         //函数体
-        if(isDefine){
+        if (isDefine) {
             sb.append("{\n");
             for (BasicBlock basicBlock : basicBlocks) {
                 sb.append(basicBlock.ir()).append("\n");
