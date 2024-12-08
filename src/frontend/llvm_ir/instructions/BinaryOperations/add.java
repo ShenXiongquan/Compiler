@@ -1,6 +1,7 @@
 package frontend.llvm_ir.instructions.BinaryOperations;
 
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.type.IntegerType;
 
 /**
@@ -17,4 +18,8 @@ public class add extends BinaryOperation {
     }
 
 
+    @Override
+    public String getMipsType() {
+        return getOp2() instanceof Constant ? "addiu" : "addu";
+    }
 }

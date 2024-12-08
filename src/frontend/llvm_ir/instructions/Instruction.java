@@ -30,4 +30,8 @@ public abstract class Instruction extends User {
     public String mips() {
         return "";
     }
+
+    public BasicBlock getParentBlock() {
+        return parentBlock;
+    }
 }

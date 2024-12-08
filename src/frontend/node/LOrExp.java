@@ -1,7 +1,6 @@
 package frontend.node;
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.token.token;
 
@@ -37,7 +36,7 @@ public class LOrExp extends node {
         int i = 0;
         int size = Visitor.lAndExps.size();
         for (LAndExp lAndExp : Visitor.lAndExps) {
-            BasicBlock nextBlock = (size == (++i) ? falseBlock : new BasicBlock("Block_or" + Function.orNum++));
+            BasicBlock nextBlock = (size == (++i) ? falseBlock : new BasicBlock());
             Visitor.eqExps = new ArrayList<>();
             lAndExp.handle();
             lAndExp.visit(trueBlock, nextBlock);

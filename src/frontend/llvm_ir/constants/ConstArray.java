@@ -34,8 +34,8 @@ public class ConstArray extends Constant {
     }
 
     public String mips() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(((ArrayType) getType()).getElementType().getByteSize() == 4 ? ".word " : ".byte ");
+        StringBuilder sb = new StringBuilder(".word ");
+//        sb.append(((ArrayType) getType()).getElementType().getByteSize() == 4 ? ".word " : ".byte ");
         int len = ((ArrayType) getType()).getArraySize();
         for (int i = 0; i < len; i++) {
             sb.append(getArrayElement(i).getName());

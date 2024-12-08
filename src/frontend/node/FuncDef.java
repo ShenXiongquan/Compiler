@@ -53,7 +53,7 @@ public class FuncDef extends node {
         Visitor.model.addGlobalValue(function);
         Visitor.globalTable.addSymbol(ident.name(), function);
 
-        enterNewBlock(new BasicBlock("entry"));
+        enterNewBlock(new BasicBlock());
 
         for (Parameter parameter : parameters) {
             System.out.println("函数参数类型: " + parameter.getType().ir());
@@ -66,7 +66,7 @@ public class FuncDef extends node {
         Visitor.popScope();
 
         Instruction last = Visitor.curBlock.getLastInstruction();
-        if (function.getType().getReturnType() instanceof VoidType && !Visitor.curBlock.isJumpInstruction(last)) {
+        if (function.getType() instanceof VoidType && !Visitor.curBlock.isJumpInstruction(last)) {
             ret();
         } else if (Visitor.curBlock.isEmpty()) {
             Visitor.curFunc.removeBasicBlock(Visitor.curBlock);

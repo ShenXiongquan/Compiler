@@ -1,7 +1,6 @@
 package frontend.node.stmt;
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.node.Cond;
 import frontend.node.ForStmt;
@@ -42,10 +41,10 @@ public class LoopStmt extends Stmt {
 
         // cond 块负责条件判断和跳转,如果是 true 则进入 bodyBlock,如果是 false 就进入 nextBlock,结束 for 语句
         // body 块是循环的主体
-        BasicBlock bodyBlock = new BasicBlock("Block_body" + Function.forNum++);
-        BasicBlock condBlock = (cond == null ? null : new BasicBlock("Block_cond" + Function.forNum));
-        BasicBlock updateBlock = new BasicBlock("Block_update" + Function.forNum);
-        BasicBlock endBlock = new BasicBlock("Block_end" + Function.forNum);
+        BasicBlock bodyBlock = new BasicBlock();
+        BasicBlock condBlock = (cond == null ? null : new BasicBlock());
+        BasicBlock updateBlock = new BasicBlock();
+        BasicBlock endBlock = new BasicBlock();
 
         //解决循环嵌套的问题
         Visitor.continueToBlocks.add(updateForStmt != null ? updateBlock : (cond != null ? condBlock : bodyBlock));

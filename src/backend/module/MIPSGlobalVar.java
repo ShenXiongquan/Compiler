@@ -1,4 +1,4 @@
-package backend;
+package backend.module;
 
 import frontend.llvm_ir.constants.Constant;
 

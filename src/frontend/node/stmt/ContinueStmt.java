@@ -2,7 +2,6 @@ package frontend.node.stmt;
 
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.token.token;
 
@@ -21,7 +20,7 @@ public class ContinueStmt extends Stmt {
 
     public void visit() {
         br(Visitor.continueToBlocks.peek());
-        enterNewBlock(new BasicBlock("Block_continue" + Function.continueNum++));
+        enterNewBlock(new BasicBlock());
 
     }
 }

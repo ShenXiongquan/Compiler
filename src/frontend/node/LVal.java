@@ -53,7 +53,6 @@ public class LVal extends node {
                 } else {
                     exp.visit();//数组索引
                     Visitor.upValue = zext(Visitor.upValue);
-
                     Visitor.upValue = getelementptr(lVal, ConstInt.zero, Visitor.upValue);//传数组元素地址
                 }
             } else {

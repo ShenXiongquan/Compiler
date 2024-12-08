@@ -1,12 +1,11 @@
 package frontend.llvm_ir;
 
 import frontend.llvm_ir.instructions.ControlFlowInstructions.ControlFlowInstr;
+import frontend.llvm_ir.instructions.Instruction;
 import frontend.llvm_ir.type.LabelType;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import frontend.llvm_ir.instructions.Instruction;
 
 /**
  * 表示LLVM中的基本块，每个基本块由多个指令组成
@@ -20,7 +19,7 @@ public class BasicBlock extends Value {
     /**
      * 基本块包含的指令
      */
-    private final List<Instruction> instructions=new ArrayList<>();
+    private final List<Instruction> instructions = new ArrayList<>();
     /**
      * 基本块的父作用域
      */
@@ -28,9 +27,11 @@ public class BasicBlock extends Value {
     private final List<BasicBlock> predecessors;   // 前驱基本块列表
     private final List<BasicBlock> successors;     // 后继基本块列表
 
+    private static int num = 0;
+
     // 构造函数
-    public BasicBlock(String blockName) {
-        super("%"+blockName, new LabelType());
+    public BasicBlock() {
+        super(LOCAL_PREFIX + "block" + num++, new LabelType());
         this.predecessors = new ArrayList<>();
         this.successors = new ArrayList<>();
         this.parent = Visitor.curFunc;
@@ -51,20 +52,21 @@ public class BasicBlock extends Value {
     }
 
     /**
-     *
      * @return 基本块的最后一条指令
      */
-    public Instruction getLastInstruction(){
-        return instructions.isEmpty()?null:instructions.get(instructions.size() - 1);
+    public Instruction getLastInstruction() {
+        return instructions.isEmpty() ? null : instructions.get(instructions.size() - 1);
     }
 
     /**
-     *  判断基本块为空
+     * 判断基本块为空
+     *
      * @return 为空返回true
      */
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return this.instructions.isEmpty();
     }
+
     /**
      * 获取基本块的指令列表。
      */

@@ -31,6 +31,6 @@ public class ConstInt extends Constant {
     }
 
     public String mips() {
-        return getType().getByteSize() == 4 ? ".word " : ".byte " + value;
+        return ".word " + value;
     }
 }

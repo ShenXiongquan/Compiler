@@ -1,7 +1,6 @@
 package frontend.node.stmt;
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.token.token;
 
@@ -21,6 +20,6 @@ public class BreakStmt extends Stmt {
 
     public void visit() {
         br(Visitor.breakToBlocks.peek());
-        enterNewBlock(new BasicBlock("Block_break" + Function.breakNum++));
+        enterNewBlock(new BasicBlock());
     }
 }

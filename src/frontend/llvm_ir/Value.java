@@ -26,18 +26,24 @@ public abstract class Value {
     /**
      * 使用value的user
      */
-    private final List<User> users=new ArrayList<>();
-    public Value(String llvm_name, Type valueType){
+    private final List<User> users = new ArrayList<>();
+
+    public Value(String llvm_name, Type valueType) {
         this.llvm_name = llvm_name;
         this.type = valueType;
     }
-    public void addUser(User user){
+
+    public void addUser(User user) {
         users.add(user);
     }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
     public void removeUser(User user) {
         users.remove(user);
     }
-
 
     /**
      * @return value的类型

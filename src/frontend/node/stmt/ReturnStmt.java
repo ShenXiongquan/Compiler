@@ -1,7 +1,6 @@
 package frontend.node.stmt;
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.Exp;
@@ -29,12 +28,12 @@ public class ReturnStmt extends Stmt {
             ret();
         } else {
             returnExp.visit();
-            IntegerType expectedType = (IntegerType) ((Function) Visitor.curBlock.getParent()).getType().getReturnType();
+            IntegerType expectedType = (IntegerType) Visitor.curBlock.getParent().getType();
             if (expectedType.isInt32()) Visitor.upValue = zext(Visitor.upValue);
             else Visitor.upValue = trunc(Visitor.upValue);
             ret(Visitor.upValue);
         }
-        enterNewBlock(new BasicBlock("Block_return" + Function.returnNum++));
+        enterNewBlock(new BasicBlock());
 
     }
 }

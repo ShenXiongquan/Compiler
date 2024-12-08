@@ -15,14 +15,19 @@ public abstract class BinaryOperation extends Instruction {
      * @param op2 第二个操作数
      */
     public BinaryOperation(Type returnType, Value op1, Value op2) {
-        super(LOCAL_PREFIX + (Function.VarNum++), returnType, new ArrayList<>(){{
-            add(op1);add(op2);
+        super(LOCAL_PREFIX + (Function.VarNum++), returnType, new ArrayList<>() {{
+            add(op1);
+            add(op2);
         }});
     }
-    public Value getOp1(){
+
+    public Value getOp1() {
         return getOperand(0);
     }
-    public Value getOp2(){
+
+    public Value getOp2() {
         return getOperand(1);
     }
+
+    public abstract String getMipsType();
 }

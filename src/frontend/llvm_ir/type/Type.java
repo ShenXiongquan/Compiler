@@ -7,6 +7,9 @@ package frontend.llvm_ir.type;
  */
 public abstract class Type {
 
+    /**
+     * @return 类型的字节数
+     */
     public abstract int getByteSize();
 
     public abstract String ir();

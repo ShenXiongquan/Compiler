@@ -15,13 +15,12 @@ public class Zeroinitializer extends Constant {
         this.length = arrayType.getArraySize();
     }
 
-
     @Override
     public String ir() {
         return "zeroinitializer";
     }
 
     public String mips() {
-        return "0:" + length;
+        return ".word " + "0:" + length;
     }
 }

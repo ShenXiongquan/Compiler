@@ -22,13 +22,15 @@ public class call extends Instruction {
      */
     public call(Function function, Value... args) {
         super(
-                function.getType().getReturnType() instanceof VoidType ? null : LOCAL_PREFIX + (Function.VarNum++),
-                function.getType().getReturnType(),
+                function.getType() instanceof VoidType ? null : LOCAL_PREFIX + (Function.VarNum++),
+                function.getType(),
                 new ArrayList<>() {{
                     add(function); // 将函数作为第一个操作数
                     addAll(List.of(args));  // 将参数列表追加到操作数中
                 }}
         );
+        //函数中有call语句，该函数是非叶函数
+        ((Function) getParentBlock().getParent()).setNonLeaf(true);
     }
 
     /**
@@ -38,7 +40,7 @@ public class call extends Instruction {
      */
     @Override
     public String ir() {
-        Function function = (Function) getOperands().get(0);
+        Function function = getFunction();
 
         String args = getOperands().subList(1, getOperands().size()).stream()
                 .map(op -> op.getType().ir() + " " + op.getName())
@@ -49,7 +51,19 @@ public class call extends Instruction {
 
         // 生成指令
         return result + "call "
-                + function.getType().getReturnType().ir() + " "
+                + function.getType().ir() + " "
                 + function.getName() + "(" + args + ")";
     }
+
+    /**
+     * @return 是否是外部函数
+     */
+    public boolean isExternal() {
+        return !((Function) getOperand(0)).isDefine();
+    }
+
+    public Function getFunction() {
+        return (Function) getOperand(0);
+    }
+
 }

@@ -1,7 +1,6 @@
 package frontend.node.stmt;
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.node.Cond;
 import frontend.token.token;
 
@@ -32,9 +31,9 @@ public class IfStmt extends Stmt {
     }
 
     public void visit() {
-        BasicBlock trueBlock = new BasicBlock("Block_true" + Function.ifNum++);
-        BasicBlock endBlock = new BasicBlock("Block_next" + Function.ifNum);
-        BasicBlock falseBlock = (falseStmt != null) ? new BasicBlock("Block_false" + Function.ifNum) : endBlock;
+        BasicBlock trueBlock = new BasicBlock();
+        BasicBlock endBlock = new BasicBlock();
+        BasicBlock falseBlock = (falseStmt != null) ? new BasicBlock() : endBlock;
 
 
         //if()

@@ -1,4 +1,5 @@
-import backend.MIPSGenerator;
+import backend.Translator;
+import backend.module.MIPSModel;
 import frontend.Lexer;
 import frontend.Parser;
 import frontend.SemanticAnalyzer;
@@ -27,10 +28,11 @@ public class Compiler {
 
         Visitor visitor = new Visitor(compUnit);
         visitor.visit();//中间代码生成
-//          myWriter.writeIr(Visitor.model.ir());
+        myWriter.writeIr(Visitor.model.ir());
 
-        MIPSGenerator MIPSGenerator = new MIPSGenerator(Visitor.model);
-        MIPSGenerator.genMips();//目标代码生成
+        Translator Translator = new Translator(Visitor.model);
+        MIPSModel mipsModel = Translator.genMips();//目标代码生成
+        myWriter.writeMips(mipsModel.mips());
 
         myWriter.close();
     }

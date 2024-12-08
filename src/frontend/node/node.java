@@ -16,6 +16,7 @@ import frontend.llvm_ir.instructions.MemInstructions.store;
 import frontend.llvm_ir.instructions.MixedInstructions.call;
 import frontend.llvm_ir.instructions.MixedInstructions.trunc;
 import frontend.llvm_ir.instructions.MixedInstructions.zext;
+import frontend.llvm_ir.type.ArrayType;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.llvm_ir.type.PointerType;
 import frontend.llvm_ir.type.Type;
@@ -120,6 +121,11 @@ public abstract class node {
     protected alloca alloca(Type type) {
         alloca allocaInstruction = new alloca(type);
         Visitor.curBlock.addInstruction(allocaInstruction);
+        int i = 1;
+        if (type instanceof ArrayType arrayType) {
+            i = arrayType.getArraySize();
+        }
+        ((Function) Visitor.curBlock.getParent()).addAllocaNum(i);
         return allocaInstruction;
     }
 

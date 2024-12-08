@@ -16,6 +16,7 @@ public class br extends ControlFlowInstr {
 
     /**
      * 无条件的跳转
+     *
      * @param targetBlock 目标基本块
      */
     public br(BasicBlock targetBlock) {
@@ -26,8 +27,9 @@ public class br extends ControlFlowInstr {
 
     /**
      * 有条件的跳转
-     * @param condition 条件表达式
-     * @param trueBlock 条件为 true 时的目标块
+     *
+     * @param condition  条件表达式
+     * @param trueBlock  条件为 true 时的目标块
      * @param falseBlock 条件为 false 时的目标块
      */
     public br(Value condition, BasicBlock trueBlock, BasicBlock falseBlock) {
@@ -40,6 +42,7 @@ public class br extends ControlFlowInstr {
 
     /**
      * 生成 LLVM IR 格式的字符串
+     *
      * @return LLVM IR 表达式
      */
     @Override
@@ -53,4 +56,26 @@ public class br extends ControlFlowInstr {
         }
     }
 
+    /**
+     * @return 是否为无条件跳转
+     */
+    public boolean isJmp() {
+        return condition == null;
+    }
+
+    public String getTrueLabel() {
+        return getOperand(0).getName().substring(1);
+    }
+
+    public String getLabel() {
+        return getOperand(0).getName().substring(1);
+    }
+
+    public Value getCondition() {
+        return condition;
+    }
+
+    public String getFalseLabel() {
+        return getOperand(1).getName().substring(1);
+    }
 }

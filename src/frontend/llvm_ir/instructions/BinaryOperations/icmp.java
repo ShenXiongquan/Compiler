@@ -1,6 +1,7 @@
 package frontend.llvm_ir.instructions.BinaryOperations;
 
 import frontend.llvm_ir.Value;
+import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.type.IntegerType;
 
 
@@ -19,10 +20,9 @@ public class icmp extends BinaryOperation {
     private final String condition;
 
     /**
-     *
      * @param condition 条件类型
-     * @param op1 第一个数
-     * @param op2 第二个数
+     * @param op1       第一个数
+     * @param op2       第二个数
      */
     public icmp(String condition, Value op1, Value op2) {
         super(IntegerType.i1, op1, op2);
@@ -31,6 +31,25 @@ public class icmp extends BinaryOperation {
 
     @Override
     public String ir() {
-        return getName() + " = icmp " + condition + " " + getOperand(0).getType().ir() + " " + getOperand(0).getName() + ", " + getOperand(1).getName();
+        return getName() + " = icmp " + condition + " " + getOp1().getType().ir() + " " + getOp1().getName() + ", " + getOp2().getName();
+    }
+
+    @Override
+    public String getMipsType() {
+        return switch (condition) {
+            case EQ -> // Equal
+                    "seq"; // Set on Equal
+            case NE -> // Not Equal
+                    "sne"; // Set on Not Equal
+            case GE -> // Signed Greater Than or Equal
+                    "sge"; // Set on Greater or Equal
+            case GT -> // Signed Greater Than
+                    "sgt"; // Set on Greater Than
+            case LE -> // Signed Less Than or Equal
+                    "sle"; // Set on Less or Equal
+            case LT -> // Signed Less Than
+                    getOp2() instanceof Constant ? "slti" : "slt"; // Set on Less Than
+            default -> throw new IllegalArgumentException("Unsupported condition: " + condition);
+        };
     }
 }

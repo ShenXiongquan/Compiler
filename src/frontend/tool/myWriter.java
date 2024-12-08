@@ -72,7 +72,19 @@ public class myWriter {
     public static void writeIr(String ir) {
         System.out.print(ir);
         try {
+            writer = new FileWriter(outputFilePath4);
             writer.write(ir);
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void writeMips(String mips) {
+//        System.out.println(mips);
+        try {
+            writer = new FileWriter(outputFilePath5);
+            writer.write(mips);
             writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -34,4 +34,8 @@ public class ret extends ControlFlowInstr {
             return "ret " + getType().ir() + " " + getOperand(0).getName();
         }
     }
+
+    public boolean isVoidType() {
+        return getType().ir().equals("void");
+    }
 }

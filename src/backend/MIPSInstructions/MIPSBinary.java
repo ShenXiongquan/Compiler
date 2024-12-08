@@ -1,8 +1,9 @@
 package backend.MIPSInstructions;
 
 import backend.operand.Operand;
+import backend.operand.Reg;
 
-public abstract class MIPSBinary extends MIPSInstruction {
+public class MIPSBinary extends MIPSInstruction {
 
     public final String type;
 
@@ -11,6 +12,9 @@ public abstract class MIPSBinary extends MIPSInstruction {
         this.operand2 = src1;
         this.operand3 = src2;
         this.type = type;
+        addDef(dst);
+        addUse(src1);
+        addUse(src2);
     }
 
     public Operand getDst() {
@@ -26,24 +30,28 @@ public abstract class MIPSBinary extends MIPSInstruction {
     }
 
     @Override
-    public String mips() {
-        StringBuilder sb = new StringBuilder();
-
-        switch (type) {
-            case "div" -> {
-                sb.append("div ").append(getSrc1().mips()).append(", ").append(getSrc2().mips());
-                sb.append("\nmflo ").append(getDst().mips());
-            }
-            case "rem" -> {
-                sb.append("rem ").append(getSrc1().mips()).append(", ").append(getSrc2().mips());
-                sb.append("\nmfhi ").append(getDst().mips());
-            }
-            default -> sb.append(type).append(" ")
-                    .append(getDst().mips()).append(", ")
-                    .append(getSrc1().mips()).append(", ")
-                    .append(getSrc2().mips());
+    public void replaceReg(Reg oldReg, Reg newReg) {
+        super.replaceReg(oldReg, newReg);
+        // 更新操作数
+        if (operand1.equals(oldReg)) {
+            operand1 = newReg;
         }
-        return sb.toString();
+        if (operand2.equals(oldReg)) {
+            operand2 = newReg;
+        }
+        if (operand3.equals(oldReg)) {
+            operand3 = newReg;
+        }
     }
+
+    @Override
+    public String mips() {
+
+        return type + " " +
+                getDst().mips() + ", " +
+                getSrc1().mips() + ", " +
+                getSrc2().mips();
+    }
+
 
 }

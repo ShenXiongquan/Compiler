@@ -36,7 +36,7 @@ public class MainFuncDef extends node {
         Visitor.model.addGlobalValue(function);
         Visitor.globalTable.addSymbol(main.name(), function);
 
-        enterNewBlock(new BasicBlock("entry"));
+        enterNewBlock(new BasicBlock());
 
         block.visit();
         Visitor.popScope();

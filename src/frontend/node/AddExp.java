@@ -24,45 +24,31 @@ public class AddExp extends node {
 
 
     public void visit() {
-        if (Visitor.calAble) {
-            if (addExp != null) {
-                addExp.visit();
-                int l = Visitor.upConstValue;
-                mulExp.visit();
-                int r = Visitor.upConstValue;
+
+        if (addExp != null) {
+            addExp.visit();
+            Value lhs = zext(Visitor.upValue);
+            int l = Visitor.upConstValue;
+            mulExp.visit();
+            Value rhs = zext(Visitor.upValue);
+            int r = Visitor.upConstValue;
+            if (lhs instanceof ConstInt && rhs instanceof ConstInt || Visitor.calAble) {// 处理常量操作
                 Visitor.upConstValue = switch (op.type()) {
                     case PLUS -> l + r;
                     case MINU -> l - r;
                     default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
                 };
-            } else {
-                mulExp.visit();
+                Visitor.upValue = new ConstInt(IntegerType.i32, Visitor.upConstValue);
+            } else {// 处理非常量操作
+                Visitor.upValue = switch (op.type()) {
+                    case PLUS -> add(lhs, rhs);
+                    case MINU -> sub(lhs, rhs);
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
+                };
             }
         } else {
-            if (addExp != null) {
-                addExp.visit();
-                Value lhs = zext(Visitor.upValue);
-                int l = Visitor.upConstValue;
-                mulExp.visit();
-                Value rhs = zext(Visitor.upValue);
-                int r = Visitor.upConstValue;
-                if (lhs instanceof ConstInt && rhs instanceof ConstInt) {// 处理常量操作
-                    Visitor.upConstValue = switch (op.type()) {
-                        case PLUS -> l + r;
-                        case MINU -> l - r;
-                        default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
-                    };
-                    Visitor.upValue = new ConstInt(IntegerType.i32, Visitor.upConstValue);
-                } else {// 处理非常量操作
-                    Visitor.upValue = switch (op.type()) {
-                        case PLUS -> add(lhs, rhs);
-                        case MINU -> sub(lhs, rhs);
-                        default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
-                    };
-                }
-            } else {
-                mulExp.visit();
-            }
+            mulExp.visit();
         }
+
     }
 }//加减表达式

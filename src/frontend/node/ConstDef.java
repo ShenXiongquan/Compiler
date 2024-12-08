@@ -12,6 +12,8 @@ import frontend.llvm_ir.type.IntegerType;
 import frontend.node.constInitVal.ConstInitVal;
 import frontend.token.token;
 
+import java.util.ArrayList;
+
 public class ConstDef extends node {
     public token ident;
     public token lbrack;
@@ -50,7 +52,6 @@ public class ConstDef extends node {
                 GlobalVar globalVar = new GlobalVar(variableName, (Constant) Visitor.upValue, true);
                 Visitor.model.addGlobalValue(globalVar);
             }
-            System.out.println("全局变量：" + variableName);
             Visitor.curTable.addSymbol(variableName, Visitor.upValue);
         } else { // 数组变量
             constExp.visit(); // 处理数组维度
@@ -65,6 +66,7 @@ public class ConstDef extends node {
             } else { // 局部数组
                 alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
+                Visitor.upArrayValue = new ArrayList<>();
                 constInitVal.visit(); // 处理数组的初始值
                 int i = 0;
                 for (Value element : Visitor.upArrayValue) {

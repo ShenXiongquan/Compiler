@@ -1,7 +1,6 @@
 package frontend.node;
 
 import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.icmp;
@@ -37,7 +36,7 @@ public class LAndExp extends node {
         int size = Visitor.eqExps.size();
         int i = 0;
         for (EqExp eqExp : Visitor.eqExps) {
-            BasicBlock nextBlock = (size == (++i) ? trueBlock : new BasicBlock("Block_and" + Function.andNum++));
+            BasicBlock nextBlock = (size == (++i) ? trueBlock : new BasicBlock());
             eqExp.visit();
 
             if (Visitor.upValue instanceof ConstInt constInt) {// 常量直接判断是否为零

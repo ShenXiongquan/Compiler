@@ -25,48 +25,33 @@ public class MulExp extends node {
     }
 
     public void visit() {
-        if (Visitor.calAble) {
-            if (mulExp != null) {
-                mulExp.visit();
-                int l = Visitor.upConstValue;
-                unaryExp.visit();
-                int r = Visitor.upConstValue;
+
+        if (mulExp != null) {
+            mulExp.visit();
+            Value lhs = zext(Visitor.upValue);
+            int l = Visitor.upConstValue;
+            unaryExp.visit();
+            Value rhs = zext(Visitor.upValue);
+            int r = Visitor.upConstValue;
+            if (lhs instanceof ConstInt && rhs instanceof ConstInt || Visitor.calAble) {// 处理常量操作
                 Visitor.upConstValue = switch (op.type()) {
                     case MULT -> l * r;
                     case DIV -> l / r;
                     case MOD -> l % r;
                     default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
                 };
-            } else {
-                unaryExp.visit();
+                Visitor.upValue = new ConstInt(IntegerType.i32, Visitor.upConstValue);
+            } else {// 处理非常量操作
+                Visitor.upValue = switch (op.type()) {
+                    case MULT -> mul(lhs, rhs);
+                    case DIV -> sdiv(lhs, rhs);
+                    case MOD -> srem(lhs, rhs);
+                    default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
+                };
             }
         } else {
-            if (mulExp != null) {
-                mulExp.visit();
-                Value lhs = zext(Visitor.upValue);
-                int l = Visitor.upConstValue;
-                unaryExp.visit();
-                Value rhs = zext(Visitor.upValue);
-                int r = Visitor.upConstValue;
-                if (lhs instanceof ConstInt && rhs instanceof ConstInt) {// 处理常量操作
-                    Visitor.upConstValue = switch (op.type()) {
-                        case MULT -> l * r;
-                        case DIV -> l / r;
-                        case MOD -> l % r;
-                        default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
-                    };
-                    Visitor.upValue = new ConstInt(IntegerType.i32, Visitor.upConstValue);
-                } else {// 处理非常量操作
-                    Visitor.upValue = switch (op.type()) {
-                        case MULT -> mul(lhs, rhs);
-                        case DIV -> sdiv(lhs, rhs);
-                        case MOD -> srem(lhs, rhs);
-                        default -> throw new IllegalArgumentException("Unexpected tokenType: " + op.type());
-                    };
-                }
-            } else {
-                unaryExp.visit();
-            }
+            unaryExp.visit();
         }
+
     }
 }//乘除模表达式
