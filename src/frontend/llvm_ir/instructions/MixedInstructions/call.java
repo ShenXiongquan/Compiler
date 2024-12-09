@@ -30,7 +30,7 @@ public class call extends Instruction {
                 }}
         );
         //函数中有call语句，该函数是非叶函数
-        ((Function) getParentBlock().getParent()).setNonLeaf(true);
+        getParent().getParent().setNonLeaf(true);
     }
 
     /**

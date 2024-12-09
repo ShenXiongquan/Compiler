@@ -140,7 +140,7 @@ public class MIPSBasicBlock {
 
 
     private void transRet(ret ret, BasicBlock basicBlock) {
-        if (((Function) basicBlock.getParent()).isMainFunc()) {
+        if (basicBlock.getParent().isMainFunc()) {
             if (mipsFunction.stackTop != 0) {
                 MIPSBinary binary = new MIPSBinary("addiu", PhysicalReg.$sp, PhysicalReg.$sp, new Immediate(mipsFunction.stackTop));
                 addInstruction(binary);
@@ -166,7 +166,6 @@ public class MIPSBasicBlock {
         if (br.isJmp()) {
             MIPSJump jump = new MIPSJump("j", new Label(br.getLabel()));
             addInstruction(jump);
-
         } else {
             Operand cond = getVReg(br.getCondition());
             MIPSJump jump = new MIPSJump("bnez", cond, new Label(br.getTrueLabel()));
@@ -174,7 +173,6 @@ public class MIPSBasicBlock {
 
             jump = new MIPSJump("j", new Label(br.getFalseLabel()));
             addInstruction(jump);
-
         }
     }
 
@@ -251,27 +249,30 @@ public class MIPSBasicBlock {
     //gep 指令的基址类型（全局数组、局部数组);
     private void transGetelementptr(getelementptr getelementptr) {
 
-        //计算offset
-        Operand offset;
-        if (((PointerType) getelementptr.getPtrval().getType()).getPointedType() instanceof ArrayType) {
-            offset = getVReg(getelementptr.getOperand(1));
-        } else {
-            offset = getVReg(getelementptr.getOperand(0));
-        }
-        MIPSBinary binary = new MIPSBinary("sll", offset, offset, new Immediate(2));
-        addInstruction(binary);
 
+        Operand offset;
+        // 确定操作数索引：如果指针指向的是 ArrayType，使用操作数 1；否则使用操作数 0
+        int operandIndex = (((PointerType) getelementptr.getPtrval().getType()).getPointedType() instanceof ArrayType) ? 1 : 0;
+        Value operand = getelementptr.getOperand(operandIndex);
+        // 根据操作数是否为 ConstInt 计算 offset
+        if (operand instanceof ConstInt constInt) {// 如果是常量，直接计算偏移量
+            offset = new Immediate(constInt.getValue() * 4);
+        } else {// 如果是变量，获取寄存器并进行左移操作（乘以4）
+            offset = getVReg(operand);
+            MIPSBinary binary = new MIPSBinary("sll", offset, offset, new Immediate(2));
+            addInstruction(binary);
+        }
 
         Operand base = getVReg(getelementptr.getPtrval());
         if (getelementptr.getPtrval() instanceof GlobalVar globalVar) {//la
             MIPSMove la = new MIPSMove(base, new Label(globalVar.getName().substring(1)));
             addInstruction(la);
         } else if (MIPSModel.getValue2Stack().containsKey(getelementptr.getPtrval())) {//如果是alloca出来的栈空间，先用栈获取对应的地址存到base中
-            binary = new MIPSBinary("addiu", base, PhysicalReg.$sp, new Immediate(MIPSModel.getValue2Stack().get(getelementptr.getPtrval())));
+            MIPSBinary binary = new MIPSBinary("addiu", base, PhysicalReg.$sp, new Immediate(MIPSModel.getValue2Stack().get(getelementptr.getPtrval())));
             addInstruction(binary);
         }
 
-        binary = new MIPSBinary("addu", getVReg(getelementptr), base, offset);
+        MIPSBinary binary = new MIPSBinary("addu", getVReg(getelementptr), base, offset);
         addInstruction(binary);
     }
 

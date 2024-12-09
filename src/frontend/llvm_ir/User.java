@@ -43,4 +43,20 @@ public abstract class User extends Value {
     public List<Value> getOperands() {
         return new ArrayList<>(operands);  // 返回副本以防止外部修改
     }
+
+    /**
+     * 替换使用的 Value
+     *
+     * @param oldValue 旧的 Value
+     * @param newValue 新的 Value
+     */
+    public void replaceUse(Value oldValue, Value newValue) {
+        for (int i = 0; i < operands.size(); i++) {
+            if (operands.get(i).equals(oldValue)) {
+                operands.set(i, newValue);
+                oldValue.removeUser(this);
+                newValue.addUser(this);
+            }
+        }
+    }
 }

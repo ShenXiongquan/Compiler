@@ -68,17 +68,6 @@ public abstract class node {
     // 封装二元操作指令
 
 
-//    protected and and(Value lhs, Value rhs) {
-//        and andInstruction = new and(lhs, rhs);
-//        Visitor.curBlock.addInstruction(andInstruction);
-//        return andInstruction;
-//    }
-
-    //    protected or or(Value lhs, Value rhs) {
-//        or orInstruction = new or(lhs, rhs);
-//        Visitor.curBlock.addInstruction(orInstruction);
-//        return orInstruction;
-//    }
     protected add add(Value lhs, Value rhs) {
         add addInstruction = new add(lhs, rhs);
         Visitor.curBlock.addInstruction(addInstruction);
@@ -125,7 +114,7 @@ public abstract class node {
         if (type instanceof ArrayType arrayType) {
             i = arrayType.getArraySize();
         }
-        ((Function) Visitor.curBlock.getParent()).addAllocaNum(i);
+        Visitor.curBlock.getParent().addAllocaNum(i);
         return allocaInstruction;
     }
 

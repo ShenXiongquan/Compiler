@@ -2,6 +2,7 @@ package frontend.node;
 
 import frontend.llvm_ir.Value;
 import frontend.llvm_ir.Visitor;
+import frontend.llvm_ir.constants.ConstArray;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.MemInstructions.load;
 import frontend.llvm_ir.type.ArrayType;
@@ -53,7 +54,11 @@ public class LVal extends node {
                 } else {
                     exp.visit();//数组索引
                     Visitor.upValue = zext(Visitor.upValue);
-                    Visitor.upValue = getelementptr(lVal, ConstInt.zero, Visitor.upValue);//传数组元素地址
+                    if (lVal instanceof ConstArray constArray && Visitor.upValue instanceof ConstInt constInt) {
+                        Visitor.upValue = constArray.getArrayElement(constInt.getValue());
+                    } else {
+                        Visitor.upValue = getelementptr(lVal, ConstInt.zero, Visitor.upValue);//传数组元素地址
+                    }
                 }
             } else {
                 //数组形参的使用会涉及二重指针,假设a是函数参数,f(int a[])

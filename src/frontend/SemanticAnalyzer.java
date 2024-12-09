@@ -357,7 +357,7 @@ public class SemanticAnalyzer {
             return visitExp(eprimaryExp.exp);
         } else if (primaryExp instanceof LprimaryExp lprimaryExp) {
             return visitLVal(lprimaryExp.lVal);
-        } else if (primaryExp instanceof CprimaryExp cprimaryExp) {
+        } else if (primaryExp instanceof CprimaryExp) {
             return new Symbol(false, SymbolType.Char);
         } else {
             return new Symbol(false, SymbolType.Int);
@@ -445,19 +445,28 @@ public class SemanticAnalyzer {
         visitAddExp(constExp.addExp);
     }
 
-    private void write(SymbolTable symbolTable) {
-        if (symbolTable != null) {
+
+    private String buildSymbolTableString(SymbolTable symbolTable) {
+        StringBuilder sb = new StringBuilder();
+        if (symbolTable != null) {// 遍历当前 SymbolTable 的所有符号并添加到字符串中
             for (Map.Entry<String, Symbol> entry : symbolTable.directory.entrySet()) {
                 Symbol symbol = entry.getValue();
-                myWriter.writeSymbol(symbol);
+                StringBuilder type = new StringBuilder();
+                if (symbol.isConst()) type.append("Const");
+                type.append(symbol.getSymbolType());
+                if (symbol.isArray()) type.append("Array");
+                if (symbol.getParamList() != null) type.append("Func");
+                String output = symbol.getTableId() + " " + symbol.getToken() + " " + type + "\n";
+                sb.append(output);
             }
             for (SymbolTable next : symbolTable.next) {
-                write(next);
+                sb.append(buildSymbolTableString(next));
             }
         }
+        return sb.toString();
     }
 
     public void write() {
-        write(globalTable);
+        myWriter.writeSymbolTable(buildSymbolTableString(globalTable));
     }
 }

@@ -1,7 +1,9 @@
 package frontend.llvm_ir;
 
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * llvm中的编译单元，树的唯一根节点，一个model由多个GlobalValue组成。
@@ -47,6 +49,16 @@ public class Model {
             sb.append(globalValue.ir()).append('\n');
         }
         return sb.toString();
+    }
+
+    public List<Function> getFunctions() {
+        List<Function> functions = new ArrayList<>();
+        for (GlobalValue gv : globalValues) {
+            if (gv instanceof Function) {
+                functions.add((Function) gv);
+            }
+        }
+        return functions;
     }
 
     public LinkedList<GlobalValue> getGlobalValues() {

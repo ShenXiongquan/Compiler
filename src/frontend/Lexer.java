@@ -212,10 +212,12 @@ public class Lexer {
     }
 
     public void write() {
+        StringBuilder sb = new StringBuilder();
         for (token token : tokens) {
-            myWriter.writeTerminal(token);
+            System.out.println(token.type() + " " + token.name());
+            sb.append(token.type()).append(" ").append(token.name()).append("\n");
         }
-
+        myWriter.writeTokens(sb.toString());
     }
 }
 

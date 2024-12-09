@@ -23,7 +23,7 @@ public class BasicBlock extends Value {
     /**
      * 基本块的父作用域
      */
-    private final Value parent;
+    private final Function parent;
     private final List<BasicBlock> predecessors;   // 前驱基本块列表
     private final List<BasicBlock> successors;     // 后继基本块列表
 
@@ -42,6 +42,10 @@ public class BasicBlock extends Value {
      */
     public void addInstruction(Instruction Instruction) {
         instructions.add(Instruction);
+    }
+
+    public void removeInstruction(Instruction instruction) {
+        instructions.remove(instruction);
     }
 
     /**
@@ -109,7 +113,7 @@ public class BasicBlock extends Value {
     /**
      * 获取父作用域（通常是一个函数）。
      */
-    public Value getParent() {
+    public Function getParent() {
         return parent;
     }
 

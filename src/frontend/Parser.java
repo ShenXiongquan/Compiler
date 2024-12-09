@@ -26,6 +26,7 @@ import frontend.node.unaryExp.UnaryExp;
 import frontend.token.token;
 import frontend.token.tokenType;
 import frontend.tool.errorManager;
+import frontend.tool.myWriter;
 
 import java.util.List;
 
@@ -36,9 +37,16 @@ public class Parser {
     private int index = 0;//索引和当前的token保持一致
     private token token;
 
+    private final CompUnit compUnit;
+
     public Parser(List<token> tokens) {
         this.tokens = tokens;
         this.token = tokens.get(index);
+        this.compUnit = parseCompUnit();
+    }
+
+    public CompUnit getCompUnit() {
+        return compUnit;
     }
 
     //匹配所给的终结符
@@ -65,7 +73,7 @@ public class Parser {
         this.token = tokens.get(tempIndex);//恢复token
     }
 
-    public CompUnit parseCompUnit() {
+    private CompUnit parseCompUnit() {
         CompUnit compUnit = new CompUnit();
 
         while (token.type() == tokenType.CONSTTK || ((token.type() == tokenType.INTTK || token.type() == tokenType.CHARTK) && offset2Token(2).type() != tokenType.LPARENT)) {
@@ -658,6 +666,9 @@ public class Parser {
         return mainFuncDef;
     }
 
+    public void write() {
+        myWriter.writeTree(compUnit.print());
+    }
 }
 
 

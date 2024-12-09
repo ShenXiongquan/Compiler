@@ -31,7 +31,10 @@ public abstract class Instruction extends User {
         return "";
     }
 
-    public BasicBlock getParentBlock() {
+    /**
+     * @return 指令所在作用域
+     */
+    public BasicBlock getParent() {
         return parentBlock;
     }
 }

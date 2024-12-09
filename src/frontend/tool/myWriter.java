@@ -1,101 +1,70 @@
 package frontend.tool;
 
-import frontend.symbol.Symbol;
-import frontend.token.token;
-
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class myWriter {
 
-    private static final String outputFilePath1 = "lexer.txt";
-    private static final String outputFilePath2 = "parser.txt";
-    private static final String outputFilePath3 = "symbol.txt";
-    private static final String outputFilePath4 = "llvm_ir.txt";
+    // 文件路径常量，清晰反映用途
+    private static final String LEXER_OUTPUT_FILE = "lexer.txt";
+    private static final String PARSER_OUTPUT_FILE = "parser.txt";
+    private static final String SYMBOL_TABLE_OUTPUT_FILE = "symbol.txt";
+    private static final String LLVM_IR_OUTPUT_FILE = "llvm_ir.txt";
+    private static final String MIPS_OUTPUT_FILE = "mips.txt";
 
-    private static final String outputFilePath5 = "mips.txt";
-    private static FileWriter writer;
-
-    static {
-        try {
-            writer = new FileWriter(outputFilePath4);
+    private static void writeToFile(String filePath, String content) {
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(content);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to write to file: " + filePath, e);
         }
     }
 
-    public myWriter(String path) {
-        try {
-            writer = new FileWriter(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * 写入词法分析器结果
+     *
+     * @param tokens 词法分析结果
+     */
+    public static void writeTokens(String tokens) {
+        writeToFile(LEXER_OUTPUT_FILE, tokens);
     }
 
-    public static void writeTerminal(token token) {
-        System.out.println(token.type() + " " + token.name());
-        try {
-            writer.write(token.type() + " " + token.name() + "\n");
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    /**
+     * 写入语法树结果
+     *
+     * @param tree 语法树结构
+     */
     public static void writeTree(String tree) {
         System.out.print(tree);
-        try {
-            writer.write(tree);
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeToFile(PARSER_OUTPUT_FILE, tree);
     }
 
-    public static void writeSymbol(Symbol symbol) {
-        StringBuilder type = new StringBuilder();
-        if (symbol.isConst()) type.append("Const");
-        type.append(symbol.getSymbolType());
-        if (symbol.isArray()) type.append("Array");
-        if (symbol.getParamList() != null) type.append("Func");
-        String output = symbol.getTableId() + " " + symbol.getToken() + " " + type;
-        System.out.println(output);
-
-        try {
-            writer.write(output + "\n");
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * 写入符号表
+     *
+     * @param symbolTable 符号表内容
+     */
+    public static void writeSymbolTable(String symbolTable) {
+        writeToFile(SYMBOL_TABLE_OUTPUT_FILE, symbolTable);
     }
 
+    /**
+     * 写入 LLVM IR 中间代码
+     *
+     * @param ir LLVM IR 内容
+     */
     public static void writeIr(String ir) {
         System.out.print(ir);
-        try {
-            writer = new FileWriter(outputFilePath4);
-            writer.write(ir);
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeToFile(LLVM_IR_OUTPUT_FILE, ir);
     }
 
+    /**
+     * 写入 MIPS 汇编代码
+     *
+     * @param mips MIPS 汇编内容
+     */
     public static void writeMips(String mips) {
 //        System.out.println(mips);
-        try {
-            writer = new FileWriter(outputFilePath5);
-            writer.write(mips);
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void close() {
-        try {
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeToFile(MIPS_OUTPUT_FILE, mips);
     }
 }

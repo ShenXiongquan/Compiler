@@ -38,6 +38,7 @@ public class br extends ControlFlowInstr {
             add(falseBlock);
         }});
         this.condition = condition;
+        condition.addUser(this);
     }
 
     /**
@@ -47,11 +48,9 @@ public class br extends ControlFlowInstr {
      */
     @Override
     public String ir() {
-        if (condition == null) {
-            // 无条件跳转
+        if (condition == null) {// 无条件跳转
             return "br label " + getOperand(0).getName();
-        } else {
-            // 有条件跳转
+        } else {// 有条件跳转
             return "br i1 " + condition.getName() + ", label " + getOperand(0).getName() + ", label " + getOperand(1).getName();
         }
     }

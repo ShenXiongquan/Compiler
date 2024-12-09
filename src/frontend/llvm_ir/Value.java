@@ -37,13 +37,14 @@ public abstract class Value {
         users.add(user);
     }
 
+    public void removeUser(User user) {
+        users.remove(user);
+    }
+
     public List<User> getUsers() {
         return users;
     }
 
-    public void removeUser(User user) {
-        users.remove(user);
-    }
 
     /**
      * @return value的类型
@@ -62,6 +63,3 @@ public abstract class Value {
     protected abstract String ir();
 }
 
-//    public static final String GLOBAL_NAME_PREFIX = "g_";
-//    public static final String LOCAL_NAME_PREFIX = "v";
-//    public static final String FPARAM_NAME_PREFIX = "f";
