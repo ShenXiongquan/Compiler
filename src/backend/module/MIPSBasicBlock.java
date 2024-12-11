@@ -281,7 +281,7 @@ public class MIPSBasicBlock {
             offset = 4 * arrayType.getArraySize();
         else offset += 4;
         //分配栈空间
-        MIPSModel.getValue2Stack().put(alloca, mipsFunction.stackTop);//记录到栈底的距离
+        MIPSModel.getValue2Stack().put(alloca, mipsFunction.stackTop);
         mipsFunction.stackTop += offset;
     }
 
