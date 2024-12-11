@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class store2Stack extends MemInstr {
 
-    private int argIndex;
+    private final int argIndex;
 
-    private int argsNum;
+    private final int argsNum;
 
     public store2Stack(Value arg, int argIndex, int argsNum) {
         super(new VoidType(), new ArrayList<>() {{
