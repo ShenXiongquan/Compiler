@@ -2,6 +2,8 @@ package frontend.llvm_ir;
 
 import frontend.llvm_ir.instructions.ControlFlowInstructions.ControlFlowInstr;
 import frontend.llvm_ir.instructions.Instruction;
+import frontend.llvm_ir.instructions.MemInstructions.loadFRStack;
+import frontend.llvm_ir.instructions.MemInstructions.store2Stack;
 import frontend.llvm_ir.type.LabelType;
 
 import java.util.ArrayList;
@@ -126,7 +128,9 @@ public class BasicBlock extends Value {
         sb.append(getName().substring(1)).append(":");
         sb.append("\n");
         for (Instruction inst : instructions) {
-            sb.append("    ").append(inst.ir()).append("\n");
+            if (!(inst instanceof store2Stack || inst instanceof loadFRStack)) {
+                sb.append("    ").append(inst.ir()).append("\n");
+            }
         }
 
         return sb.toString();

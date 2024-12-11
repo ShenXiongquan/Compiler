@@ -2,7 +2,9 @@ package backend.operand;
 
 public class Immediate extends Operand {
 
-    public static Immediate zero = new Immediate(0);
+    public static Immediate ZERO = new Immediate(0);
+
+    public static Immediate MINUS_FOUR = new Immediate(-4);
     private final int value;
 
     public Immediate(int value) {

@@ -191,107 +191,109 @@ block2:
   %74 = load i8, ptr %73, align 1
   %75 = zext i8 %74 to i32
   %76 = add i32 %72, %75
-  %77 = trunc i32 %76 to i8
-  store i8 %77, ptr %57, align 1
-  %78 = getelementptr inbounds [22 x i8], ptr @.str.11, i64 0, i64 0
-  call void @putstr(ptr %78)
-  %79 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
-  %80 = load i8, ptr %79, align 1
-  %81 = zext i8 %80 to i32
-  call void @putint(i32 %81)
-  %82 = getelementptr inbounds [2 x i8], ptr @.str.12, i64 0, i64 0
-  call void @putstr(ptr %82)
-  %83 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
-  %84 = load i8, ptr %83, align 1
-  %85 = zext i8 %84 to i32
-  call void @putch(i32 %85)
-  %86 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
-  call void @putstr(ptr %86)
-  %87 = alloca i32, align 4
-  %88 = getelementptr inbounds [5 x i32], ptr @intArray, i32 0, i32 0
-  %89 = load i32, ptr %88, align 4
-  %90 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
-  %91 = load i8, ptr %90, align 1
-  %92 = getelementptr inbounds [5 x i32], ptr @intArray, i32 0, i32 0
-  %93 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
-  %94 = call i32 @func_with_param(i32 %89, i8 %91, ptr %92, ptr %93)
-  store i32 %94, ptr %87, align 4
-  %95 = alloca i32, align 4
-  %96 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 0
-  %97 = load i8, ptr %96, align 1
-  %98 = zext i8 %97 to i32
-  %99 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 1
-  %100 = load i8, ptr %99, align 1
-  %101 = zext i8 %100 to i32
-  %102 = add i32 %98, %101
-  %103 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 2
-  %104 = load i8, ptr %103, align 1
-  %105 = zext i8 %104 to i32
-  %106 = add i32 %102, %105
-  %107 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 3
-  %108 = load i8, ptr %107, align 1
-  %109 = zext i8 %108 to i32
-  %110 = add i32 %106, %109
-  %111 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 4
-  %112 = load i8, ptr %111, align 1
-  %113 = zext i8 %112 to i32
-  %114 = add i32 %110, %113
-  store i32 %114, ptr %95, align 4
-  %115 = alloca i8, align 1
-  %116 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 0
-  %117 = load i8, ptr %116, align 1
-  %118 = zext i8 %117 to i32
-  %119 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 1
-  %120 = load i8, ptr %119, align 1
-  %121 = zext i8 %120 to i32
-  %122 = add i32 %118, %121
-  %123 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 2
-  %124 = load i8, ptr %123, align 1
-  %125 = zext i8 %124 to i32
-  %126 = add i32 %122, %125
-  %127 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 3
-  %128 = load i8, ptr %127, align 1
-  %129 = zext i8 %128 to i32
-  %130 = add i32 %126, %129
-  %131 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 4
-  %132 = load i8, ptr %131, align 1
-  %133 = zext i8 %132 to i32
-  %134 = add i32 %130, %133
-  %135 = trunc i32 %134 to i8
-  store i8 %135, ptr %115, align 1
-  %136 = getelementptr inbounds [22 x i8], ptr @.str.13, i64 0, i64 0
-  call void @putstr(ptr %136)
-  %137 = load i32, ptr %95, align 4
-  call void @putint(i32 %137)
-  %138 = getelementptr inbounds [2 x i8], ptr @.str.12, i64 0, i64 0
+  %77 = srem i32 %76, 128
+  %78 = trunc i32 %77 to i8
+  store i8 %78, ptr %57, align 1
+  %79 = getelementptr inbounds [22 x i8], ptr @.str.11, i64 0, i64 0
+  call void @putstr(ptr %79)
+  %80 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
+  %81 = load i8, ptr %80, align 1
+  %82 = zext i8 %81 to i32
+  call void @putint(i32 %82)
+  %83 = getelementptr inbounds [2 x i8], ptr @.str.12, i64 0, i64 0
+  call void @putstr(ptr %83)
+  %84 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
+  %85 = load i8, ptr %84, align 1
+  %86 = zext i8 %85 to i32
+  call void @putch(i32 %86)
+  %87 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
+  call void @putstr(ptr %87)
+  %88 = alloca i32, align 4
+  %89 = getelementptr inbounds [5 x i32], ptr @intArray, i32 0, i32 0
+  %90 = load i32, ptr %89, align 4
+  %91 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
+  %92 = load i8, ptr %91, align 1
+  %93 = getelementptr inbounds [5 x i32], ptr @intArray, i32 0, i32 0
+  %94 = getelementptr inbounds [5 x i8], ptr @charArray, i32 0, i32 0
+  %95 = call i32 @func_with_param(i32 %90, i8 %92, ptr %93, ptr %94)
+  store i32 %95, ptr %88, align 4
+  %96 = alloca i32, align 4
+  %97 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 0
+  %98 = load i8, ptr %97, align 1
+  %99 = zext i8 %98 to i32
+  %100 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 1
+  %101 = load i8, ptr %100, align 1
+  %102 = zext i8 %101 to i32
+  %103 = add i32 %99, %102
+  %104 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 2
+  %105 = load i8, ptr %104, align 1
+  %106 = zext i8 %105 to i32
+  %107 = add i32 %103, %106
+  %108 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 3
+  %109 = load i8, ptr %108, align 1
+  %110 = zext i8 %109 to i32
+  %111 = add i32 %107, %110
+  %112 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 4
+  %113 = load i8, ptr %112, align 1
+  %114 = zext i8 %113 to i32
+  %115 = add i32 %111, %114
+  store i32 %115, ptr %96, align 4
+  %116 = alloca i8, align 1
+  %117 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 0
+  %118 = load i8, ptr %117, align 1
+  %119 = zext i8 %118 to i32
+  %120 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 1
+  %121 = load i8, ptr %120, align 1
+  %122 = zext i8 %121 to i32
+  %123 = add i32 %119, %122
+  %124 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 2
+  %125 = load i8, ptr %124, align 1
+  %126 = zext i8 %125 to i32
+  %127 = add i32 %123, %126
+  %128 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 3
+  %129 = load i8, ptr %128, align 1
+  %130 = zext i8 %129 to i32
+  %131 = add i32 %127, %130
+  %132 = getelementptr inbounds [5 x i8], ptr @constCharArray2, i32 0, i32 4
+  %133 = load i8, ptr %132, align 1
+  %134 = zext i8 %133 to i32
+  %135 = add i32 %131, %134
+  %136 = srem i32 %135, 128
+  %137 = trunc i32 %136 to i8
+  store i8 %137, ptr %116, align 1
+  %138 = getelementptr inbounds [22 x i8], ptr @.str.13, i64 0, i64 0
   call void @putstr(ptr %138)
-  %139 = load i8, ptr %115, align 1
-  %140 = zext i8 %139 to i32
-  call void @putch(i32 %140)
-  %141 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
-  call void @putstr(ptr %141)
-  %142 = alloca i32, align 4
-  store i32 107, ptr %142, align 4
-  %143 = getelementptr inbounds [6 x i8], ptr @.str.14, i64 0, i64 0
+  %139 = load i32, ptr %96, align 4
+  call void @putint(i32 %139)
+  %140 = getelementptr inbounds [2 x i8], ptr @.str.12, i64 0, i64 0
+  call void @putstr(ptr %140)
+  %141 = load i8, ptr %116, align 1
+  %142 = zext i8 %141 to i32
+  call void @putch(i32 %142)
+  %143 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
   call void @putstr(ptr %143)
-  %144 = load i32, ptr %142, align 4
-  call void @putint(i32 %144)
-  %145 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
+  %144 = alloca i32, align 4
+  store i32 107, ptr %144, align 4
+  %145 = getelementptr inbounds [6 x i8], ptr @.str.14, i64 0, i64 0
   call void @putstr(ptr %145)
-  %146 = alloca i8, align 1
-  store i8 41, ptr %146, align 1
-  %147 = getelementptr inbounds [6 x i8], ptr @.str.15, i64 0, i64 0
+  %146 = load i32, ptr %144, align 4
+  call void @putint(i32 %146)
+  %147 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
   call void @putstr(ptr %147)
-  %148 = load i8, ptr %146, align 1
-  %149 = zext i8 %148 to i32
-  call void @putint(i32 %149)
-  %150 = getelementptr inbounds [12 x i8], ptr @.str.16, i64 0, i64 0
-  call void @putstr(ptr %150)
-  %151 = load i8, ptr %146, align 1
-  %152 = zext i8 %151 to i32
-  call void @putch(i32 %152)
-  %153 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
-  call void @putstr(ptr %153)
+  %148 = alloca i8, align 1
+  store i8 41, ptr %148, align 1
+  %149 = getelementptr inbounds [6 x i8], ptr @.str.15, i64 0, i64 0
+  call void @putstr(ptr %149)
+  %150 = load i8, ptr %148, align 1
+  %151 = zext i8 %150 to i32
+  call void @putint(i32 %151)
+  %152 = getelementptr inbounds [12 x i8], ptr @.str.16, i64 0, i64 0
+  call void @putstr(ptr %152)
+  %153 = load i8, ptr %148, align 1
+  %154 = zext i8 %153 to i32
+  call void @putch(i32 %154)
+  %155 = getelementptr inbounds [2 x i8], ptr @.str.4, i64 0, i64 0
+  call void @putstr(ptr %155)
   ret i32 0
 }
 

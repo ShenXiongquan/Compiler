@@ -54,11 +54,11 @@ public class FuncDef extends node {
         Visitor.globalTable.addSymbol(ident.name(), function);
 
         enterNewBlock(new BasicBlock());
-
+        //处理函数参数
         for (Parameter parameter : parameters) {
-            System.out.println("函数参数类型: " + parameter.getType().ir());
             alloca alloca = alloca(parameter.getType());
             Visitor.curTable.addSymbol(parameter.getArgName(), alloca);
+            loadFRStack(parameter);
             store(parameter, alloca);
         }
 

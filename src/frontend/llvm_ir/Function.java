@@ -17,20 +17,12 @@ import java.util.LinkedList;
 public class Function extends GlobalValue {
 
     public static int VarNum = 0;
-    //    public static int ifNum = 1;
-//    public static int forNum = 1;
-//    public static int breakNum = 1;
-//    public static int continueNum = 1;
-//    public static int returnNum = 1;
-//    public static int andNum = 1;
-//    public static int orNum = 1;
     private final LinkedList<BasicBlock> basicBlocks = new LinkedList<>(); // 函数中的基本块列表
     private final boolean isDefine; // 是否是内建函数
     private final ArrayList<Parameter> parameters; // 函数的形参列表
 
     private final HashSet<Function> callers = new HashSet<>(); // 调用该函数的其他函数
     private int allocaNum = 0;
-    private boolean isNonLeaf = false;
 
     /**
      * @param name       函数名
@@ -42,19 +34,15 @@ public class Function extends GlobalValue {
         super(name, returnType);
         this.parameters = parameters;
         this.isDefine = isDefine;
-//        ifNum = 0;
-//        forNum = 0;
-//        continueNum = 0;
-//        breakNum = 0;
-//        returnNum = 0;
-//        andNum = 0;
-//        orNum = 0;
     }
 
     public void addAllocaNum(int i) {
         allocaNum += i;
     }
 
+    /**
+     * @return 需要分配栈的大小/4
+     */
     public int getAllocaNum() {
         return allocaNum;
     }
@@ -87,13 +75,6 @@ public class Function extends GlobalValue {
         return getName().equals("@main");
     }
 
-    public void setNonLeaf(boolean nonLeaf) {
-        isNonLeaf = nonLeaf;
-    }
-
-    public boolean isNonLeaf() {
-        return isNonLeaf;
-    }
 
     //define dso_local i32 @main(){}
     //declare i32 @getint()

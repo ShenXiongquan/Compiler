@@ -1,18 +1,12 @@
 package frontend.node;
 
 
-import frontend.llvm_ir.BasicBlock;
-import frontend.llvm_ir.Function;
-import frontend.llvm_ir.Value;
-import frontend.llvm_ir.Visitor;
+import frontend.llvm_ir.*;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.instructions.BinaryOperations.*;
 import frontend.llvm_ir.instructions.ControlFlowInstructions.br;
 import frontend.llvm_ir.instructions.ControlFlowInstructions.ret;
-import frontend.llvm_ir.instructions.MemInstructions.alloca;
-import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
-import frontend.llvm_ir.instructions.MemInstructions.load;
-import frontend.llvm_ir.instructions.MemInstructions.store;
+import frontend.llvm_ir.instructions.MemInstructions.*;
 import frontend.llvm_ir.instructions.MixedInstructions.call;
 import frontend.llvm_ir.instructions.MixedInstructions.trunc;
 import frontend.llvm_ir.instructions.MixedInstructions.zext;
@@ -139,6 +133,16 @@ public abstract class node {
         load loadInstruction = new load(pointer);
         Visitor.curBlock.addInstruction(loadInstruction);
         return loadInstruction;
+    }
+
+    protected void loadFRStack(Parameter parameter) {
+        loadFRStack loadFRStack = new loadFRStack(parameter);
+        Visitor.curBlock.addInstruction(loadFRStack);
+    }
+
+    protected void store2Stack(Value arg, int argIndex, int argsNum) {
+        store2Stack store2Stack = new store2Stack(arg, argIndex, argsNum);
+        Visitor.curBlock.addInstruction(store2Stack);
     }
 
     protected call call(Function function, Value... args) {

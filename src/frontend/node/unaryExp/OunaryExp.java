@@ -40,6 +40,9 @@ public class OunaryExp extends UnaryExp {
                     Visitor.upValue = icmp(icmp.EQ, operand, ConstInt.zero);
                 }
             }
+            default -> {
+                Visitor.upValue = operand;
+            }
         }
     }
 

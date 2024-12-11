@@ -29,8 +29,6 @@ public class call extends Instruction {
                     addAll(List.of(args));  // 将参数列表追加到操作数中
                 }}
         );
-        //函数中有call语句，该函数是非叶函数
-        getParent().getParent().setNonLeaf(true);
     }
 
     /**

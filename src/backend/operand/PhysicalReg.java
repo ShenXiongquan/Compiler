@@ -9,6 +9,9 @@ public class PhysicalReg extends Reg {
     public static final PhysicalReg $sp = new PhysicalReg("sp");
     public static final PhysicalReg $ra = new PhysicalReg("ra");
     public static final PhysicalReg $a0 = new PhysicalReg("a0");
+    public static final PhysicalReg $a1 = new PhysicalReg("a1");
+    public static final PhysicalReg $a2 = new PhysicalReg("a2");
+    public static final PhysicalReg $a3 = new PhysicalReg("a3");
     public static final PhysicalReg $t0 = new PhysicalReg("t0");
     public static final PhysicalReg $t1 = new PhysicalReg("t1");
     public static final PhysicalReg $t2 = new PhysicalReg("t2");
@@ -28,9 +31,7 @@ public class PhysicalReg extends Reg {
     public static final PhysicalReg $s6 = new PhysicalReg("s6");
     public static final PhysicalReg $s7 = new PhysicalReg("s7");
 
-    public static final PhysicalReg $a1 = new PhysicalReg("a1");
-    public static final PhysicalReg $a2 = new PhysicalReg("a2");
-    public static final PhysicalReg $a3 = new PhysicalReg("a3");
+
     public static final List<PhysicalReg> regs = new ArrayList<>() {{
         add($t0);
         add($t1);
@@ -50,9 +51,6 @@ public class PhysicalReg extends Reg {
         add($s5);
         add($s6);
         add($s7);
-        add($a1);
-        add($a2);
-        add($a3);
     }};
     private boolean isFree = true; // 初始状态为空闲
     private VirtualReg associatedVirReg; // 关联的虚拟寄存器 (-1 表示无关联)

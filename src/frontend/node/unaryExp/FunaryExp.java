@@ -36,10 +36,8 @@ public class FunaryExp extends UnaryExp {
         Function function = (Function) Visitor.curTable.getSymbolValue(ident.name());
 
         ArrayList<Value> args = new ArrayList<>();
+        store2Stack(null, -1, funcRParams == null ? 0 : funcRParams.exps.size());
         if (funcRParams != null) funcRParams.visit(function.getParameters(), args);
-
-        System.out.println("函数实参个数:" + args.size());
-
         Visitor.upValue = call(function, args.toArray(Value[]::new));
     }
 }

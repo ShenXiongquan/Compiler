@@ -28,20 +28,17 @@ public class FuncRParams extends node {
 
 
     public void visit(ArrayList<Parameter> parameters, ArrayList<Value> args) {
-
         int i = 0;
-
         for (Exp exp : exps) {
-            Type paraType = parameters.get(i++).getType();
-            System.out.println("参数类型:" + paraType.ir());
             exp.visit();
-
+            Type paraType = parameters.get(i).getType();
             if (paraType instanceof IntegerType expectedType) {
                 if (expectedType.isInt32()) Visitor.upValue = zext(Visitor.upValue);
                 else Visitor.upValue = trunc(Visitor.upValue);
             }//如果参数不是指针类型的，需要考虑扩展
-
+            store2Stack(Visitor.upValue, i, exps.size());//实参在mips需要存到a0-a4或者栈里面
             args.add(Visitor.upValue);
+            i++;
         }
     }
 

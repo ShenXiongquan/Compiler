@@ -32,6 +32,9 @@ public class MIPSFunction {
         MIPSModel.getValue2VReg().clear();
     }
 
+    public int getAllocaNum() {
+        return function.getAllocaNum();
+    }
 
     public void addBasicBlock(MIPSBasicBlock block) {
         blocks.add(block);
@@ -39,7 +42,7 @@ public class MIPSFunction {
 
     public void buildFunction() {
         for (BasicBlock basicBlock : function.getBasicBlocks()) {
-            MIPSBasicBlock mipsBasicBlock = new MIPSBasicBlock(basicBlock.getName().substring(1), function, this);
+            MIPSBasicBlock mipsBasicBlock = new MIPSBasicBlock(basicBlock.getName().substring(1), this);
             addBasicBlock(mipsBasicBlock);
             mipsBasicBlock.buildBasicBlock(basicBlock);
         }
