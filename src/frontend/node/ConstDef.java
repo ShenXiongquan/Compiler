@@ -1,18 +1,12 @@
 package frontend.node;
 
 import frontend.llvm_ir.GlobalVar;
-import frontend.llvm_ir.Value;
 import frontend.llvm_ir.Visitor;
-import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.Constant;
 import frontend.llvm_ir.instructions.MemInstructions.alloca;
-import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
 import frontend.llvm_ir.type.ArrayType;
-import frontend.llvm_ir.type.IntegerType;
 import frontend.node.constInitVal.ConstInitVal;
 import frontend.token.token;
-
-import java.util.ArrayList;
 
 public class ConstDef extends node {
     public token ident;
@@ -47,7 +41,7 @@ public class ConstDef extends node {
         boolean isArray = (constExp != null); // 是否为数组
 
         if (!isArray) {
-            constInitVal.visit();
+            constInitVal.visit(null);
             if (isGlobal) { // 全局普通变量
                 GlobalVar globalVar = new GlobalVar(variableName, (Constant) Visitor.upValue, true);
                 Visitor.model.addGlobalValue(globalVar);
@@ -59,20 +53,19 @@ public class ConstDef extends node {
             ArrayType arrayType = new ArrayType(Visitor.ValueType, Visitor.ArraySize); // 构建数组类型
 
             if (isGlobal) { // 全局数组
-                constInitVal.visit(); // 处理数组的初始值
+                constInitVal.visit(null); // 处理数组的初始值
                 GlobalVar globalVar = new GlobalVar(variableName, (Constant) Visitor.upValue, true);
                 Visitor.model.addGlobalValue(globalVar);
                 Visitor.curTable.addSymbol(variableName, globalVar);
             } else { // 局部数组
                 alloca alloca = alloca(arrayType); // 分配空间
                 Visitor.curTable.addSymbol(variableName, alloca);
-                Visitor.upArrayValue = new ArrayList<>();
-                constInitVal.visit(); // 处理数组的初始值
-                int i = 0;
-                for (Value element : Visitor.upArrayValue) {
-                    getelementptr getelementptr = getelementptr(alloca, ConstInt.zero, new ConstInt(IntegerType.i32, i++));
-                    store(element, getelementptr);
-                }
+                constInitVal.visit(alloca); // 处理数组的初始值
+//                int i = 0;
+//                for (Value element : Visitor.upArrayValue) {
+//                    getelementptr getelementptr = getelementptr(alloca, ConstInt.zero, new ConstInt(IntegerType.i32, i++));
+//                    store(element, getelementptr);
+//                }
             }
         }
     }

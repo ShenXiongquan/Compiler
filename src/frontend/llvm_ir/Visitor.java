@@ -59,11 +59,6 @@ public class Visitor {
     public static int upConstValue;
 
     /**
-     * 综合属性：局部数组的元素值集合。
-     */
-    public static ArrayList<Value> upArrayValue;
-
-    /**
      * 继承属性：标识表达式是否可计算，常量表达式（constExp）始终可计算。
      */
     public static boolean calAble;

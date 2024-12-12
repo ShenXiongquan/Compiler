@@ -1,9 +1,11 @@
 package frontend.node.constInitVal;
 
+import frontend.llvm_ir.Value;
 import frontend.llvm_ir.Visitor;
 import frontend.llvm_ir.constants.ConstArray;
 import frontend.llvm_ir.constants.ConstInt;
 import frontend.llvm_ir.constants.Zeroinitializer;
+import frontend.llvm_ir.instructions.MemInstructions.getelementptr;
 import frontend.llvm_ir.type.ArrayType;
 import frontend.llvm_ir.type.IntegerType;
 import frontend.node.ConstExp;
@@ -35,7 +37,7 @@ public class ArrayConstInitVal extends ConstInitVal {
         return sb.toString();
     }
 
-    public void visit() {
+    public void visit(Value alloca) {
 
         if (Visitor.isGlobal()) {//全局数组初始化
             if (constExps.isEmpty()) {
@@ -56,10 +58,12 @@ public class ArrayConstInitVal extends ConstInitVal {
             for (int i = 0; i < Visitor.ArraySize; i++) {
                 if (i < constExps.size()) {
                     constExps.get(i).visit();
-                    Visitor.upArrayValue.add(new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue));
+                    Visitor.upValue = new ConstInt((IntegerType) Visitor.ValueType, Visitor.upConstValue);
                 } else {
-                    Visitor.upArrayValue.add(new ConstInt((IntegerType) Visitor.ValueType, 0));
+                    Visitor.upValue = new ConstInt((IntegerType) Visitor.ValueType, 0);
                 }
+                getelementptr getelementptr = getelementptr(alloca, ConstInt.zero, new ConstInt(IntegerType.i32, i));
+                store(Visitor.upValue, getelementptr);
             }
         }
     }
