@@ -100,7 +100,7 @@ public class MIPSBasicBlock {
             if (instruction instanceof BinaryOperation binaryOperation) {
                 transBinaryOperation(binaryOperation);
             } else if (instruction instanceof ret ret) {
-                transRet(ret, basicBlock);
+                transRet(ret);
             } else if (instruction instanceof br br) {
                 transBr(br);
             } else if (instruction instanceof call call) {
@@ -135,8 +135,8 @@ public class MIPSBasicBlock {
 
     }
 
-    private void transRet(ret ret, BasicBlock basicBlock) {
-        if (basicBlock.getParent().isMainFunc()) {
+    private void transRet(ret ret) {
+        if (ret.getParent().getParent().isMainFunc()) {
             if (mipsFunction.stackTop != 0) {
                 MIPSBinary binary = new MIPSBinary("addiu", PhysicalReg.$sp, PhysicalReg.$sp, new Immediate(mipsFunction.stackTop));
                 addInstruction(binary);
@@ -173,7 +173,7 @@ public class MIPSBasicBlock {
     }
 
     private void transCall(call call) {
-        String funcName = call.getFunction().getName().substring(1);
+        String funcName = call.getFunction().getMipsName();
         if (call.isExternal()) {
             // 处理外部函数调用
             if (funcName.equals("putint") || funcName.equals("putch") || funcName.equals("putstr")) {
@@ -189,24 +189,8 @@ public class MIPSBasicBlock {
                 addInstruction(moveReturn);
             }
         } else {
-//            List<Value> args = call.getOperands().subList(1, call.getOperands().size());
-//            // 计算需要为参数和返回地址预留的栈空间
-//            int size = (int) args.stream().filter(arg -> !MIPSModel.getValue2VReg().containsKey(arg)).count() + MIPSModel.getValue2VReg().size();
-//            int stackSpace = size * 4 + 4;
-//            mipsFunction.stackTop += stackSpace;
-//            // 调整栈指针，分配栈空间
-//            MIPSBinary binary = new MIPSBinary("addiu", PhysicalReg.$sp, PhysicalReg.$sp, new Immediate(-stackSpace));
-//            addInstruction(binary);
-//            // 保存参数到栈中
-//            int i;
-//            for (i = 0; i < args.size(); i++) {
-//                Value arg = args.get(i);
-//                MIPSStore store = new MIPSStore(getVReg(arg), new Immediate(i * 4), PhysicalReg.$sp);
-//                addInstruction(store);
-//            }
             int paramNum = call.getFunction().getParameters().size();
             ArrayList<Reg> tempRegs = new ArrayList<>(MIPSModel.getValue2VReg().values());
-
             // 保存用到的临时变量寄存器到栈中
             int offset = paramNum * 4;
             for (Reg reg : tempRegs) {

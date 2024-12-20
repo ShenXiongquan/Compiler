@@ -18,10 +18,9 @@ public class MIPSModel {
     // 全局变量列表
     private static final List<MIPSGlobalVar> globalVars = new ArrayList<>();
     // 函数列表
-    private static final HashMap<String, MIPSFunction> functions = new HashMap<>();
-    // 主函数
-    private MIPSFunction mainFunction;
+    private static final List<MIPSFunction> functions = new ArrayList<>();
 
+    // 主函数
     public static LinkedHashMap<Value, Reg> getValue2VReg() {
         return Value2VReg;
     }
@@ -40,8 +39,8 @@ public class MIPSModel {
     }
 
     // 添加函数
-    public void addFunction(String funcName, MIPSFunction function) {
-        functions.put(funcName, function);
+    public void addFunction(MIPSFunction function) {
+        functions.add(function);
     }
 
     public void buildModel(Model irModel) {
@@ -50,14 +49,13 @@ public class MIPSModel {
                 MIPSGlobalVar mipsGlobalVar = new MIPSGlobalVar(globalVar.getName().substring(1), globalVar.getInitial());
                 addGlobalVar(mipsGlobalVar);
             } else if (globalValue instanceof Function function && function.isDefine()) {//函数声明
-                MIPSFunction mipsFunction = new MIPSFunction(function.getName().substring(1), function);
-                addFunction(mipsFunction.getName(), mipsFunction);
+                MIPSFunction mipsFunction = new MIPSFunction(function.getMipsName(), function);
+                addFunction(mipsFunction);
                 mipsFunction.buildFunction();
             }
         }
-        mainFunction = functions.get("main");
-    }
 
+    }
 
     public String mips() {
         StringBuilder sb = new StringBuilder();
@@ -93,10 +91,12 @@ public class MIPSModel {
         }
         //.text段
         sb.append(".text\n");
-        sb.append(".globl main\n");
-        sb.append(mainFunction.mips()).append("\n");
-        for (MIPSFunction function : functions.values()) {
-            if (!function.getName().equals("main")) sb.append(function.mips()).append("\n");
+//        sb.append(".globl f_main\n");
+
+
+        for (int i = functions.size() - 1; i >= 0; i--) { // 从最后一个元素开始遍历
+            MIPSFunction function = functions.get(i);
+            sb.append(function.mips()).append("\n");
         }
 
         return sb.toString();

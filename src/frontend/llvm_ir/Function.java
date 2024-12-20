@@ -75,6 +75,9 @@ public class Function extends GlobalValue {
         return getName().equals("@main");
     }
 
+    public String getMipsName() {
+        return "f_" + getName().substring(1);
+    }
 
     //define dso_local i32 @main(){}
     //declare i32 @getint()
